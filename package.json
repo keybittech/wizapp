@@ -23,7 +23,7 @@
     "cli": "node dist-cli/cli.js",
     "prepare": "yarn build:cli",
     "test": "jest",
-    "debug": "node --inspect-brk ./node_modules/jest/bin/jest.js --runInBand" 
+    "debug": "node --inspect-brk ./node_modules/jest/bin/jest.js --runInBand"
   },
   "dependencies": {
     "openai": "^3.2.1",
@@ -39,5 +39,16 @@
     "ts-jest": "^29.1.0",
     "ts-loader": "^9.0.0",
     "typescript": "^4.0.0"
+  },
+  "main": "src/index.ts",
+  "directories": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/keybittech/wizapp.git"
+  },
+  "bugs": {
+    "url": "https://github.com/keybittech/wizapp/issues"
   }
 }
