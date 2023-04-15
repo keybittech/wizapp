@@ -2,10 +2,13 @@ import fs from 'fs';
 import path from 'path';
 import { Project, ScriptKind } from 'ts-morph';
 
-import { useAi } from './use_ai';
+import { useAi } from './use_ai_spell';
 import { IPrompts } from '../prompts';
+import { getConfig } from '../config';
 
 export async function createComponent(description: string, user: string) {
+  
+  const config = getConfig();
 
   const project = new Project({
     tsConfigFilePath: './projectts.json'
@@ -21,14 +24,12 @@ export async function createComponent(description: string, user: string) {
     const asExpression = exAssignment.getExpression();
 
     if (asExpression) {
-      console.log({ asname: asExpression.getText() })
-
-      const creatorComment = `/* Created by Twitch chatter ${user}, ${description} */\n`;
+      const creatorComment = `/* Created by ${user}, ${description} */\n`;
 
       fs.writeFileSync(path.join(__dirname, `../../app/website/src/modules/generated/${asExpression.getText()}.tsx`), `${creatorComment}${res.message}`);
       return 'created a new componenet like an actual omega mega bro';
     }
   }
 
-  return 'uh oh, spaghetti-ohs, it is time to check the logs';
+  return 'unable to create a component ' + res.message;
 }

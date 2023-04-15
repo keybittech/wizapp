@@ -1,10 +1,11 @@
 import { CreateChatCompletionRequest, CreateCompletionRequest, CreateModerationRequest } from "openai";
 import { IPrompts } from "./prompts";
 
-export type Config = Record<string, Record<string, string | undefined>>;
-export type CurrentType = string | undefined | Config | Record<string, string | undefined>;
+export type ConfigPropTypes = string;
+export type Config = Record<string, Record<string, ConfigPropTypes>>;
+export type CurrentType = ConfigPropTypes | Config;
 
-export function isConfigNestedObject(obj: unknown): obj is Record<string, string | undefined> {
+export function isConfigNestedObject(obj: unknown): obj is Record<string, ConfigPropTypes> {
   return typeof obj === 'object' && obj !== null;
 }
 

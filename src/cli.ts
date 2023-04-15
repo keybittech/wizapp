@@ -3,12 +3,9 @@
 
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
-import { useAi, guidedEdit, createComponent, createApi } from './spells';
-import { IPrompts } from './prompts';
-import { config, saveConfig } from './config';
-import { CurrentType, isConfigNestedObject } from './types';
+import { config, saveConfig, getConfigValue } from './config';
 
-const argv = yargs(hideBin(process.argv))
+const argv =  yargs(hideBin(process.argv))
   .options({
     // Global options
     'timeout': {
@@ -42,14 +39,8 @@ const argv = yargs(hideBin(process.argv))
     (argv) => {
       if (!argv.key) throw new Error('key required');
       const keys = argv.key.split('.');
-      let current: CurrentType = config;
-      for (let i = 0; i < keys.length - 1; i++) {
-        if (!isConfigNestedObject(current[keys[i]])) {
-          throw new Error('invalid config key');
-        }
-        current = current[keys[i]];
-      }
-      current[keys[keys.length - 1]] = argv.value;
+      const [current, lastKey] = getConfigValue(config, keys);
+      current[lastKey] = argv.value || '';      
       saveConfig();
       console.log(`Configuration updated: ${argv.key} = ${argv.value}`);
     }
@@ -73,6 +64,9 @@ const argv = yargs(hideBin(process.argv))
         });
     },
     (argv) => {
+      Object.keys(process.env).forEach(ke => {
+        ke.startsWith('WIZAPP_') && console.log(ke)
+      })
       // Add your use-ai logic here
       // Access global options with argv.timeout, argv['outer-delimeter'], argv['inner-delimeter']
       // Access user settings with config.user.name
@@ -155,4 +149,4 @@ const argv = yargs(hideBin(process.argv))
   .strict()
   .argv;
 
-yargs(hideBin(process.argv)).argv;
+export default argv;

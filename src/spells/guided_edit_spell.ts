@@ -1,9 +1,9 @@
-import simpleGit from 'simple-git';
 import { FunctionDeclaration, SyntaxKind, Node, Project } from 'ts-morph';
 
-import { useAi } from './use_ai';
+import { useAi } from './use_ai_spell';
 import { GuidedEditKeys, GuidedEditResponse, IPrompts } from '../prompts';
 import { prepareBranch, pushCommit, managePullRequest } from '../git';
+import { getConfig } from '../config';
 
 function getStatementText(child: Node) {
   let parsedStatementText = child.getText();
@@ -33,14 +33,17 @@ function walkNode(child: Node, i: number, parsedStatements: Record<string, strin
 }
 
 export async function guidedEdit(fileParts: string, user: string) {
+  
+  const config = getConfig();
+  if (!config.ts.configPath) {
+    throw new Error('Missing ts.configPath.')
+  }
+  const project = new Project({
+    tsConfigFilePath: config.ts.configPath
+  });
+
   const [fileName, ...suggestedEdits] = fileParts.split(' ');
   const suggestions = suggestedEdits.join(' ');
-
-
-  const project = new Project({
-    tsConfigFilePath: '../../project_diff/api/projectts.json'
-  });
-  const git = simpleGit('../../project_diff');
 
   const generatedBranch = await prepareBranch(user);
 
@@ -49,7 +52,7 @@ export async function guidedEdit(fileParts: string, user: string) {
   if (sourceFile) {
 
     if (sourceFile.getText().length > 10000) {
-      return 'hol up, wait a minute, file too stronk';
+      return 'the file is too large';
     }
 
     const originalStatements: Map<string, string> = new Map();

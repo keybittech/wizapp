@@ -1,10 +1,15 @@
+import { ChatResponse, CompletionResponse, isCompletionRequest, ModerationResponse, OpenAIResults, UseAIResponses } from '../types';
 import { parseChatAttempt } from '../chat_parser';
 import { IPrompts } from '../prompts';
 import { buildOpenAIRequest, performRequest } from '../request';
 import { logAiResult } from '../stats';
-import { ChatResponse, CompletionResponse, isCompletionRequest, ModerationResponse, OpenAIResults, UseAIResponses } from '../types';
+import { getConfig } from '../config';
 
 export async function useAi<T = undefined>(promptType: IPrompts, ...prompts: string[]): Promise<UseAIResponses<T>> {
+  
+  const config = getConfig();
+  const retries = parseInt(config.ai.retries, 10);
+  
   let failures: string[] = [];
 
   const [builtRequest, promptTemplate] = buildOpenAIRequest(prompts, promptType);
@@ -16,13 +21,15 @@ export async function useAi<T = undefined>(promptType: IPrompts, ...prompts: str
     promptTemplate,
     promptType,
   }
+  
   try {
 
     const responseTry = await performRequest(builtRequest);
 
     if ('undefined' === typeof responseTry) {
-      failures.push('Open AI returned no choices.');
-      throw undefined;
+      const noChoices = 'Open AI returned no choices.'
+      failures.push(noChoices);
+      throw new Error(noChoices);
     }
 
     if ('boolean' === typeof responseTry) {
@@ -55,28 +62,32 @@ export async function useAi<T = undefined>(promptType: IPrompts, ...prompts: str
         const err = error as Error;
         failures.push(err.message + ' FAILED ATTEMPT:' + attempt);
 
-        if (failures.length < 3 && err.message.startsWith('cannot parse')) {
+        if (failures.length < retries && err.message.startsWith('cannot parse')) {
 
           console.log('REPEATING ATTEMPT WITH REQUEST: ', JSON.stringify(builtRequest, null, 2))
 
           const repeatedAttempt = await performRequest(builtRequest);
 
           if ('string' !== typeof repeatedAttempt) {
-            failures.push('Received imparsable resolution during retry.');
-            throw undefined;
+            const imparsable = 'Received imparsable resolution during retry.';
+            failures.push(imparsable);
+            throw new Error(imparsable);
           }
 
           return await resolveAttempt(repeatedAttempt);
         }
 
-        throw undefined;
+        const resolveIssue = 'Critical chat parse error or could not resolve a valid response after ' + retries + ' attempts. ' + (err.message ? 'Parsing error: ' + err.message : '');
+        failures.push(resolveIssue);
+        throw new Error(resolveIssue);
       }
     }
 
     return await resolveAttempt(responseTry) as UseAIResponses<T>;
-  } catch (e) {
+  } catch (error) {
+    const err = error as Error;
     aiResponse.successful = false;
     logAiResult({ ...aiResponse, prompts, message: undefined, model: builtRequest.model });
-    throw aiResponse;
+    throw 'General use AI failure: ' + err.message + err.stack + '\n' + JSON.stringify(aiResponse, null, 2);
   }
 }

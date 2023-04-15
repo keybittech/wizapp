@@ -3,12 +3,14 @@ import { aiPrompts, IPrompts } from "./prompts";
 import { isChatRequest, isCompletionRequest, isModerationRequest, OpenAIRequestShapes } from "./types";
 
 const openai = new OpenAIApi();
-const openAIRequestOptions = {
+export const openAIRequestOptions = {
   headers: {
     'Content-Type': 'application/json',
     'Authorization': `Bearer ${process.env.OPENAI_API_KEY as string}`
   }
 };
+
+export const chatModel = 'gpt-3.5-turbo';
 
 export function buildOpenAIRequest(prompts: string[], promptType?: IPrompts): [OpenAIRequestShapes, string?] {
 
@@ -46,7 +48,7 @@ export function buildOpenAIRequest(prompts: string[], promptType?: IPrompts): [O
     }
 
     return [{
-      model: 'gpt-3.5-turbo',
+      model: chatModel,
       messages: completionOrHistory
     }, promptTemplateString]
   }
@@ -56,13 +58,16 @@ export function buildOpenAIRequest(prompts: string[], promptType?: IPrompts): [O
 
 export async function performRequest(request: OpenAIRequestShapes): Promise<string | boolean | undefined> {
   if (isChatRequest(request)) {
+    console.log('OpenAIActionTrigger: createChatCompletion')
     const chatResponse = await openai.createChatCompletion(request, openAIRequestOptions);
     return chatResponse.data.choices[0]?.message?.content.trim()
   } else if (isCompletionRequest(request)) {
+    console.log('OpenAIActionTrigger: createCompletion')
     const completionResponse = await openai.createCompletion(request, openAIRequestOptions);
     return completionResponse.data.choices[0].text?.trim();
   } else if (isModerationRequest(request)) {
+    console.log('OpenAIActionTrigger: createModeration')
     const moderationResponse = await openai.createModeration(request, openAIRequestOptions);
-    return moderationResponse.data.results.at(0)?.flagged;
+    return moderationResponse.data.results[0]?.flagged;
   }
 }

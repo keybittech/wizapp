@@ -1,0 +1,15 @@
+{
+  "ts": {
+    "configPath": "",
+    "typeDir": "",
+    "compDir": ""
+  },
+  "git": {
+    "rootPath": "",
+    "source": "main",
+    "remote": "origin"
+  },
+  "user": {
+    "name": ""
+  }
+}
