@@ -22,24 +22,24 @@ OPENAI_API_KEY in the environment.
 To install WizApp locally, run the following command:
 
 ```
-npm install @kbt/wizapp
+npm install @keybittech/wizapp
 ```
 
 ### Configure WizApp settings
 ```
-npx @kbt/wizapp set ts.configPath "<path/to/tsconfig.json>"
+npx @keybittech/wizapp set ts.configPath "<path/to/tsconfig.json>"
 // required for create-api create-component guided-edit
 
-npx @kbt/wizapp set ts.typeDir "<folder for generated types/apis>"
+npx @keybittech/wizapp set ts.typeDir "<folder for generated types/apis>"
 // required for create-api
 
-npx @kbt/wizapp set ts.compDir "<folder for generated components>"
+npx @keybittech/wizapp set ts.compDir "<folder for generated components>"
 // required for create-component
 
-npx @kbt/wizapp set git.rootPath "<root directory for the git project containing the above>"
+npx @keybittech/wizapp set git.rootPath "<root directory for the git project containing the above>"
 // setting this will enable PR creation only for guided-edit
 
-npx @kbt/wizapp set user.name "<name used for generating entity>"
+npx @keybittech/wizapp set user.name "<name used for generating entity>"
 // default wizapp
 ```
 
@@ -57,7 +57,7 @@ The WizApp CLI offers a variety of magical delights to help you manage your Type
 - `use-ai`: General purpose function to generate a request for any IPrompts prompt
 
 ```
-npx @kbt/wizapp [command] [options]
+npx @keybittech/wizapp [command] [options]
 ```
 
 ### CLI Commands - Work In Progress
@@ -65,7 +65,7 @@ npx @kbt/wizapp [command] [options]
 #### Guided Edit
 
 ```
-npx @kbt/wizapp guided-edit "<fileName/Path> <desired addition, deletion, edit>"
+npx @keybittech/wizapp guided-edit "<fileName/Path> <desired addition, deletion, edit>"
 
 Ex:
 
@@ -78,20 +78,20 @@ Guided edit requires the tsconfig.json path to be configured and will seek out t
 #### Create API
 
 ```
-npx @kbt/wizapp create-api "IMyApi"
+npx @keybittech/wizapp create-api "IMyApi"
 ```
 (Awayto) This command infers a typescript type from the name given, then designs a templated API configuration and functionality.
 
 #### Create Component
 
 ```
-npx @kbt/wizapp create-component "description of a component"
+npx @keybittech/wizapp create-component "description of a component"
 ```
 This requires ts.compDir to be configured. A component name will be generated based on the description and placed into compDir/Component.tsx.
 
 #### Use AI
 ```
-npx @kbt/wizapp use-ai "suggest_feature" "a writing center"
+npx @keybittech/wizapp use-ai "suggest_feature" "a writing center"
 ```
 
 ## TypeScript Library Usage
@@ -106,7 +106,7 @@ WizApp can also be used as a library to directly interact with TypeScript files 
 #### Create a new component
 
 ```typescript
-import { createComponent } from '@kbt/wizapp';
+import { createComponent } from '@keybittech/wizapp';
 
 createComponent('A tarot card reader that shows 7 cards in a grid and pulls images from a real tarot card website along with their names and descriptions. Users can press a button to reveal 7 new cards.');
 ```
@@ -114,7 +114,7 @@ createComponent('A tarot card reader that shows 7 cards in a grid and pulls imag
 #### Generate or modify code based on AI suggestions
 
 ```typescript
-import { useAi, IPrompts } from '@kbt/wizapp';
+import { useAi, IPrompts } from '@keybittech/wizapp';
 
 useAi(IPrompts.SUGGEST_SERVICE, 'a group of people who go out on the weekends and do various activities');
 ```
