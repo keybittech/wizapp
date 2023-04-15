@@ -1,0 +1,38 @@
+{
+  "name": "@kbt/wizapp",
+  "version": "0.0.1-alpha",
+  "description": "The Wizard's Apprentice",
+  "keywords": [
+    "automated",
+    "ai",
+    "api",
+    "assistant",
+    "typescript",
+    "development",
+    "editing",
+    "projects"
+  ],
+  "homepage": "https://awayto.dev",
+  "license": "MIT",
+  "author": "Joe McCormick",
+  "bin": {
+    "wizapp": "dist-cli/cli.js"
+  },
+  "scripts": {
+    "build:cli": "tsc --project tsconfig.cli.json",
+    "cli": "node dist-cli/cli.js",
+    "prepare": "yarn build:cli"
+  },
+  "dependencies": {
+    "openai": "^3.2.1",
+    "simple-git": "^3.17.0",
+    "ts-morph": "^18.0.0",
+    "yargs": "^17.7.1"
+  },
+  "devDependencies": {
+    "@types/node": "^18.15.11",
+    "@types/yargs": "^17.0.24",
+    "ts-loader": "^9.0.0",
+    "typescript": "^4.0.0"
+  }
+}
