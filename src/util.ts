@@ -1,3 +1,4 @@
+import path from "path";
 
 export const isValidName = (name: string): boolean => {
   const regex = /^I[A-Z][a-zA-Z]*$/;
@@ -55,7 +56,7 @@ export function sanitizeName(input: string): string {
   return result;
 }
 
-export function ensureKeysAreQuoted(jsonString: string) {
+export function ensureKeysAreQuoted(jsonString: string): string {
   const unquotedKeysRegex = /([{,]\s*)(\w+)\s*:/g;
   function quoteKeys(match: unknown, prefix: string, key: string) {
     return `${prefix}"${key}":`;
@@ -63,7 +64,7 @@ export function ensureKeysAreQuoted(jsonString: string) {
   return jsonString.replace(unquotedKeysRegex, quoteKeys);
 }
 
-export function typeDefinitionToSentence(typeDefinition: string) {
+export function typeDefinitionToSentence(typeDefinition: string): string {
   const typeNameMatch = typeDefinition.match(/export type (\w+)/);
 
   if (!typeNameMatch) {
@@ -95,7 +96,11 @@ export function typeDefinitionToSentence(typeDefinition: string) {
   return 'Unable to parse the type definition.';
 }
 
-export function hasSimilarKey(obj: Record<string, unknown>, prop: string) {
+export function hasSimilarKey(obj: Record<string, unknown>, prop: string): boolean {
   const regex = new RegExp(`^${prop}_\\d+$`);
   return Object.keys(obj).some(key => regex.test(key));
+}
+
+export function getPathOf(name: string): string {
+  return path.join(__dirname, name);
 }

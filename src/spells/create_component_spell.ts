@@ -1,17 +1,24 @@
 import fs from 'fs';
-import path from 'path';
 import { Project, ScriptKind } from 'ts-morph';
 
 import { useAi } from './use_ai_spell';
 import { IPrompts } from '../prompts';
 import { getConfig } from '../config';
+import { getPathOf } from '../util';
 
 export async function createComponent(description: string, user: string) {
   
   const config = getConfig();
+  if (!config.ts.compDir) {
+    throw new Error('Missing ts.compDir.')
+  }
+
+  if (!config.ts.configPath) {
+    throw new Error('Missing ts.configPath.')
+  }
 
   const project = new Project({
-    tsConfigFilePath: './projectts.json'
+    tsConfigFilePath: config.ts.configPath
   });
 
   const res = await useAi<string>(IPrompts.CREATE_GEN_COMPONENT, description)
@@ -26,8 +33,9 @@ export async function createComponent(description: string, user: string) {
     if (asExpression) {
       const creatorComment = `/* Created by ${user}, ${description} */\n`;
 
-      fs.writeFileSync(path.join(__dirname, `../../app/website/src/modules/generated/${asExpression.getText()}.tsx`), `${creatorComment}${res.message}`);
-      return 'created a new componenet like an actual omega mega bro';
+      const filePath = getPathOf(`./${config.ts.compDir}/${asExpression.getText()}.tsx`);
+      fs.writeFileSync(filePath, `${creatorComment}${res.message}`);
+      return 'created a new component';
     }
   }
 
