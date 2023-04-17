@@ -1,5 +1,5 @@
 import { GuidedEditResponse, IPrompts } from '../src/prompts';
-import { setupCommonMocks, setupChatResponse, setupCompletionResponse, setupModerationResponse, setupOpenAiMocks } from './testHelpers';
+import { setupCommonMocks, setupChatResponse, setupCompletionResponse, setupModerationResponse, setupOpenAiMocks, openai, setupConfigTestBefore, setupConfigTestAfter } from './testHelpers';
 
 setupChatResponse('&&&Some text@@@[{ "statement_0": "some code " }]@@@Some other text&&&');
 setupCompletionResponse('test completion response');
@@ -10,8 +10,16 @@ import { useAi } from '../src/spells/use_ai_spell';
 
 describe('useAi', () => {
 
+  beforeEach(() => {
+    setupConfigTestBefore({ ts: { typeDir: 'types', configPath: 'tsconfig.json' } });
+    jest.clearAllMocks();
+  });
+
+  afterEach(() => {
+    setupConfigTestAfter();
+  });
+
   test('should return a chat response when promptType is a chat prompt', async () => {
-    
     const response = await useAi<GuidedEditResponse>(IPrompts.GUIDED_EDIT, 'Profile.tsx make the profile picture round instead of square.');
     expect(response.message).toStrictEqual([{ "statement_0": "some code "}]);
   });
@@ -26,10 +34,11 @@ describe('useAi', () => {
     expect(response.flagged).toBe(false);
   });
 
-  test('should throw an error when all attempts fail', async () => {
-    const failingChatResponse = '&&&Some text@invalid json}@@@Some other text&&&';
-    setupChatResponse(failingChatResponse);
-    setupOpenAiMocks();
+  test('should throw an error when all parsing attempts fail', async () => {
+    openai.createChatCompletion.mockImplementation(() => ({
+      data: { choices: [{ message: { content: '&&&Some text@invalid json}@@@Some other text&&&' } }] },
+    }));
+
     await expect(useAi<GuidedEditResponse>(IPrompts.GUIDED_EDIT, 'testfile.tsx', 'add comments throughout the file')).rejects.toThrowError();
   });
 

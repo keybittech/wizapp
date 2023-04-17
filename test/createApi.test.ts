@@ -9,7 +9,7 @@ import {
   setupConfigTestAfter,
 } from './testHelpers';
 
-setupChatResponse('const userNameApi = { ...');
+setupChatResponse('const testTypeApi = { ...');
 setupCommonMocks();
 
 import { createApi } from '../src/spells';
@@ -24,7 +24,7 @@ jest.mock('fs', () => ({
 describe('createApi', () => {
 
   beforeEach(() => {
-    setupConfigTestBefore({ ai: { retries: '3' }, ts: { typeDir: 'types', configPath: 'tsconfig.json' } });
+    setupConfigTestBefore({ ts: { typeDir: 'types', configPath: 'tsconfig.json' } });
   });
 
   afterEach(() => {
@@ -56,7 +56,7 @@ describe('createApi', () => {
     const generatedType = 'userName';
     const coreTypesPath = path.join(__dirname, '../src/spells/types', `${toSnakeCase(typeName)}.ts`);
     const comment = `/*\n* @category ${toTitleCase(typeName)}\n*/\n`;
-    const generatedApi = 'const userNameApi = { ...';
+    const generatedApi = 'const testTypeApi = { ...';
     await createApi(typeName, generatedType);
     expect(fs.appendFileSync).toHaveBeenCalledWith(coreTypesPath, `${comment}${generatedApi}\n\n`);
   });

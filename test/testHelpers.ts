@@ -2,6 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import { getConfig } from '../src/config';
 import { Config } from '../src/types';
+import { SyntaxKind } from 'ts-morph';
 
 let chatResponseContent: string;
 let completionResponseText: string;
@@ -9,23 +10,23 @@ let moderationResponseFlagged: boolean;
 
 export let openai: Record<string, ReturnType<ReturnType<typeof jest.fn>['mockResolvedValue']>>;
 
-export function setupOpenAiMocks() {
+export function setupOpenAiMocks({ chat, completion, moderation }: { chat?: string, completion?: string, moderation?: string }) {
   openai = {
     createChatCompletion: jest.fn().mockResolvedValue({
-      data: { choices: [{ message: { content: chatResponseContent } }] },
+      data: { choices: [{ message: { content: chat || chatResponseContent } }] },
     }),
     createCompletion: jest.fn().mockReturnValue({
-      data: { choices: [{ text: completionResponseText }] },
+      data: { choices: [{ text: completion || completionResponseText }] },
     }),
     createModeration: jest.fn().mockReturnValue({
-      data: { results: [{ flagged: moderationResponseFlagged }] },
+      data: { results: [{ flagged: moderation || moderationResponseFlagged }] },
     }),
   };
 }
 
 export function setupCommonMocks() {
 
-  setupOpenAiMocks();
+  setupOpenAiMocks({});
 
   jest.mock('openai', () => ({
     OpenAIApi: jest.fn().mockImplementation(() => openai),
@@ -70,4 +71,13 @@ export function setupConfigTestAfter() {
   if (fs.existsSync(configFile)) {
     fs.unlinkSync(configFile);
   }
+}
+
+export function createMockStatement(text: string, kind: SyntaxKind) {
+  return {
+    getText: () => text,
+    getFullText: () => text,
+    getKind: () => kind,
+    getParent: () => null,
+  };
 }

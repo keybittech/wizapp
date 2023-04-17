@@ -1,18 +1,15 @@
-import { Project } from "ts-morph";
+import { Project } from 'ts-morph';
 import { getConfig } from '../config';
-import path from "path";
-import { toSnakeCase, toTitleCase } from "../util";
-import { useAi } from "./use_ai_spell";
-import { IPrompts } from "../prompts";
+import path from 'path';
+import { toSnakeCase, toTitleCase } from '../util';
+import { useAi } from './use_ai_spell';
+import { IPrompts } from '../prompts';
 
 export async function createApiBackend(typeName: string, generatedType: string) {
-
   const config = getConfig();
-
   if (!config.ts.configPath) {
     throw new Error('Missing ts.configPath.')
   }
-
   const project = new Project({
     tsConfigFilePath: config.ts.configPath
   });
@@ -36,7 +33,6 @@ export async function createApiBackend(typeName: string, generatedType: string) 
   try {
     const generatedApiBackend = await useAi<string>(IPrompts.CREATE_API_BACKEND, generatedType + ' ' + apiEndpoints.join(' '))
     const comment = `/*\n* @category ${toTitleCase(typeName)}\n*/\n`;
-
     sourceFile.insertText(sourceFile.getEnd(), `${comment}${generatedApiBackend.message}\n\n`);
     sourceFile.fixMissingImports();
     await project.save();

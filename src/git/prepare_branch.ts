@@ -1,15 +1,24 @@
 import simpleGit from "simple-git";
 import { sanitizeName } from "../util";
-
+import { getConfig } from "../config";
+import { gitCheck } from "./check_git_cli";
 
 export async function prepareBranch(name: string): Promise<string> {
-  const git = simpleGit('../../project_diff');
+  gitCheck();
+  const config = getConfig();
+  if (!config.git.rootPath) {
+    throw 'Missing config.git.rootPath.'
+  }
+
+  const git = simpleGit(config.git.rootPath);
   const generatedBranch = sanitizeName(`gen/${name}`);
 
   console.log('Prepare branch main checkout.');
   await git.checkout('main');
+
   console.log('Pulling main.');
   await git.pull('origin', 'main');
+
   console.log('Fetching.');
   await git.fetch('all');
 

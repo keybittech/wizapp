@@ -14,7 +14,9 @@ export type GuardValidations = Record<string, unknown> | Record<string, unknown>
 export type OpenAIRequestShapes = CreateChatCompletionRequest | CreateCompletionRequest | CreateModerationRequest;
 
 export type OpenAIResults = {
+  model?: string;
   timestamp: Date;
+  prompts?: string[];
   promptType: IPrompts;
   promptTemplate: string | undefined;
   failures: string[];
@@ -49,14 +51,14 @@ export function isModerationRequest(obj: OpenAIRequestShapes): obj is CreateMode
   return 'input' in obj;
 }
 
-export function isChatResponse<T>(obj: Record<string, unknown>): obj is ChatResponse<T> {
-  return 'message' in obj && Array.isArray(obj.message) && obj.message.length > 0;
+export function isChatResponse<T>(obj: GuardValidations): obj is ChatResponse<T> {
+  return 'object' === typeof obj && 'message' in obj && Array.isArray(obj.message);
 }
 
-export function isCompletionResponse(obj: Record<string, unknown>): obj is CompletionResponse {
-  return 'message' in obj && 'string' === typeof obj.message;
+export function isCompletionResponse(obj: GuardValidations): obj is CompletionResponse {
+  return 'object' === typeof obj && 'message' in obj && 'string' === typeof obj.message;
 }
 
-export function isModerationResponse(obj: Record<string, unknown>): obj is ModerationResponse {
-  return 'input' in obj;
+export function isModerationResponse(obj: GuardValidations): obj is ModerationResponse {
+  return 'object' === typeof obj && 'input' in obj;
 }

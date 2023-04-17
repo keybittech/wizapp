@@ -62,7 +62,7 @@ export async function performRequest(request: OpenAIRequestShapes): Promise<stri
   if (isChatRequest(request)) {
     console.log('CHAT')
     const chatResponse = await openai.createChatCompletion(request, openAIRequestOptions);
-    return chatResponse.data.choices[0]?.message?.content.trim()
+    return chatResponse.data.choices[0]?.message?.content.trim();
   } else if (isCompletionRequest(request)) {
     console.log('COMPLETION')
     const completionResponse = await openai.createCompletion(request, openAIRequestOptions);

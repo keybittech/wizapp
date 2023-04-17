@@ -1,9 +1,11 @@
 import { ChatResponse, CompletionResponse, isChatResponse, isCompletionResponse, isModerationResponse, ModerationResponse } from "./types";
 import fs from 'fs';
+import { getConfig } from "./config";
 
-export function logAiResult<T>(res: (ChatResponse<T> | CompletionResponse | ModerationResponse) & { prompts: string[], model?: string }) {
+export function logAiResult<T>(res: ChatResponse<T> | CompletionResponse | ModerationResponse) {
+  const config = getConfig();
   const { successful, timestamp, failures, prompts, model, ...metric } = res;
-  const duration = ((new Date()).getTime() - res.timestamp.getTime()) / 1000;
+  const duration = ((new Date()).getTime() - (new Date(res.timestamp).getTime())) / 1000;
 
   let metrics: Record<string, unknown> = {
     pass: successful,
@@ -30,5 +32,5 @@ export function logAiResult<T>(res: (ChatResponse<T> | CompletionResponse | Mode
 
   Object.assign(metrics, { failures, template: metric.promptTemplate, type: metric.promptType });
 
-  fs.appendFileSync('results.json', `${JSON.stringify(metrics)}\n`);
+  fs.appendFileSync(config.ai.logFile, `${JSON.stringify(metrics)}\n`);
 }

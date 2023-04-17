@@ -7,7 +7,7 @@ const configFile = 'config.json';
 
 // Default configuration values
 export const defaultConfig: Config = {
-  ai: { retries: '3' },
+  ai: { retries: '3', logFile: 'results.json' },
   ts: { configPath: '', typeDir: '', compDir: '' },
   git: { rootPath: '', source: 'main', remote: 'origin' },
   user: { name: 'wizapp' },
