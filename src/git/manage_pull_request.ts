@@ -20,5 +20,5 @@ export async function managePullRequest(branch: string, title: string, body: str
     execSync(`gh pr review ${existingPr.number} --comment -b "${title}\n\n${body}"`, { cwd: config.git.rootPath }); 
   }
 
-  return `guided edit produced PR ${existingPr?.number} at ${existingPr?.url}`;
+  return `guided edit produced PR ${existingPr?.number ? `${existingPr.number} at ${existingPr.url}` : ''}`;
 }

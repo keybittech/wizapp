@@ -2,7 +2,7 @@ import { FunctionDeclaration, SyntaxKind, Node, Project } from 'ts-morph';
 
 import { useAi } from './use_ai_spell';
 import { GuidedEditKeys, GuidedEditResponse, IPrompts } from '../prompts';
-import { prepareBranch, pushCommit, managePullRequest } from '../git';
+import { prepareBranch, pushCommit, managePullRequest, goHome } from '../git';
 import { getConfig } from '../config';
 
 function getStatementText(child: Node) {
@@ -142,7 +142,10 @@ export async function guidedEdit(fileParts: string, editingUser?: string) {
 
       const prTitle = `${editingUser || config.user.name} edited ${fileName}: ${suggestions.replace(/[~^:?"*\[\]@{}\\/]+/g, '')}`.slice(0, 255);
       const prBody = `GPT: ${res.supportingText || 'No supporting text found.'}`.replaceAll('"', '');
-      return await managePullRequest(generatedBranch, prTitle, prBody);
+      const prRes = await managePullRequest(generatedBranch, prTitle, prBody);
+      await goHome();
+
+      return 'guided edit complete: ' + prRes;
 
     } else {
       return 'guided edit produced no modifications for ' + fileName;
