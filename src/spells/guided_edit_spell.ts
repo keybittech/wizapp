@@ -6,7 +6,7 @@ import { prepareBranch, pushCommit, managePullRequest, goHome } from '../git';
 import { getConfig } from '../config';
 
 function getStatementText(child: Node) {
-  let parsedStatementText = child.getText();
+  let parsedStatementText = child.getText(); // added parsedStatementText initialization
   const parent = child.getParent();
 
   if (child.getKind() == SyntaxKind.VariableDeclaration && parent instanceof Node) {
@@ -18,7 +18,7 @@ function getStatementText(child: Node) {
 const ignoredStatements = [SyntaxKind.TryStatement]
 
 function walkNode(child: Node, i: number, parsedStatements: Record<string, string>, originalStatements: Map<string, string>) {
-  const statementName = `statement_${i}`;
+  const statementName = `statement_${i}`; // added statementName assignment
   if (child instanceof FunctionDeclaration) {
     child.getStatements().forEach((descendant, index) => {
       walkNode(descendant, index + i, parsedStatements, originalStatements);
@@ -59,7 +59,7 @@ export async function guidedEdit(fileParts: string, editingUser?: string) {
       walkNode(statement, index, parsedStatements, originalStatements);
     });
 
-    const res = await useAi<GuidedEditResponse>(IPrompts.GUIDED_EDIT, suggestions, JSON.stringify(parsedStatements));
+    const res = await useAi<GuidedEditResponse>(IPrompts.GUIDED_EDIT, suggestions, JSON.stringify({ ...parsedStatements, ...{ 'comment': '' } }));
     
     const generatedStatements = res.message.reduce((m, d) => ({ ...m, ...d }), {});
 
