@@ -7,6 +7,10 @@ import { getConfig } from '../config';
 
 function getStatementText(child: Node) {
   let parsedStatementText = child.getText();
+if (child.getLeadingCommentRanges()?.length) {
+  const leadingComments = child.getLeadingCommentRanges()?.reduce((s, c) => s + c.getText(), '') as string;
+  parsedStatementText = `${leadingComments}\n${parsedStatementText}`;
+}
   const parent = child.getParent();
 
   if (child.getKind() == SyntaxKind.VariableDeclaration && parent instanceof Node) {
@@ -58,6 +62,17 @@ export async function guidedEdit(fileParts: string, editingUser?: string) {
     sourceFile.getStatements().forEach((statement, index) => {
       walkNode(statement, index, parsedStatements, originalStatements);
     });
+
+    sourceFile.getFullText().split('\n').forEach(line => {
+      if (line.match(/\/\/|\/\*/)) {
+        const commentBody = line.replace(/.*?(\/\*|\/\/)/, '').trim();
+        
+        if (commentBody) {
+          const previousStatementIndex = Object.keys(parsedStatements).length;
+          parsedStatements[`statement_${previousStatementIndex + 1}`] = commentBody
+        }
+      }
+    })
 
     const res = await useAi<GuidedEditResponse>(IPrompts.GUIDED_EDIT, suggestions, JSON.stringify(parsedStatements));
     
