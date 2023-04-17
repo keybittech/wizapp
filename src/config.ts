@@ -29,7 +29,6 @@ export function saveConfig() {
 }
 
 export function setConfig(newConfig: Config) {
-  console.log({ SETTINGNEWCONFIG: newConfig })
   config = newConfig;
 }
 
@@ -38,7 +37,6 @@ export function getConfig() {
   
   try {
     const configText = fs.readFileSync(configFilePath, 'utf-8');
-    console.log({ SAVEDCONFIG: configText })
     config = JSON.parse(configText) as Config;
   } catch (error) {
     config = defaultConfig;

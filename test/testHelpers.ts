@@ -60,7 +60,6 @@ export function setupModerationResponse(flagged: boolean) {
 export function setupConfigTestBefore(testConfig?: Config) {
   const defaultConfig = getConfig();
   const updatedConfig = Object.assign(defaultConfig, (testConfig || {}));
-  console.log({ NEW_CONFIG: updatedConfig });
   setConfig(updatedConfig);
   // Reset the config file to default values before each test
   fs.writeFileSync(configFilePath, JSON.stringify(updatedConfig, null, 2));

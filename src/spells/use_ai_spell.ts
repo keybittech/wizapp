@@ -15,7 +15,7 @@ export async function useAi<T = undefined>(promptType?: IPrompts, ...prompts: st
   const [builtRequest, promptTemplate] = buildOpenAIRequest(prompts, promptType);
 
   console.log({
-    OUTGOING_REQUEST: builtRequest
+    OUTGOING_REQUEST: JSON.stringify(builtRequest, null, 2)
   });
 
   const aiResponse: OpenAIResults = {
