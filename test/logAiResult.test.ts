@@ -44,9 +44,6 @@ describe('logAiResult', () => {
 
     const logFileContent = fs.readFileSync(logFilePath, { encoding: 'utf-8' });
     const loggedMetrics = JSON.parse(logFileContent);
-
-    console.log({ expectedLogLine, loggedMetrics })
-
     expect(loggedMetrics).toEqual(expectedLogLine);
   });
 });

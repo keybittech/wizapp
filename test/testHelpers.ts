@@ -1,7 +1,7 @@
 import fs from 'fs';
 import { setConfig, getConfig, configFilePath } from '../src/config';
 import { Config } from '../src/types';
-import { SyntaxKind } from 'ts-morph';
+import { SyntaxKind, CommentRange } from 'ts-morph';
 
 let chatResponseContent: string;
 let completionResponseText: string;
@@ -60,7 +60,6 @@ export function setupModerationResponse(flagged: boolean) {
 export function setupConfigTestBefore(testConfig?: Config) {
   const defaultConfig = getConfig();
   const updatedConfig = Object.assign(defaultConfig, (testConfig || {}));
-  console.log({ NEW_CONFIG: updatedConfig });
   setConfig(updatedConfig);
   // Reset the config file to default values before each test
   fs.writeFileSync(configFilePath, JSON.stringify(updatedConfig, null, 2));
@@ -73,11 +72,21 @@ export function setupConfigTestAfter() {
   }
 }
 
-export function createMockStatement(text: string, kind: SyntaxKind) {
+export function createMockStatement(
+  text: string,
+  kind: SyntaxKind,
+  leadingCommentRanges: CommentRange[] = []
+) {
   return {
     getText: () => text,
     getFullText: () => text,
     getKind: () => kind,
     getParent: () => null,
+    getLeadingCommentRanges: () => leadingCommentRanges.map(range => ({
+      ...range,
+      getText: () => text.slice(range.compilerObject.pos, range.compilerObject.end),
+    })),
+    leadingCommentRanges
   };
 }
+
