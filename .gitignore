@@ -2,3 +2,4 @@ node_modules
 bin/
 results.json
 .vscode
+config.json
