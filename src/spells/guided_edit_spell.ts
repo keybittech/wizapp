@@ -1,24 +1,14 @@
 import { FunctionDeclaration, SyntaxKind, Node, Project } from 'ts-morph';
 
-import { useAi } from './use_ai_spell';
+import { useAi // use ai spell-checker for guided edits
+} from './use_ai_spell';
 import { GuidedEditKeys, GuidedEditResponse, IPrompts } from '../prompts';
 import { prepareBranch, pushCommit, managePullRequest, goHome } from '../git';
-import { getConfig } from '../config';
+import { getConfig // get app configuration
+} from '../config';
 
 function getStatementText(child: Node) {
-  
-
-// Find and get comments for all the source files\nlet sourceFiles = project.getSourceFiles();
-let allComments = [];
-sourceFiles.forEach(f => {
- let syntaxList = f.getChildrenOfKind(SyntaxKind.SyntaxList) as Node[]
- syntaxList.forEach(sl=>{
-   sl.getChildSyntaxListOrThrow().forEach(c=>{
-     if(c.getKind()===SyntaxKind.SingleLineCommentTrivia||c.getKind()===SyntaxKind.MultiLineCommentTrivia)
-       allComments.push(c.getText());
-   })
- }) 
-});let parsedStatementText = child.getText();
+  let parsedStatementText = child.getText();
   const parent = child.getParent();
 
   if (child.getKind() == SyntaxKind.VariableDeclaration && parent instanceof Node) {
@@ -30,7 +20,7 @@ sourceFiles.forEach(f => {
 const ignoredStatements = [SyntaxKind.TryStatement]
 
 function walkNode(child: Node, i: number, parsedStatements: Record<string, string>, originalStatements: Map<string, string>) {
-  const statementName = `statement_${i}`;
+  const statementName = `statement_${i}`; // get statement name
   if (child instanceof FunctionDeclaration) {
     child.getStatements().forEach((descendant, index) => {
       walkNode(descendant, index + i, parsedStatements, originalStatements);
@@ -54,7 +44,7 @@ export async function guidedEdit(fileParts: string, editingUser?: string) {
   const [fileName, ...suggestedEdits] = fileParts.split(' ');
   const suggestions = suggestedEdits.join(' ');
 
-  const generatedBranch = await prepareBranch(editingUser || config.user.name);
+  const generatedBranch = await prepareBranch(editingUser || config.user.name); // prepare branch for commit
 
   const sourceFile = project.getSourceFiles().filter(sf => sf.getFilePath().toLowerCase().includes(fileName.toLowerCase()))[0];
 
@@ -66,23 +56,10 @@ export async function guidedEdit(fileParts: string, editingUser?: string) {
 
     const originalStatements: Map<string, string> = new Map();
     const parsedStatements: Record<string, string> = {};
-    const all_comments: string[] = [];
 
     sourceFile.getStatements().forEach((statement, index) => {
       walkNode(statement, index, parsedStatements, originalStatements);
     });
-
-    // get comments in sourceFile
-    const syntaxList = sourceFile.getDescendantsOfKind(SyntaxKind.SyntaxList)
-
-    syntaxList.forEach(sl=>{
-      sl.getChildSyntaxListOrThrow().forEach(c=>{
-        if(c.getKind()===SyntaxKind.SingleLineCommentTrivia||c.getKind()===SyntaxKind.MultiLineCommentTrivia)
-          all_comments.push(c.getText());
-      })
-    })
-
-    parsedStatements['all_comments'] = all_comments;
 
     const res = await useAi<GuidedEditResponse>(IPrompts.GUIDED_EDIT, suggestions, JSON.stringify(parsedStatements));
     
@@ -115,14 +92,6 @@ export async function guidedEdit(fileParts: string, editingUser?: string) {
           fileModified = true;
         }
 
-      } else if (stKey === 'all_comments'){
-          let generated_comments = generatedStatements['all_comments'].join('\n');
-          let source_comments = parsedStatements['all_comments'].join('\n');
-          if(generated_comments !== source_comments){
-              let cindex = fileContent.indexOf(source_comments);
-              fileContent = fileContent.substring(0, cindex)+generated_comments+fileContent.substring(cindex+source_comments.length);
-              fileModified = true;
-          }
       } else {
         const originalStatement = originalStatements.get(stKey);
 
@@ -183,8 +152,6 @@ export async function guidedEdit(fileParts: string, editingUser?: string) {
     } else {
       return 'guided edit produced no modifications for ' + fileName;
     }
-  } else {
-    return 'file not found: ' + fileName;
   }
 
   return 'file not found: ' + fileName;
