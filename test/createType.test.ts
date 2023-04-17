@@ -1,8 +1,7 @@
 import fs from 'fs';
-import path from 'path';
 import * as useAiModule from '../src/spells/use_ai_spell';
 import { getConfig } from '../src/config';
-import { toSnakeCase, toTitleCase } from '../src/util';
+import { getPathOf, toSnakeCase, toTitleCase } from '../src/util';
 import { setupConfigTestBefore, setupConfigTestAfter } from './testHelpers';
 
 jest.mock('fs', () => ({
@@ -44,7 +43,7 @@ describe('createType', () => {
     const generatedType = 'Test Type';
     const config = getConfig();
     useAiMock.mockResolvedValue({ message: generatedType });
-    const coreTypesPath = path.join(__dirname, `../src/spells/${config.ts.typeDir}`, `${toSnakeCase(typeName)}.ts`);
+    const coreTypesPath = getPathOf(`../src/${config.ts.typeDir}/${toSnakeCase(typeName)}.ts`);
     const comment = `/*\n* @category ${toTitleCase(typeName)}\n*/\n`;
 
     await createType(typeName);

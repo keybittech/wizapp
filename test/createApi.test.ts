@@ -1,6 +1,5 @@
-import path from 'path';
 import fs from 'fs';
-import { toSnakeCase, toTitleCase } from '../src/util';
+import { getPathOf, toSnakeCase, toTitleCase } from '../src/util';
 import {
   setupChatResponse,
   setupCommonMocks,
@@ -54,7 +53,7 @@ describe('createApi', () => {
     setupConfigTestBefore({ ai: { retries: '3' }, ts: { typeDir: 'types' } });
     const typeName = 'ITestTypeName';
     const generatedType = 'userName';
-    const coreTypesPath = path.join(__dirname, '../src/spells/types', `${toSnakeCase(typeName)}.ts`);
+    const coreTypesPath = getPathOf(`../src/types/${toSnakeCase(typeName)}.ts`);
     const comment = `/*\n* @category ${toTitleCase(typeName)}\n*/\n`;
     const generatedApi = 'const testTypeApi = { ...';
     await createApi(typeName, generatedType);

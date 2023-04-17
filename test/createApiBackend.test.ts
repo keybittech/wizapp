@@ -1,8 +1,7 @@
-import path from 'path';
 import * as useAiModule from '../src/spells/use_ai_spell';
 import { getConfig } from '../src/config';
 import { setupConfigTestBefore, setupConfigTestAfter } from './testHelpers';
-import { toSnakeCase, toTitleCase } from '../src/util';
+import { getPathOf, toSnakeCase, toTitleCase } from '../src/util';
 import { Project } from 'ts-morph';
 
 jest.mock('fs', () => ({
@@ -17,7 +16,7 @@ jest.mock('../src/spells/use_ai_spell', () => ({
 
 const useAiMock = useAiModule.useAi as jest.Mock;
 
-import { createApiBackend } from '../src/spells'; // Adjust the import path accordingly
+import { createApiBackend } from '../src/spells';
 
 describe('createApiBackend', () => {
 
@@ -39,7 +38,7 @@ describe('createApiBackend', () => {
     const generatedType = 'GeneratedType';
     const config = getConfig();
     useAiMock.mockResolvedValue({ message: generatedType });
-    const coreTypesPath = path.join(__dirname, `../src/spells/${config.ts.configPath}`, `${toSnakeCase(typeName)}.ts`);
+    const coreTypesPath = getPathOf(`../src/spells/${config.ts.configPath}/${toSnakeCase(typeName)}.ts`);
     const comment = `/*\n* @category ${toTitleCase(typeName)}\n*/\n`;
 
     const addSourceFileAtPathMock = jest.fn().mockReturnValue({

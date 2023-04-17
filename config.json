@@ -1,15 +1,16 @@
 {
   "ts": {
     "configPath": "tsconfig.json",
-    "typeDir": "",
+    "typeDir": "types/",
     "compDir": "components/"
   },
   "git": {
-    "rootPath": "",
+    "rootPath": ".",
     "source": "main",
-    "remote": "origin"
+    "remote": "origin",
+    "configPath": "tsconfig.json"
   },
   "user": {
-    "name": ""
+    "name": "wizapp"
   }
 }

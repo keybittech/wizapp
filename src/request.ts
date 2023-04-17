@@ -32,7 +32,7 @@ export function buildOpenAIRequest(prompts: string[], promptType?: IPrompts): [O
       completionOrHistory = completionOrHistory.replaceAll(token, promptTokens[token]);
     }
     const completionRequest = {
-      model: 'ada',
+      model: 'curie',
       prompt: completionOrHistory
     };
     return [completionRequest, promptTemplateString]

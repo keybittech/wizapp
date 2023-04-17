@@ -1,10 +1,7 @@
 import fs from 'fs';
-import path from 'path';
-import { getConfig, defaultConfig } from '../src/config';
+import { getConfig, defaultConfig, configFilePath } from '../src/config';
 import { Config } from '../src/types';
 import { setupConfigTestBefore, setupConfigTestAfter } from './testHelpers';
-
-const configFile = path.join(__dirname, '../src/config.json');
 
 describe('getConfig', () => {
   beforeEach(() => {
@@ -17,7 +14,7 @@ describe('getConfig', () => {
 
   it('returns default config values when config file does not exist', () => {
     // Remove the config file
-    fs.unlinkSync(configFile);
+    fs.unlinkSync(configFilePath);
 
     const config = getConfig();
     expect(config).toEqual(defaultConfig);
@@ -31,7 +28,7 @@ describe('getConfig', () => {
     };
 
     // Save the expected config to the config file
-    fs.writeFileSync(configFile, JSON.stringify(expectedConfig, null, 2));
+    fs.writeFileSync(configFilePath, JSON.stringify(expectedConfig, null, 2));
 
     const config = getConfig();
     expect(config).toEqual(expectedConfig);

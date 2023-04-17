@@ -1,9 +1,9 @@
 // config.js
 import fs from 'fs';
 import { Config, ConfigPropTypes, isConfigNestedObject } from './types';
-import path from 'path';
-const configFile = 'config.json';
+import { getPathOf } from './util';
 
+export const configFilePath = getPathOf('../../config.json');
 
 // Default configuration values
 export const defaultConfig: Config = {
@@ -15,24 +15,30 @@ export const defaultConfig: Config = {
 
 // Load existing configuration or create a new file with default values
 export let config = defaultConfig;
-if (fs.existsSync(configFile)) {
-  const rawData = fs.readFileSync(configFile);
+if (fs.existsSync(configFilePath)) {
+  const rawData = fs.readFileSync(configFilePath);
   config = JSON.parse(rawData.toString());
 } else {
-  fs.writeFileSync(configFile, JSON.stringify(defaultConfig, null, 2));
+  fs.writeFileSync(configFilePath, JSON.stringify(defaultConfig, null, 2));
   config = defaultConfig;
 }
 
 // Function to save the configuration
 export function saveConfig() {
-  fs.writeFileSync(configFile, JSON.stringify(config, null, 2));
+  fs.writeFileSync(configFilePath, JSON.stringify(config, null, 2));
+}
+
+export function setConfig(newConfig: Config) {
+  console.log({ SETTINGNEWCONFIG: newConfig })
+  config = newConfig;
 }
 
 export function getConfig() {
   let config: Config;
   
   try {
-    const configText = fs.readFileSync(path.join(__dirname, configFile), 'utf-8');
+    const configText = fs.readFileSync(configFilePath, 'utf-8');
+    console.log({ SAVEDCONFIG: configText })
     config = JSON.parse(configText) as Config;
   } catch (error) {
     config = defaultConfig;

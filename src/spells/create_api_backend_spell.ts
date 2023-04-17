@@ -13,8 +13,6 @@ export async function createApiBackend(typeName: string, generatedType: string) 
     tsConfigFilePath: config.ts.configPath
   });
 
-
-  
   const coreTypesPath = getPathOf(`${config.ts.typeDir}/${toSnakeCase(typeName)}.ts`);
   const sourceFile = project.addSourceFileAtPath(coreTypesPath);
   const variables = sourceFile.getVariableDeclarations();

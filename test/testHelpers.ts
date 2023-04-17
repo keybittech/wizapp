@@ -1,6 +1,5 @@
 import fs from 'fs';
-import path from 'path';
-import { getConfig } from '../src/config';
+import { setConfig, getConfig, configFilePath } from '../src/config';
 import { Config } from '../src/types';
 import { SyntaxKind } from 'ts-morph';
 
@@ -58,18 +57,19 @@ export function setupModerationResponse(flagged: boolean) {
   moderationResponseFlagged = flagged;
 }
 
-const configFile = path.join(__dirname, '../src/config.json');
-
 export function setupConfigTestBefore(testConfig?: Config) {
   const defaultConfig = getConfig();
+  const updatedConfig = Object.assign(defaultConfig, (testConfig || {}));
+  console.log({ NEW_CONFIG: updatedConfig });
+  setConfig(updatedConfig);
   // Reset the config file to default values before each test
-  fs.writeFileSync(configFile, JSON.stringify(Object.assign(defaultConfig, (testConfig || {})), null, 2));
+  fs.writeFileSync(configFilePath, JSON.stringify(updatedConfig, null, 2));
 }
 
 export function setupConfigTestAfter() {
   // Clean up the config file after each test
-  if (fs.existsSync(configFile)) {
-    fs.unlinkSync(configFile);
+  if (fs.existsSync(configFilePath)) {
+    fs.unlinkSync(configFilePath);
   }
 }
 

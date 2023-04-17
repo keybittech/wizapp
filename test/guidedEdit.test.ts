@@ -30,6 +30,7 @@ describe('guidedEdit', () => {
   });
 
   it('should return "file not found" if the file does not exist', async () => {
+    setupConfigTestBefore({ ai: { retries: '3' }, ts: { configPath: 'tsconfig.json' } });
     const fileParts = 'NonExistent.tsx please make some changes to the file';
     prepareBranchMock.mockResolvedValue('test_branch');
     useAiMock.mockResolvedValue({ message: [] });

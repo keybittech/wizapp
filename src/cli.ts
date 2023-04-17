@@ -43,7 +43,7 @@ const argv =  yargs(hideBin(process.argv))
     }
   )
   .command(
-    'use-ai [promptType] [prompts]',
+    'use-ai [promptType] [prompts...]',
     'Use AI with the specified prompts',
     (yargs) => {
       return yargs
@@ -54,9 +54,10 @@ const argv =  yargs(hideBin(process.argv))
         })
         .positional('prompts', {
           describe: 'Prompts',
-          default: [],
+          demandOption: true,
           type: 'string',
-          array: true
+          nargs: 1,
+          array: true,
         });
     },
     async (argv) => {

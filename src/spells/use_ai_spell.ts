@@ -14,6 +14,10 @@ export async function useAi<T = undefined>(promptType?: IPrompts, ...prompts: st
 
   const [builtRequest, promptTemplate] = buildOpenAIRequest(prompts, promptType);
 
+  console.log({
+    OUTGOING_REQUEST: builtRequest
+  });
+
   const aiResponse: OpenAIResults = {
     timestamp: new Date(),
     successful: true,
@@ -21,7 +25,7 @@ export async function useAi<T = undefined>(promptType?: IPrompts, ...prompts: st
     promptTemplate,
     promptType: (!promptType ? 'moderation' : promptType) as IPrompts
   }
-  
+
   const responseTry = await performRequest(builtRequest);
 
   try {
