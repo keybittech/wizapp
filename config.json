@@ -1,8 +1,8 @@
 {
   "ts": {
-    "configPath": "",
+    "configPath": "tsconfig.json",
     "typeDir": "",
-    "compDir": ""
+    "compDir": "components/"
   },
   "git": {
     "rootPath": "",

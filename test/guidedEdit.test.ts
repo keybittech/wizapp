@@ -8,7 +8,6 @@ jest.mock('../src/git');
 jest.mock('../src/spells/use_ai_spell');
 
 const prepareBranchMock = git.prepareBranch as jest.Mock;
-const pushCommitMock = git.pushCommit as jest.Mock;
 const managePullRequestMock = git.managePullRequest as jest.Mock;
 const useAiMock = useAiModule.useAi as jest.Mock;
 

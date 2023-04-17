@@ -1,5 +1,5 @@
 import { GuidedEditResponse, IPrompts } from '../src/prompts';
-import { setupCommonMocks, setupChatResponse, setupCompletionResponse, setupModerationResponse, setupOpenAiMocks, openai, setupConfigTestBefore, setupConfigTestAfter } from './testHelpers';
+import { setupCommonMocks, setupChatResponse, setupCompletionResponse, setupModerationResponse, openai, setupConfigTestBefore, setupConfigTestAfter } from './testHelpers';
 
 setupChatResponse('&&&Some text@@@[{ "statement_0": "some code " }]@@@Some other text&&&');
 setupCompletionResponse('test completion response');

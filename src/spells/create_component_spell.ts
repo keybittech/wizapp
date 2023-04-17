@@ -6,7 +6,7 @@ import { IPrompts } from '../prompts';
 import { getConfig } from '../config';
 import { getPathOf } from '../util';
 
-export async function createComponent(description: string, user: string) {
+export async function createComponent(description: string, user?: string) {
   
   const config = getConfig();
   if (!config.ts.compDir) {
@@ -31,7 +31,7 @@ export async function createComponent(description: string, user: string) {
     const asExpression = exAssignment.getExpression();
 
     if (asExpression) {
-      const creatorComment = `/* Created by ${user}, ${description} */\n`;
+      const creatorComment = `/* Created by ${user || config.user.name}, ${description} */\n`;
 
       const filePath = getPathOf(`./${config.ts.compDir}/${asExpression.getText()}.tsx`);
       fs.writeFileSync(filePath, `${creatorComment}${res.message}`);

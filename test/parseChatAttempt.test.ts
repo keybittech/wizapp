@@ -1,6 +1,6 @@
 import { GuidedEditResponse } from '../src/prompts';
 import { setupChatResponse, setupCommonMocks } from './testHelpers';
-setupChatResponse('')
+setupChatResponse('');
 setupCommonMocks();
 
 import { parseChatAttempt } from '../src/chat_parser';

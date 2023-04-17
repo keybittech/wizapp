@@ -3,7 +3,7 @@ import * as useAiModule from '../src/spells/use_ai_spell';
 import { getConfig } from '../src/config';
 import { setupConfigTestBefore, setupConfigTestAfter } from './testHelpers';
 import { toSnakeCase, toTitleCase } from '../src/util';
-import { Project, SourceFile, SyntaxKind } from 'ts-morph';
+import { Project } from 'ts-morph';
 
 jest.mock('fs', () => ({
   ...jest.requireActual('fs'),

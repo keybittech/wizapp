@@ -1,7 +1,6 @@
 import fs from 'fs';
 import { createComponent } from '../src/spells/create_component_spell';
 import { useAi } from '../src/spells/use_ai_spell';
-import { getConfig } from '../src/config';
 import { setupConfigTestAfter, setupConfigTestBefore } from './testHelpers';
 import { getPathOf } from '../src/util';
 
@@ -45,9 +44,7 @@ describe('createComponent', () => {
   
     const writeFileSpy = jest.spyOn(fs, 'writeFileSync');
     const result = await createComponent('Create a test component', 'user123');
-  
-    const config = getConfig();
-    const filePath = getPathOf(`./${config.ts.compDir}/${componentName}.tsx`);
+    const filePath = getPathOf(`./components/${componentName}.tsx`);
     const creatorComment = `/* Created by user123, Create a test component */\n`;
   
     expect(writeFileSpy).toHaveBeenCalledWith(filePath, `${creatorComment}${componentContent}`);

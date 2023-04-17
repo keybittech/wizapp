@@ -4,24 +4,22 @@
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
 import { config, saveConfig, getConfigValue } from './config';
+import * as spells from './spells';
+import { IPrompts } from './prompts';
 
 const argv =  yargs(hideBin(process.argv))
   .options({
-    // Global options
-    'timeout': {
-      type: 'number',
-      description: 'How many attempts before failed',
-      default: 3,
-    },
-    'outer-delimeter': {
+    'config': {
+      alias: 'c',
+      describe: 'Path to the configuration file',
+      default: 'config.json',
       type: 'string',
-      description: 'Outer delimeter used to encapsulate targeted result summaries',
-      default: '&&&',
     },
-    'inner-delimeter': {
-      type: 'string',
-      description: 'Inner delimeter used to encapsulate targeted results',
-      default: '@@@',
+    'verbose': {
+      alias: 'v',
+      describe: 'Display verbose output',
+      default: false,
+      type: 'boolean',
     },
   })
   .command(
@@ -45,33 +43,28 @@ const argv =  yargs(hideBin(process.argv))
     }
   )
   .command(
-    'use-ai [promptType] [prompt1] [prompt2]',
+    'use-ai [promptType] [prompts]',
     'Use AI with the specified prompts',
     (yargs) => {
       return yargs
         .positional('promptType', {
           describe: 'The type of prompt to use',
+          default: undefined,
           type: 'string',
         })
-        .positional('prompt1', {
-          describe: 'The first prompt',
+        .positional('prompts', {
+          describe: 'Prompts',
+          default: [],
           type: 'string',
-        })
-        .positional('prompt2', {
-          describe: 'The second prompt',
-          type: 'string',
+          array: true
         });
     },
-    (argv) => {
-      // Object.keys(process.env).forEach(ke => {
-      //   ke.startsWith('WIZAPP_') && console.log(ke)
-      // })
-      // Add your use-ai logic here
-      // Access global options with argv.timeout, argv['outer-delimeter'], argv['inner-delimeter']
-      // Access user settings with config.user.name
+    async (argv) => {
+      await spells.useAi(argv.promptType as IPrompts | undefined, ...argv.prompts)
+        .then((result) => console.log(result))
+        .catch((error) => console.error(error));
     }
   )
-  // Add guided-edit, create-component, and create-api commands with their specific options as follows:
   .command(
     'guided-edit [fileNameWithInstructions] [optionalName]',
     'Run guided edit',
@@ -80,6 +73,7 @@ const argv =  yargs(hideBin(process.argv))
         .positional('fileNameWithInstructions', {
           describe: 'File name with instructions',
           type: 'string',
+          demandOption: true
         })
         .positional('optionalName', {
           describe: 'Optional name',
@@ -98,48 +92,48 @@ const argv =  yargs(hideBin(process.argv))
           },
         });
     },
-    (argv) => {
-      // Add your guided-edit logic here
-      // Access command options with argv.commit, argv['pull-request']
-      // Access user settings with config.user.name
+    async (argv) => {
+      await spells.guidedEdit(argv.fileNameWithInstructions, argv.optionalName)
+        .then((result) => console.log(result))
+        .catch((error) => console.error(error));
     }
   )
   .command(
-    'create-component [description] [optionalName]',
+    'create-component [description]',
     'Create a component',
     (yargs) => {
       return yargs
         .positional('description', {
           describe: 'Component description',
-          type: 'string',
-        })
-        .positional('optionalName', {
-          describe: 'Optional component name',
+          demandOption: true,
           type: 'string',
         });
     },
-    (argv) => {
-      // Add your create-component logic here
-      // Access user settings with config.user.name
+    async (argv) => {
+      await spells.createComponent(argv.description)
+        .then((result) => console.log(result))
+        .catch((error) => console.error(error));
     }
   )
   .command(
-    'create-api [typeName] [optionalName]',
+    'create-api [typeName]',
     'Create an API',
     (yargs) => {
       return yargs
         .positional('typeName', {
           describe: 'API type name',
-          type: 'string',
-        })
-        .positional('optionalName', {
-          describe: 'Optional API name',
+          demandOption: true,
           type: 'string',
         });
     },
-    (argv) => {
-      // Add your create-api logic here
-      // Access git settings with config.git.typedir, config.git.compdir
+    async (argv) => {
+      const generatedType = await spells.createType(argv.typeName) 
+
+      await spells.createApiBackend(argv.typeName, generatedType)
+        .then((result) => console.log(result))
+        .catch((error) => console.error(error));
+
+      await spells.createApiBackend(argv.typeName, generatedType);
     }
   )
   .demandCommand(1, 'You need at least one command before moving on')

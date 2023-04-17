@@ -1,21 +1,32 @@
 {
-  "include": [
-    "src"
-  ],
+  "include": ["src"],
   "compilerOptions": {
-    "target": "es2016",
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
-    "module": "esnext",
+    "outDir": "bin",
+    "composite": true,
+    "incremental": true,
     "strict": true,
-    "moduleResolution": "node",
+    "lib": [
+      "es2021"
+    ],
+    "module": "UMD",
+    "target": "es2021",
     "esModuleInterop": true,
-    "resolveJsonModule": true,
-    "noEmit": false,
-    "noImplicitAny": true,
-    "sourceMap": true
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": false,
+    "noUnusedLocals": true,
+    "declaration": true,
+    "declarationMap": true,
+    "downlevelIteration": true,
+    "moduleResolution": "node",
+    "skipLibCheck": true,
+    "sourceMap": true,
+    "useDefineForClassFields": true,
+    "forceConsistentCasingInFileNames": true
+  },
+  "ts-node": {
+    "compilerOptions": {
+      "target": "ES2017",
+      "module": "commonjs"
+    }
   }
 }
