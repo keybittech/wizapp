@@ -57,6 +57,9 @@ export async function guidedEdit(fileParts: string, editingUser?: string) {
 
     sourceFile.getStatements().forEach((statement, index) => {
       walkNode(statement, index, parsedStatements, originalStatements);
+      if (statement instanceof FunctionDeclaration) {
+        parsedStatements[`statement_${index + 1}`] = statement.getText();
+      }
     });
 
     const res = await useAi<GuidedEditResponse>(IPrompts.GUIDED_EDIT, suggestions, JSON.stringify(parsedStatements));
