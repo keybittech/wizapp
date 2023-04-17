@@ -1,6 +1,7 @@
 import { parseChatAttempt } from '../src/chat_parser';
 import { GuidedEditResponse } from '../src/prompts';
-import { setupCommonMocks } from './testHelpers';
+import { setupChatResponse, setupCommonMocks } from './testHelpers';
+setupChatResponse('')
 setupCommonMocks();
 
 describe('parseChatAttempt', () => {
@@ -10,13 +11,9 @@ describe('parseChatAttempt', () => {
     expect(() => parseChatAttempt(attempt)).toThrowError('AI Refusal');
   });
 
-  test('should return generic chat completion response', () => {
+  test('should return throw on non typed chat completion response', () => {
     const attempt = "This is a normal response.";
-    const expectedResult = {
-      message: "This is a normal response.",
-      supportingText: "Generic chat completion response."
-    };
-    expect(parseChatAttempt(attempt)).toEqual(expectedResult);
+    expect(() => parseChatAttempt(attempt)).toThrowError();
   });
 
   test('should throw Block structure is not valid error', () => {
@@ -38,9 +35,9 @@ describe('parseChatAttempt', () => {
     expect(parseChatAttempt<GuidedEditResponse>(attempt)).toEqual(expectedResult);
   });
   
-  test('should throw invalid response body error', () => {
+  test('should throw bad chat format error', () => {
     const attempt = '&&&Some text@@@{"unknown": "value"}@@@Some other text&&&';
-    expect(() => parseChatAttempt(attempt)).toThrowError('invalid response body: {"unknown": "value"}');
+    expect(() => parseChatAttempt(attempt)).toThrowError('bad chat format');
   });
 
 });

@@ -1,4 +1,5 @@
 import { IPrompts, aiPrompts, codeGPTPrecursor } from ".";
+import { GuardValidations } from "../types";
 
 const createApiPrompt = [
   { role: 'system', content: codeGPTPrecursor },
@@ -8,3 +9,11 @@ const createApiPrompt = [
 ];
 
 Object.assign(aiPrompts, { [IPrompts.CREATE_API]: createApiPrompt });
+
+const createApiFormat = /^const\s+\w+Api\s*=\s*\{/;
+
+type CreateApiResult = string
+
+export function isCreateApiResult(obj: GuardValidations): obj is CreateApiResult {
+  return 'string' === typeof obj && createApiFormat.test(obj);
+}

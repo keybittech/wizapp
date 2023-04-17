@@ -1,6 +1,6 @@
 import { openai, setupChatResponse, setupCompletionResponse, setupModerationResponse, setupCommonMocks } from './testHelpers';
 
-setupChatResponse('test chat response');
+setupChatResponse('&&&Some text@@@[{ "statement_0": "some code " }]@@@Some other text&&&');
 setupCompletionResponse('test completion response');
 setupModerationResponse(false);
 setupCommonMocks();
@@ -57,7 +57,7 @@ describe('performRequest', () => {
 
   test('should return chat response for chat requests', async () => {
     const response = await performRequest(chatRequest);
-    expect(response).toEqual('test chat response');
+    expect(response).toEqual('&&&Some text@@@[{ "statement_0": "some code " }]@@@Some other text&&&');
   });
 
   test('should return completion response for completion requests', async () => {

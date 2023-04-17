@@ -9,7 +9,7 @@ let moderationResponseFlagged: boolean;
 
 export let openai: Record<string, ReturnType<ReturnType<typeof jest.fn>['mockResolvedValue']>>;
 
-export function setupCommonMocks() {
+export function setupOpenAiMocks() {
   openai = {
     createChatCompletion: jest.fn().mockResolvedValue({
       data: { choices: [{ message: { content: chatResponseContent } }] },
@@ -21,6 +21,11 @@ export function setupCommonMocks() {
       data: { results: [{ flagged: moderationResponseFlagged }] },
     }),
   };
+}
+
+export function setupCommonMocks() {
+
+  setupOpenAiMocks();
 
   jest.mock('openai', () => ({
     OpenAIApi: jest.fn().mockImplementation(() => openai),

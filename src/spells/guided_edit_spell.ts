@@ -19,9 +19,6 @@ const ignoredStatements = [SyntaxKind.TryStatement]
 
 function walkNode(child: Node, i: number, parsedStatements: Record<string, string>, originalStatements: Map<string, string>) {
   const statementName = `statement_${i}`;
-
-  console.log({ PARSING: statementName, OFTYPE: child.getKindName() })
-
   if (child instanceof FunctionDeclaration) {
     child.getStatements().forEach((descendant, index) => {
       walkNode(descendant, index + i, parsedStatements, originalStatements);
@@ -66,8 +63,6 @@ export async function guidedEdit(fileParts: string, user: string) {
     
     const generatedStatements = res.message.reduce((m, d) => ({ ...m, ...d }), {});
 
-    console.log({ generatedStatements });
-
     let fileContent = sourceFile.getFullText();
     let fileModified = false;
 
@@ -85,10 +80,8 @@ export async function guidedEdit(fileParts: string, user: string) {
           const adjacentEnd = adjacentStart + adjacentStatement.length;
 
           if ('above' == direction) {
-            console.log({ AS: stKey, ABOVE: generatedStatements[stKey] });
             fileContent = fileContent.substring(0, adjacentStart) + generatedStatements[stKey] + '\n' + fileContent.substring(adjacentStart);
           } else {
-            console.log({ SO: stKey, BELOW: generatedStatements[stKey] });
             fileContent = fileContent.substring(0, adjacentEnd) + '\n' + generatedStatements[stKey] + fileContent.substring(adjacentEnd);
           }
 
@@ -102,7 +95,6 @@ export async function guidedEdit(fileParts: string, user: string) {
           const originalIndex = fileContent.indexOf(originalStatement);
 
           if (originalIndex >= 0 && originalStatement !== generatedStatements[stKey]) {
-            console.log({ REPLACING: originalStatement, WITH: generatedStatements[stKey] })
             fileContent = fileContent.substring(0, originalIndex) + generatedStatements[stKey] + fileContent.substring(originalIndex + originalStatement.length);
             fileModified = true;
           }

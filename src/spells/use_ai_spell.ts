@@ -5,7 +5,7 @@ import { buildOpenAIRequest, performRequest } from '../request';
 import { logAiResult } from '../stats';
 import { getConfig } from '../config';
 
-export async function useAi<T = undefined>(promptType: IPrompts, ...prompts: string[]): Promise<UseAIResponses<T>> {
+export async function useAi<T = undefined>(promptType?: IPrompts, ...prompts: string[]): Promise<UseAIResponses<T>> {
   
   const config = getConfig();
   const retries = parseInt(config.ai.retries, 10);
@@ -19,12 +19,12 @@ export async function useAi<T = undefined>(promptType: IPrompts, ...prompts: str
     successful: true,
     failures,
     promptTemplate,
-    promptType,
+    promptType: (!promptType ? 'moderation' : promptType) as IPrompts
   }
   
-  try {
+  const responseTry = await performRequest(builtRequest);
 
-    const responseTry = await performRequest(builtRequest);
+  try {
 
     if ('undefined' === typeof responseTry) {
       const noChoices = 'Open AI returned no choices.'
@@ -34,6 +34,7 @@ export async function useAi<T = undefined>(promptType: IPrompts, ...prompts: str
 
     if ('boolean' === typeof responseTry) {
       const moderationResponse: ModerationResponse = { ...aiResponse, flagged: responseTry };
+      console.log('MODERATION RESPONSE :==: ', moderationResponse)
       logAiResult<T>({ ...moderationResponse, prompts, model: builtRequest.model });
       return moderationResponse as UseAIResponses<T>;
     }
@@ -43,6 +44,7 @@ export async function useAi<T = undefined>(promptType: IPrompts, ...prompts: str
         ...aiResponse,
         message: responseTry
       };
+      console.log('COMPLETION RESPONSE :==: ', completionResponse)
       logAiResult<T>({ ...completionResponse, prompts, model: builtRequest.model });
       return completionResponse as UseAIResponses<T>;
     }
@@ -57,15 +59,11 @@ export async function useAi<T = undefined>(promptType: IPrompts, ...prompts: str
           message
         };
         logAiResult<T>({ ...chatResponse, prompts, model: builtRequest.model });
+        console.log('CHAT RESPONSE :==: ', chatResponse)
         return chatResponse;
       } catch (error) {
         const err = error as Error;
-        failures.push(err.message + ' FAILED ATTEMPT:' + attempt);
-
         if (failures.length < retries && err.message.startsWith('cannot parse')) {
-
-          console.log('REPEATING ATTEMPT WITH REQUEST: ', JSON.stringify(builtRequest, null, 2))
-
           const repeatedAttempt = await performRequest(builtRequest);
 
           if ('string' !== typeof repeatedAttempt) {
@@ -88,6 +86,6 @@ export async function useAi<T = undefined>(promptType: IPrompts, ...prompts: str
     const err = error as Error;
     aiResponse.successful = false;
     logAiResult({ ...aiResponse, prompts, message: undefined, model: builtRequest.model });
-    throw 'General use AI failure: ' + err.message + err.stack + '\n' + JSON.stringify(aiResponse, null, 2);
+    throw new Error('General use AI failure!\nStack: ' + err.stack);
   }
 }

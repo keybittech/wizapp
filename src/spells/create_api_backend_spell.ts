@@ -33,8 +33,6 @@ export async function createApiBackend(typeName: string, generatedType: string) 
     }
   }
   
-  console.log({ apiEndpoints });
-
   try {
     const generatedApiBackend = await useAi<string>(IPrompts.CREATE_API_BACKEND, generatedType + ' ' + apiEndpoints.join(' '))
     const comment = `/*\n* @category ${toTitleCase(typeName)}\n*/\n`;

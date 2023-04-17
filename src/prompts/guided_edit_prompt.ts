@@ -1,4 +1,5 @@
 import { IPrompts, aiPrompts } from ".";
+import { GuardValidations } from "../types";
 import { hasSimilarKey } from "../util";
 
 const guidedEditPrompt = [
@@ -56,6 +57,6 @@ export type GuidedEditKeys = `${GuidedEditKeyPrefix}_${number}`;
 
 export type GuidedEditResponse = Record<GuidedEditKeys, string>[];
 
-export function isGuidedEditResult(obj: Record<string, unknown> | Record<string, unknown>[]): obj is GuidedEditResponse {
+export function isGuidedEditResult(obj: GuardValidations): obj is GuidedEditResponse {
   return Array.isArray(obj) && obj.every(item => ['statement', 'above', 'below'].some(test => hasSimilarKey(item, test)))
 }

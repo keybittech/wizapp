@@ -9,6 +9,8 @@ export function isConfigNestedObject(obj: unknown): obj is Record<string, Config
   return typeof obj === 'object' && obj !== null;
 }
 
+export type GuardValidations = Record<string, unknown> | Record<string, unknown>[] | string
+
 export type OpenAIRequestShapes = CreateChatCompletionRequest | CreateCompletionRequest | CreateModerationRequest;
 
 export type OpenAIResults = {
@@ -32,7 +34,8 @@ export type ModerationResponse = OpenAIResults & {
   flagged: boolean;
 }
 
-export type UseAIResponses<T> = T extends undefined ? (CompletionResponse | ModerationResponse) : ChatResponse<T>;
+export type UseAIResponses<T> = T extends boolean ? ModerationResponse : T extends undefined ? CompletionResponse : ChatResponse<T>;
+
 
 export function isChatRequest(obj: OpenAIRequestShapes): obj is CreateChatCompletionRequest {
   return 'messages' in obj;

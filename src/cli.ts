@@ -42,7 +42,6 @@ const argv =  yargs(hideBin(process.argv))
       const [current, lastKey] = getConfigValue(config, keys);
       current[lastKey] = argv.value || '';      
       saveConfig();
-      console.log(`Configuration updated: ${argv.key} = ${argv.value}`);
     }
   )
   .command(
@@ -64,9 +63,9 @@ const argv =  yargs(hideBin(process.argv))
         });
     },
     (argv) => {
-      Object.keys(process.env).forEach(ke => {
-        ke.startsWith('WIZAPP_') && console.log(ke)
-      })
+      // Object.keys(process.env).forEach(ke => {
+      //   ke.startsWith('WIZAPP_') && console.log(ke)
+      // })
       // Add your use-ai logic here
       // Access global options with argv.timeout, argv['outer-delimeter'], argv['inner-delimeter']
       // Access user settings with config.user.name

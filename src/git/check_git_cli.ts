@@ -19,5 +19,5 @@ export async function checkGitCli() {
 }
 
 export function gitCheck() {
-  if (!checkGitCli()) throw 'github cli is required to be installed and configured in order to use this flow';
+  if (!checkGitCli()) throw new Error('github cli is required to be installed and configured in order to use this flow');
 }

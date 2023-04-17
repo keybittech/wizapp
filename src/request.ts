@@ -13,7 +13,6 @@ export const openAIRequestOptions = {
 export const chatModel = 'gpt-3.5-turbo';
 
 export function buildOpenAIRequest(prompts: string[], promptType?: IPrompts): [OpenAIRequestShapes, string?] {
-
   if (!promptType) {
     const moderationRequest: CreateModerationRequest = {
       input: prompts[0]
@@ -23,7 +22,7 @@ export function buildOpenAIRequest(prompts: string[], promptType?: IPrompts): [O
 
   const promptTokens = prompts.reduce<Record<string, string>>((m, t, i) => ({ ...m, [`\$\{prompt${i + 1}\}`]: t }), {});
   const promptTemplate = aiPrompts[promptType];
-  if (!promptTemplate) throw 'Invalid prompt type.';
+  if (!promptTemplate) throw new Error('invalid prompt type');
 
   const promptTemplateString = JSON.stringify(promptTemplate);
   let completionOrHistory = promptTemplate;
@@ -32,10 +31,11 @@ export function buildOpenAIRequest(prompts: string[], promptType?: IPrompts): [O
     for (const token in promptTokens) {
       completionOrHistory = completionOrHistory.replaceAll(token, promptTokens[token]);
     }
-    return [{
+    const completionRequest = {
       model: 'ada',
       prompt: completionOrHistory
-    }, promptTemplateString]
+    };
+    return [completionRequest, promptTemplateString]
   }
 
   if (Array.isArray(completionOrHistory)) {
@@ -47,26 +47,28 @@ export function buildOpenAIRequest(prompts: string[], promptType?: IPrompts): [O
       }
     }
 
-    return [{
+    const chatRequest = {
       model: chatModel,
       messages: completionOrHistory
-    }, promptTemplateString]
+    };
+    return [chatRequest, promptTemplateString]
   }
 
-  throw 'Invalid prompting procedure.';
+  throw new Error('invalid prompting procedure');
 }
 
 export async function performRequest(request: OpenAIRequestShapes): Promise<string | boolean | undefined> {
+  console.log('OpenAIActionTrigger  =::= ')
   if (isChatRequest(request)) {
-    console.log('OpenAIActionTrigger: createChatCompletion')
+    console.log('CHAT')
     const chatResponse = await openai.createChatCompletion(request, openAIRequestOptions);
     return chatResponse.data.choices[0]?.message?.content.trim()
   } else if (isCompletionRequest(request)) {
-    console.log('OpenAIActionTrigger: createCompletion')
+    console.log('COMPLETION')
     const completionResponse = await openai.createCompletion(request, openAIRequestOptions);
     return completionResponse.data.choices[0].text?.trim();
   } else if (isModerationRequest(request)) {
-    console.log('OpenAIActionTrigger: createModeration')
+    console.log('MODERATION')
     const moderationResponse = await openai.createModeration(request, openAIRequestOptions);
     return moderationResponse.data.results[0]?.flagged;
   }

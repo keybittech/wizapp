@@ -1,8 +1,8 @@
-import { isGuidedEditResult } from "./prompts";
+import { isCreateApiResult, isGuidedEditResult } from "./prompts";
+import { GuardValidations } from "./types";
 
 export function parseChatAttempt<T>(attempt: string): { supportingText: string, message: T } {
-
-  const aiRefusalError = /(?:ai language model|i(?:'?m| am))(?:[^.]*?)(?:can(?:'?t| not)|unable to)(?:[^.]*?)(?:perform|do|create|provide)/i;
+  const aiRefusalError = /(?:ai(?:\s|-)?language(?:\s|-)?model|i(?:'?m| am))(?:[^.]*?)(?:can(?:'?t| not)|unable to)(?:[^.]*?)(?:perform|do|create|provide)/i;
   if (aiRefusalError.test(attempt)) {
     throw new Error('AI Refusal');
   }
@@ -25,7 +25,7 @@ export function parseChatAttempt<T>(attempt: string): { supportingText: string, 
       JSON.parse(innerBlockText)
     } catch (error) {
       const err = error as Error;
-      throw new Error('cannot parse json.' + err.message, { cause: err })
+      throw new Error('cannot parse json.' + err.message)
     }
   
     const pretext = attempt.slice(outerBlockStart, pretextEnd);
@@ -36,24 +36,36 @@ export function parseChatAttempt<T>(attempt: string): { supportingText: string, 
   
     return { message: result, supportingText };
 
-  } else {
-
-    return { message: attempt as T, supportingText: 'Generic chat completion response.' };
   }
 
+  const result = validateTypedResponse<T>(attempt);
+
+  return { message: result, supportingText: '' };
 }
 
-const responseTypeGuards = [isGuidedEditResult];
+const responseTypeGuards = [
+  isGuidedEditResult,
+  isCreateApiResult
+];
 
 function validateTypedResponse<T>(response: string): T {
+  if (!response) {
+    throw new Error('empty response');
+  }
+
   try {
-    const body = JSON.parse(response);
+    let body: GuardValidations = response;
+
+    try {
+      body = JSON.parse(response);
+    } catch (error) {}
+    
     for (const tg of responseTypeGuards) {
-      if (tg(body)) {
+      if (body && tg(body)) {
         return body as T;
       }
     }
   } catch (error) { }
 
-  throw 'invalid response body: ' + response;
+  throw new Error('bad chat format');
 }

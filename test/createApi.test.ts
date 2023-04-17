@@ -9,7 +9,7 @@ import {
   setupConfigTestAfter,
 } from './testHelpers';
 
-setupChatResponse('test');
+setupChatResponse('const userNameApi = { ...');
 setupCommonMocks();
 
 import { createApi } from '../src/spells';
@@ -34,7 +34,7 @@ describe('createApi', () => {
   test('should work by passing normal parameters for chat completion', async () => {
     const response = await createApi('ITestTypeName', 'userName');
     expect(openai.createChatCompletion).toHaveBeenCalled();
-    expect(response).toBe('test');
+    expect(response).toBe('const testTypeApi = { ...');
   });
 
   test('should throw error when ts.typeDir is not set', async () => {
@@ -56,7 +56,7 @@ describe('createApi', () => {
     const generatedType = 'userName';
     const coreTypesPath = path.join(__dirname, '../src/spells/types', `${toSnakeCase(typeName)}.ts`);
     const comment = `/*\n* @category ${toTitleCase(typeName)}\n*/\n`;
-    const generatedApi = 'test';
+    const generatedApi = 'const userNameApi = { ...';
     await createApi(typeName, generatedType);
     expect(fs.appendFileSync).toHaveBeenCalledWith(coreTypesPath, `${comment}${generatedApi}\n\n`);
   });
