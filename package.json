@@ -1,6 +1,6 @@
 {
   "name": "@keybittech/wizapp",
-  "version": "0.0.1-alpha",
+  "version": "0.0.2-alpha",
   "description": "The Wizard's Apprentice",
   "keywords": [
     "automated",
@@ -23,7 +23,10 @@
     "build": "tsc -p tsconfig.json",
     "wizapp": "ts-node ./src/cli.ts",
     "test": "jest",
-    "debug": "node --inspect-brk ./node_modules/jest/bin/jest.js --runInBand"
+    "debug": "node --inspect-brk ./node_modules/jest/bin/jest.js --runInBand",
+    "update-version": "npm version --no-git-tag-version $new_version && git add package.json && git commit -m 'Update to version $new_version'",
+    "publish": "npm publish",
+    "update-and-publish": "npm run update-version && npm run publish"
   },
   "dependencies": {
     "openai": "^3.2.1",
