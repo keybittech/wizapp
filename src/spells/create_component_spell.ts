@@ -1,10 +1,10 @@
 import fs from 'fs';
-import { Project, ScriptKind } from 'ts-morph';
+import { Node, Project, ScriptKind, SyntaxKind } from 'ts-morph';
 
 import { useAi } from './use_ai_spell';
-import { IPrompts } from '../prompts';
+import { GeneralComponentResponse, IPrompts } from '../prompts';
 import { getConfig } from '../config';
-import { getPathOf } from '../util';
+import { getPathOf, sanitizeName } from '../util';
 
 export async function createComponent(description: string, user?: string) {
   
@@ -21,22 +21,36 @@ export async function createComponent(description: string, user?: string) {
     tsConfigFilePath: config.ts.configPath
   });
 
-  const res = await useAi<string>(IPrompts.CREATE_GEN_COMPONENT, description)
-  
+  const res = await useAi<GeneralComponentResponse>(IPrompts.CREATE_GEN_COMPONENT, description);
+
   const sourceFile = project.createSourceFile('new_component.tsx', res.message, { scriptKind: ScriptKind.JSX });
 
-  const exAssignment = sourceFile.getExportAssignments().find(assignment => assignment.isExportEquals() === false);
-
-  if (exAssignment) {
-    const asExpression = exAssignment.getExpression();
-
-    if (asExpression) {
-      const creatorComment = `/* Created by ${user || config.user.name}, ${description} */\n`;
-
-      const filePath = getPathOf(`./${config.ts.compDir}/${asExpression.getText()}.tsx`);
-      fs.writeFileSync(filePath, `${creatorComment}${res.message}`);
-      return 'created a new component';
+  
+  let componentName;
+  const exportedDeclarations = sourceFile.getExportedDeclarations().get('default');
+  if (exportedDeclarations) {
+    const declaration = exportedDeclarations[0];
+    if (Node.isVariableDeclaration(declaration)) {
+      const initializer = declaration.getInitializer();
+      if (initializer?.getKind() === SyntaxKind.FunctionExpression || initializer?.getKind() === SyntaxKind.ArrowFunction) {
+        componentName = declaration.getName();
+      }
+    } else if (Node.isFunctionDeclaration(declaration)) {
+      componentName = declaration.getName();
     }
+  }
+
+  if (componentName) {
+    const creatorComment = `/* Created by ${user || config.user.name}, ${description} */\n`;
+    const coreCompsPath = sanitizeName(config.ts.compDir);
+    const filePath = getPathOf(`../../${coreCompsPath}/${componentName}.tsx`);
+    
+    if (!fs.existsSync(coreCompsPath)) {
+      fs.mkdirSync(coreCompsPath, { recursive: true });
+    }
+
+    fs.writeFileSync(filePath, `${creatorComment}${res.message}`);
+    return 'created a new component';
   }
 
   return 'unable to create a component ' + res.message;

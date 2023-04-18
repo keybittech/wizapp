@@ -19,22 +19,51 @@ export const toTitleCase = (name: string): string => {
   return name.substr(1).replace(/([A-Z])/g, " $1").replace(/^./, (str) => str.toUpperCase());
 };
 
-export function extractCodeBlock(inputString: string, delimeter: string = '\`\`\`', languages: string[] = ['typescript', 'json', 'jsx', 'tsx']) {
+export function extractCodeBlock(inputString: string, delimeter: string = '```', languages: string[] = ['typescript', 'json', 'jsx', 'tsx']) {
   const langStartTag = (language: string) => language ? `${delimeter}${language}` : delimeter;
 
   for (const language of languages) {
     const startTag = langStartTag(language);
     if (inputString.includes(startTag)) {
-      return inputString.split(startTag)[1].split(delimeter)[0];
+      return {
+        codeBlock: inputString.split(startTag)[1].split(delimeter)[0],
+        index: inputString.indexOf(startTag) + startTag.length,
+      };
     }
   }
 
   if (inputString.includes(delimeter)) {
-    return inputString.split(delimeter)[1];
+    const index = inputString.indexOf(delimeter) + delimeter.length;
+    return {
+      codeBlock: inputString.split(delimeter)[1],
+      index,
+    };
   }
 
-  return inputString;
+  return {
+    codeBlock: inputString,
+    index: 0,
+  };
 };
+
+export function extractCodeBlockPre(inputString: string, index: number): string {
+  return inputString.substring(0, index).trim();
+}
+
+export function extractCodeBlockPost(inputString: string, index: number, delimeter: string = '```'): string {
+  return inputString.substring(index).split(delimeter)[1].trim();
+}
+
+export function processTextWithCodeBlock(inputString: string): { codeBlock: string; supportingText: string } {
+  const { codeBlock, index } = extractCodeBlock(inputString);
+  const preText = extractCodeBlockPre(inputString, index);
+  const postText = extractCodeBlockPost(inputString, index);
+
+  return {
+    codeBlock,
+    supportingText: preText + ' ' + postText,
+  };
+}
 
 export function sanitizeName(input: string): string {
   // Trim whitespaces and replace consecutive spaces with a single dash

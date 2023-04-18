@@ -1,5 +1,6 @@
 {
   "include": ["src"],
+  "exclude": ["types", "components"],
   "compilerOptions": {
     "outDir": "bin",
     "composite": true,

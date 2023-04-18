@@ -19,7 +19,7 @@ Object.assign(aiPrompts, { [IPrompts.CREATE_API_BACKEND]: createApiBackendMessag
 const createApiFormat = /^const\s+\w+ApiHandlers:\s+ApiHandler/gim;
 
 type CreateApiBackendKey = string;
-export type CreateApiBackendResult = `const ${CreateApiBackendKey}ApiHandlers: ApiHandler ...`;
+export type CreateApiBackendResult = `const ${CreateApiBackendKey}ApiHandlers: ApiHandler`;
 
 export function isCreateApiBackendResult(obj: GuardValidations): obj is CreateApiBackendResult {
   return 'string' === typeof obj && createApiFormat.test(obj);

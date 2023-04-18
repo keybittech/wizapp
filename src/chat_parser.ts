@@ -1,5 +1,6 @@
-import { isCreateApiResult, isGuidedEditResult, isCreateTypeResponse, isCreateApiBackendResult } from "./prompts";
+import { isCreateApiResult, isGuidedEditResult, isCreateTypeResponse, isCreateApiBackendResult, isGeneralComponentResponse } from "./prompts";
 import { GuardValidations } from "./types";
+import { processTextWithCodeBlock } from "./util";
 
 export function parseChatAttempt<T>(attempt: string): { supportingText: string, message: T } {
   const aiRefusalError = /(?:ai(?:\s|-)?language(?:\s|-)?model|i(?:'?m| am))(?:[^.]*?)(?:can(?:'?t| not)|unable to)(?:[^.]*?)(?:perform|do|create|provide)/i;
@@ -7,27 +8,42 @@ export function parseChatAttempt<T>(attempt: string): { supportingText: string, 
     throw new Error('AI Refusal');
   }
 
-  if (attempt.indexOf('&&&') > -1 && attempt.indexOf('@@@') > -1) {
+  const isAbstractWrap = attempt.includes('&&&') && attempt.includes('@@@');
+  const isBacktickWrap = attempt.includes('```');
 
-    const outerBlockStart = attempt.indexOf('&&&') + 3;
-    const outerBlockEnd = attempt.lastIndexOf('&&&');
-    const pretextEnd = attempt.indexOf('@@@');
-    const innerBlockStart = pretextEnd + 3;
-    const innerBlockEnd = attempt.lastIndexOf('@@@');
-    const postTextStart = innerBlockEnd + 3;
-    const innerBlockText = attempt.slice(innerBlockStart, innerBlockEnd);
+  if (isAbstractWrap || isBacktickWrap) {
+    let innerBlockText = '';
+    let supportingText = '';
+    if (isBacktickWrap) { 
+      const processedText = processTextWithCodeBlock(attempt);
+      innerBlockText = processedText.codeBlock;
+      supportingText = processedText.supportingText;
+    } else {
+      const outerBlockStart = attempt.indexOf('&&&') + 3;
+      const outerBlockEnd = attempt.lastIndexOf('&&&');
+      const pretextEnd = attempt.indexOf('@@@');
+      const innerBlockStart = pretextEnd + 3;
+      const innerBlockEnd = attempt.lastIndexOf('@@@');
+      const postTextStart = innerBlockEnd + 3;
+      innerBlockText = attempt.slice(innerBlockStart, innerBlockEnd);
 
-    console.log({
-      MATCHFOUNDWITHPROPERTIES: true,
-      outerBlockStart,
-      outerBlockEnd,
-      pretextEnd,
-      innerBlockStart,
-      innerBlockEnd,
-      postTextStart,
-      innerBlockText
-    });
-  
+      const pretext = attempt.slice(outerBlockStart, pretextEnd);
+      const posttext = attempt.slice(postTextStart, outerBlockEnd);
+      supportingText = pretext + '\n' + posttext;
+
+      console.log({
+        ABSTRACTMATCHFOUND: true,
+        outerBlockStart,
+        outerBlockEnd,
+        pretextEnd,
+        innerBlockStart,
+        innerBlockEnd,
+        postTextStart
+      });
+    }
+
+    console.log({ supportingText, innerBlockText })
+
     if (!innerBlockText.length) {
       throw new Error('cannot parse Block structure is not valid.');
     }
@@ -40,10 +56,6 @@ export function parseChatAttempt<T>(attempt: string): { supportingText: string, 
       const err = error as Error;
       throw new Error('cannot parse json.' + err.message)
     }
-  
-    const pretext = attempt.slice(outerBlockStart, pretextEnd);
-    const posttext = attempt.slice(postTextStart, outerBlockEnd);
-    const supportingText = pretext + '\n' + posttext;
   
     const result = validateTypedResponse<T>(innerBlockText);
   
@@ -60,7 +72,8 @@ const responseValidators = [
   isGuidedEditResult,
   isCreateTypeResponse,
   isCreateApiResult,
-  isCreateApiBackendResult
+  isCreateApiBackendResult,
+  isGeneralComponentResponse
 ];
 
 function validateTypedResponse<T>(response: string): T {

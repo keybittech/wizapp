@@ -10,6 +10,7 @@ export enum IPrompts {
   MORPH_FILE = 'morph_file',
   MORPH_2 = 'morph_2',
   MORPH_3 = 'morph_3',
+  DERIVE_INSTRUCTION = 'derive_instruction',
   GUIDED_EDIT = 'guided_edit',
   MIRROR_EDIT = 'mirror_edit',
   SUGGEST_ROLE = 'suggest_role',
