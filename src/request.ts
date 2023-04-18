@@ -42,7 +42,7 @@ export function buildOpenAIRequest(prompts: string[], promptType?: IPrompts): [O
     for (let item of completionOrHistory) {
       if (item.content.includes('${') && item.content.includes('}')) {
         for (const token in promptTokens) {
-          item.content = item.content.replace(token, promptTokens[token]);
+          item.content = item.content.replaceAll(token, promptTokens[token]);
         }
       }
     }
@@ -62,17 +62,17 @@ export async function performRequest(request: OpenAIRequestShapes): Promise<stri
   if (isChatRequest(request)) {
     console.log('CHAT')
     const chatResponse = await openai.createChatCompletion(request, openAIRequestOptions);
-    console.log({ RAW_CHAT: chatResponse });
+    console.log({ RAW_CHAT: chatResponse.data.choices[0] });
     return chatResponse.data.choices[0]?.message?.content.trim();
   } else if (isCompletionRequest(request)) {
     console.log('COMPLETION')
     const completionResponse = await openai.createCompletion(request, openAIRequestOptions);
-    console.log({ RAW_COMPLETION: completionResponse });
+    console.log({ RAW_COMPLETION: completionResponse.data.choices[0] });
     return completionResponse.data.choices[0].text?.trim();
   } else if (isModerationRequest(request)) {
     console.log('MODERATION')
     const moderationResponse = await openai.createModeration(request, openAIRequestOptions);
-    console.log({ RAW_MODERATION: moderationResponse });
+    console.log({ RAW_MODERATION: moderationResponse.data.results[0] });
     return moderationResponse.data.results[0]?.flagged;
   }
 }

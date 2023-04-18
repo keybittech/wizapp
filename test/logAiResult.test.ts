@@ -20,6 +20,7 @@ describe('logAiResult', () => {
       successful: true,
       timestamp: new Date(),
       failures: [''],
+      rawResponses: [''],
       prompts: ['test'],
       model: 'testModel',
       message: [{ "above_9": "yep" }],
@@ -36,6 +37,7 @@ describe('logAiResult', () => {
       model: chatResponse.model,
       data: { message: chatResponse.message, supportingText: chatResponse.supportingText },
       failures: chatResponse.failures,
+      rawResponses: chatResponse.rawResponses,
       template: chatResponse.promptTemplate,
       type: chatResponse.promptType,
     };

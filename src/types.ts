@@ -19,6 +19,7 @@ export type OpenAIResults = {
   prompts?: string[];
   promptType: IPrompts;
   promptTemplate: string | undefined;
+  rawResponses: (string | boolean | undefined)[];
   failures: string[];
   successful: boolean;
 }

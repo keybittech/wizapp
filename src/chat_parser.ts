@@ -14,25 +14,38 @@ export function parseChatAttempt<T>(attempt: string): { supportingText: string, 
     const pretextEnd = attempt.indexOf('@@@');
     const innerBlockStart = pretextEnd + 3;
     const innerBlockEnd = attempt.lastIndexOf('@@@');
-    const posttextStart = innerBlockEnd + 3;
+    const postTextStart = innerBlockEnd + 3;
     const innerBlockText = attempt.slice(innerBlockStart, innerBlockEnd);
+
+    console.log({
+      MATCHFOUNDWITHPROPERTIES: true,
+      outerBlockStart,
+      outerBlockEnd,
+      pretextEnd,
+      innerBlockStart,
+      innerBlockEnd,
+      postTextStart,
+      innerBlockText
+    });
   
     if (!innerBlockText.length) {
       throw new Error('Block structure is not valid.');
     }
   
     try {
-      JSON.parse(innerBlockText)
+      if (innerBlockText.startsWith('{') || innerBlockText.startsWith('[')) {
+        JSON.parse(innerBlockText);
+      }
     } catch (error) {
       const err = error as Error;
       throw new Error('cannot parse json.' + err.message)
     }
   
     const pretext = attempt.slice(outerBlockStart, pretextEnd);
-    const posttext = attempt.slice(posttextStart, outerBlockEnd);
+    const posttext = attempt.slice(postTextStart, outerBlockEnd);
     const supportingText = pretext + '\n' + posttext;
   
-    const result = validateTypedResponse<T>(innerBlockText)
+    const result = validateTypedResponse<T>(innerBlockText);
   
     return { message: result, supportingText };
 
@@ -43,7 +56,7 @@ export function parseChatAttempt<T>(attempt: string): { supportingText: string, 
   return { message: result, supportingText: '' };
 }
 
-const responseTypeGuards = [
+const responseValidators = [
   isGuidedEditResult,
   isCreateTypeResponse,
   isCreateApiResult
@@ -61,10 +74,11 @@ function validateTypedResponse<T>(response: string): T {
       body = JSON.parse(response);
     } catch (error) {}
     
-    for (const tg of responseTypeGuards) {
+    for (const tg of responseValidators) {
       if (body && tg(body)) {
         return body as T;
       }
+      console.log('Guard function:', tg.name, 'Result:', tg(body));
     }
   } catch (error) { }
 

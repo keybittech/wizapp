@@ -19,16 +19,27 @@ import { GuardValidations } from "../types";
 // ]
 
 const createTypeMessages = [
-  { role: 'system', content: 'As a TypescriptTypeGeneratorGPT, generate a Typescript type definition for \${prompt1} with 4-7 unconventionally named properties. Your response should follow this pattern: &&&{supporting text}@@@{generated type definition}@@@{supporting text}&&&.' }
+  { role: 'system', content: 'As a TypescriptTypeGeneratorGPT, generate a Typescript type definition for ${prompt1}.' },
+  { role: 'assistant', content: `Internal Process:
+  1. Generate: 4-7 uncommon English-language attribute names. 
+  2. Format: Your response is formatted in the following enclosed structure:
+  &&&
+  {supporting text}
+  @@@
+  type \${prompt1} = {generated type definition}
+  @@@
+  {left intentionally blank}
+  &&&
+  3. Validation: Response structure is re-validated to adhere to the formatting of step 2.`}
 ]
 
 Object.assign(aiPrompts, { [IPrompts.CREATE_TYPE]: createTypeMessages });
 
 export type CreateTypeTypeName = `I${string}`;
 
-export type CreateTypeResponse = `const ${CreateTypeTypeName} =`;
+export type CreateTypeResponse = `type ${CreateTypeTypeName} =`;
 
-export function isCreateTypeResponse(obj: GuardValidations): obj is CreateTypeResponse {
-  let createTypeResponseRegex = new RegExp(/^&&&@@@const\s+I[a-zA-Z_$]*\s*=/);
+export function isCreateTypeResponse(obj: GuardValidations): boolean {
+  let createTypeResponseRegex = new RegExp(/type\s+I\w+\s*=\s*\{/gm);
   return 'string' === typeof obj && createTypeResponseRegex.test(obj);
 }

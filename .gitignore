@@ -3,3 +3,5 @@ bin/
 results.json
 .vscode
 config.json
+types/
+components/

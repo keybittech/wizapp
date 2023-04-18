@@ -10,25 +10,27 @@ export async function useAi<T = undefined>(promptType?: IPrompts, ...prompts: st
   const config = getConfig();
   const retries = parseInt(config.ai.retries, 10);
   
-  let failures: string[] = [];
 
   const [builtRequest, promptTemplate] = buildOpenAIRequest(prompts, promptType);
 
   const aiResponse: OpenAIResults = {
     timestamp: new Date(),
     successful: true,
-    failures,
+    failures: [],
+    rawResponses: [],
     promptTemplate,
     promptType: (!promptType ? 'moderation' : promptType) as IPrompts
   }
 
   const responseTry = await performRequest(builtRequest);
 
+  aiResponse.rawResponses.push(responseTry);
+
   try {
 
     if ('undefined' === typeof responseTry) {
       const noChoices = 'Open AI returned no choices.'
-      failures.push(noChoices);
+      aiResponse.failures.push(noChoices);
       throw new Error(noChoices);
     }
 
@@ -63,12 +65,14 @@ export async function useAi<T = undefined>(promptType?: IPrompts, ...prompts: st
         return chatResponse;
       } catch (error) {
         const err = error as Error;
-        if (failures.length < retries && err.message.startsWith('cannot parse')) {
+        if (aiResponse.failures.length < retries && err.message.startsWith('cannot parse')) {
           const repeatedAttempt = await performRequest(builtRequest);
+
+          aiResponse.rawResponses.push(repeatedAttempt);
 
           if ('string' !== typeof repeatedAttempt) {
             const imparsable = 'Received imparsable resolution during retry.';
-            failures.push(imparsable);
+            aiResponse.failures.push(imparsable);
             throw new Error(imparsable);
           }
 
@@ -76,7 +80,7 @@ export async function useAi<T = undefined>(promptType?: IPrompts, ...prompts: st
         }
 
         const resolveIssue = 'Critical chat parse error or could not resolve a valid response after ' + retries + ' attempts. ' + (err.message ? 'Parsing error: ' + err.message : '');
-        failures.push(resolveIssue);
+        aiResponse.failures.push(resolveIssue);
         throw new Error(resolveIssue);
       }
     }

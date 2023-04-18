@@ -4,7 +4,7 @@ import { getConfig } from "./config";
 
 export function logAiResult<T>(res: ChatResponse<T> | CompletionResponse | ModerationResponse) {
   const config = getConfig();
-  const { successful, timestamp, failures, prompts, model, ...metric } = res;
+  const { successful, timestamp, failures, rawResponses, prompts, model, ...metric } = res;
   const duration = ((new Date()).getTime() - (new Date(res.timestamp).getTime())) / 1000;
 
   let metrics: Record<string, unknown> = {
@@ -30,7 +30,7 @@ export function logAiResult<T>(res: ChatResponse<T> | CompletionResponse | Moder
     Object.assign(metrics, { data: { flagged } });
   }
 
-  Object.assign(metrics, { failures, template: metric.promptTemplate, type: metric.promptType });
+  Object.assign(metrics, {  type: metric.promptType, template: metric.promptTemplate, rawResponses, failures });
 
   fs.appendFileSync(config.ai.logFile, `${JSON.stringify(metrics)}\n`);
 }
