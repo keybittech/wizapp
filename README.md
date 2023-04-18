@@ -1,6 +1,8 @@
 # ![KeyBit Tech Logo](https://raw.githubusercontent.com/keybittech/awayto/main/app/src/webapp/img/kbt-icon_32w.png) The Wizard's Apprentice
 
-[Awayto.dev](https://awayto.dev/) - [KeyBit Tech](https://keybittech.com/) - [Discord](https://discord.gg/KzpcTrn5DQ) - [Twitch](https://twitch.tv/chatjoept) - [Twitter](https://twitter.com/awaytodev) - [Contact](mailto:joe@keybittech.com) - [LinkedIn](https://www.linkedin.com/in/joe-mccormick-76224429/)
+[Awayto.dev](https://awayto.dev/) - [KeyBit Tech](https://keybittech.com/) - [Patreon](https://patreon.com/KeyBitTech) -  [Discord](https://discord.gg/KzpcTrn5DQ) - [Twitch](https://twitch.tv/chatjoept) - [Twitter](https://twitter.com/awaytodev) - [Contact](mailto:joe@keybittech.com) - [LinkedIn](https://www.linkedin.com/in/joe-mccormick-76224429/)
+
+TLDR: This software is in beta, providing baseline functionality that may be temperamental. An AI-assisted CLI & Typescript function suite including file editing, git pr initiation + follow-up, response format validation, detailed logging including prompt versioning to derive success rates, examples of prompt design with the goal of code generation, and strategies for working with code artifacts in prompts.
 
 WizApp is a powerful TypeScript-based command-line tool and library for managing TypeScript projects, utilizing AI-driven code modifications, and generating code structures. The intended use is to have an informed code companion as you go through your development cycle.
 
