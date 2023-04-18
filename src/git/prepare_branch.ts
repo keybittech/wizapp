@@ -13,19 +13,19 @@ export async function prepareBranch(name: string): Promise<string> {
   const git = simpleGit(config.git.rootPath);
   const generatedBranch = sanitizeName(`gen/${name}`);
 
-  console.log('Prepare branch main checkout.');
-  await git.checkout('main');
+  console.log('Prepare branch checkout.');
+  await git.checkout(config.git.source);
 
   console.log('Pulling main.');
-  await git.pull('origin', 'main');
+  await git.pull(config.git.remote, generatedBranch);
 
   console.log('Fetching.');
   await git.fetch('all');
 
   try {
     console.log('Creating a new branch for ', generatedBranch);
-    await git.checkoutBranch(generatedBranch, 'main');
-    await git.push('origin', generatedBranch, ['--set-upstream', generatedBranch])
+    await git.checkoutBranch(generatedBranch, config.git.source);
+    await git.push(config.git.remote, generatedBranch, ['--set-upstream', generatedBranch])
   } catch (error) {
     const err = error as Error;
     if (err.message.includes('A branch named') && err.message.includes('already exists')) {
@@ -33,7 +33,7 @@ export async function prepareBranch(name: string): Promise<string> {
       await git.checkout(generatedBranch);
   
       console.log('Pulling generated branch.');
-      await git.pull('origin', generatedBranch);
+      await git.pull(config.git.remote, generatedBranch);
     }
   }
 
