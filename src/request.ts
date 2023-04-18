@@ -58,18 +58,21 @@ export function buildOpenAIRequest(prompts: string[], promptType?: IPrompts): [O
 }
 
 export async function performRequest(request: OpenAIRequestShapes): Promise<string | boolean | undefined> {
-  console.log('OpenAIActionTrigger  =::= ')
+  console.log('OpenAIActionTrigger  =::= ', JSON.stringify(request, null, 2))
   if (isChatRequest(request)) {
     console.log('CHAT')
     const chatResponse = await openai.createChatCompletion(request, openAIRequestOptions);
+    console.log({ RAW_CHAT: chatResponse });
     return chatResponse.data.choices[0]?.message?.content.trim();
   } else if (isCompletionRequest(request)) {
     console.log('COMPLETION')
     const completionResponse = await openai.createCompletion(request, openAIRequestOptions);
+    console.log({ RAW_COMPLETION: completionResponse });
     return completionResponse.data.choices[0].text?.trim();
   } else if (isModerationRequest(request)) {
     console.log('MODERATION')
     const moderationResponse = await openai.createModeration(request, openAIRequestOptions);
+    console.log({ RAW_MODERATION: moderationResponse });
     return moderationResponse.data.results[0]?.flagged;
   }
 }

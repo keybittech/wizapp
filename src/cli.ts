@@ -3,9 +3,10 @@
 
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
-import { config, saveConfig, getConfigValue } from './config';
+import { config, saveConfig, getConfigValue, updateConfig } from './config';
 import * as spells from './spells';
 import { IPrompts } from './prompts';
+import { Config } from './types';
 
 const argv =  yargs(hideBin(process.argv))
   .options({
@@ -38,7 +39,8 @@ const argv =  yargs(hideBin(process.argv))
       if (!argv.key) throw new Error('key required');
       const keys = argv.key.split('.');
       const [current, lastKey] = getConfigValue(config, keys);
-      current[lastKey] = argv.value || '';      
+      current[lastKey] = argv.value || '';
+      updateConfig(current as Config);
       saveConfig();
     }
   )
@@ -128,13 +130,16 @@ const argv =  yargs(hideBin(process.argv))
         });
     },
     async (argv) => {
+      console.log({ GENERATINGTYPEFROMCLI: argv.typeName })
+
       const generatedType = await spells.createType(argv.typeName) 
+      console.log({ GENERATEDTYPEFROMCLI: generatedType })
 
-      await spells.createApiBackend(argv.typeName, generatedType)
-        .then((result) => console.log(result))
-        .catch((error) => console.error(error));
+      // await spells.createApiBackend(argv.typeName, generatedType)
+      //   .then((result) => console.log(result))
+      //   .catch((error) => console.error(error));
 
-      await spells.createApiBackend(argv.typeName, generatedType);
+      // await spells.createApiBackend(argv.typeName, generatedType);
     }
   )
   .demandCommand(1, 'You need at least one command before moving on')

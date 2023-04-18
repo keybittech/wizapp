@@ -1,8 +1,8 @@
 import fs from 'fs';
 import * as useAiModule from '../src/spells/use_ai_spell';
 import { getConfig } from '../src/config';
-import { getPathOf, toTitleCase } from '../src/util';
-import { setupConfigTestBefore, setupConfigTestAfter, withTempConfig } from './testHelpers';
+import { getPathOf, sanitizeName, toSnakeCase, toTitleCase } from '../src/util';
+import { setupConfigTestBefore, setupConfigTestAfter, withTempConfig, withOriginalGetConfig } from './testHelpers';
 
 jest.mock('fs', () => ({
   ...jest.requireActual('fs'),
@@ -43,23 +43,26 @@ describe('createType', () => {
   });
 
   test('should generate the type correctly and append it to the file', async () => {
-    const typeName = 'ITestType';
-    const generatedType = 'Test Type';
-    const config = getConfig();
-    useAiMock.mockResolvedValue({ message: generatedType });
-    const coreTypesPath = getPathOf(`../src/${config.ts.typeDir}/`);
-    const typeFilePath = coreTypesPath + `toSnakeCase(typeName)}.ts`;
-    const comment = `/*\n* @category ${toTitleCase(typeName)}\n*/\n`;
+    await withOriginalGetConfig(async () => {
+      const typeName = 'ITestType';
+      const generatedType = 'Test Type';
+      const config = getConfig();
+      useAiMock.mockResolvedValue({ message: generatedType });
 
-    (fs.existsSync as jest.Mock).mockReturnValue(false);
-
-    await createType(typeName);
-
-    // Check if the directory was created
-    expect(fs.existsSync).toHaveBeenCalledWith(coreTypesPath);
-    expect(fs.mkdirSync).toHaveBeenCalledWith(coreTypesPath, { recursive: true });
-
-    // Check if the file was written correctly
-    expect(fs.writeFileSync).toHaveBeenCalledWith(typeFilePath, `${comment}${generatedType}\n\n`);
+      const coreTypesPath = sanitizeName(config.ts.typeDir);
+      const typeFilePath = getPathOf(`../../${coreTypesPath}/${toSnakeCase(typeName)}.ts`);
+      const comment = `/*\n* @category ${toTitleCase(typeName)}\n*/\n`;
+  
+      (fs.existsSync as jest.Mock).mockReturnValue(false);
+  
+      await createType(typeName);
+  
+      // Check if the directory was created
+      expect(fs.existsSync).toHaveBeenCalledWith(coreTypesPath);
+      expect(fs.mkdirSync).toHaveBeenCalledWith(coreTypesPath, { recursive: true });
+  
+      // Check if the file was written correctly
+      expect(fs.writeFileSync).toHaveBeenCalledWith(typeFilePath, `${comment}${generatedType}\n\n`);
+    });
   });
 });

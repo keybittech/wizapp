@@ -1,5 +1,5 @@
 import fs from 'fs';
-import { getPathOf, toSnakeCase, toTitleCase } from '../src/util';
+import { getPathOf, sanitizeName, toSnakeCase, toTitleCase } from '../src/util';
 import {
   setupChatResponse,
   setupCommonMocks,
@@ -8,6 +8,7 @@ import {
   setupConfigTestAfter,
   mockGetConfig,
   withTempConfig,
+  withOriginalGetConfig,
 } from './testHelpers';
 
 setupChatResponse('const testTypeApi = { ...');
@@ -16,6 +17,7 @@ setupCommonMocks();
 import { createApi } from '../src/spells';
 import { IPrompts } from '../src/prompts';
 import { buildOpenAIRequest, openAIRequestOptions } from '../src/request';
+import { getConfig } from '../src/config';
 
 jest.mock('fs', () => ({
   ...jest.requireActual('fs'),
@@ -26,7 +28,7 @@ describe('createApi', () => {
   let tempConfigPath = '';
 
   beforeEach(() => {
-    tempConfigPath = setupConfigTestBefore({ ts: { typeDir: 'types', configPath: 'tsconfig.json' } });
+    tempConfigPath = setupConfigTestBefore({ ai: { retries : '3' }, ts: { typeDir: 'types', configPath: 'tsconfig.json' } });
     mockGetConfig(tempConfigPath);
   });
 
@@ -55,15 +57,19 @@ describe('createApi', () => {
   });
 
   test('should append the generated API to the correct file', async () => {
-    setupConfigTestAfter(tempConfigPath);
-    tempConfigPath = setupConfigTestBefore({ ai: { retries: '3' }, ts: { typeDir: 'types' } });
-    const typeName = 'ITestTypeName';
-    const generatedType = 'userName';
-    const coreTypesPath = getPathOf(`../src/types/${toSnakeCase(typeName)}.ts`);
-    const comment = `/*\n* @category ${toTitleCase(typeName)}\n*/\n`;
-    const generatedApi = 'const testTypeApi = { ...';
-    await createApi(typeName, generatedType);
-    expect(fs.appendFileSync).toHaveBeenCalledWith(coreTypesPath, `${comment}${generatedApi}\n\n`);
+    await withOriginalGetConfig(async () => {
+      await withTempConfig({ ai: { retries: '3' }, ts: { typeDir: 'types' } }, async () => {
+        const config = getConfig();
+        const typeName = 'ITestTypeName';
+        const generatedType = 'userName';
+        const coreTypesPath = sanitizeName(config.ts.typeDir);
+        const typeFilePath = getPathOf(`../../${coreTypesPath}/${toSnakeCase(typeName)}.ts`);
+        const comment = `/*\n* @category ${toTitleCase(typeName)}\n*/\n`;
+        const generatedApi = 'const testTypeApi = { ...';
+        await createApi(typeName, generatedType);
+        expect(fs.appendFileSync).toHaveBeenCalledWith(typeFilePath, `${comment}${generatedApi}\n\n`);
+      });
+    });
   });
 
 });

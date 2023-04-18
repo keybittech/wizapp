@@ -96,8 +96,7 @@ export function typeDefinitionToSentence(typeDefinition: string): string {
   return 'Unable to parse the type definition.';
 }
 
-export function hasSimilarKey(obj: Record<string, unknown>, prop: string): boolean {
-  const regex = new RegExp(`^${prop}_\\d+$`);
+export function hasSimilarKey(obj: Record<string, unknown>, regex: RegExp): boolean {
   return Object.keys(obj).some(key => regex.test(key));
 }
 

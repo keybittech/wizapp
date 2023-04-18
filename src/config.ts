@@ -24,29 +24,33 @@ if (fs.existsSync(configFilePath)) {
 }
 
 // Function to save the configuration
-export function saveConfig() {
+export function saveConfig(): void {
   fs.writeFileSync(configFilePath, JSON.stringify(config, null, 2));
 }
 
-export function setConfig(newConfig: Config) {
+export function updateConfig(newConfig: Config): void {
+  config = Object.assign(config, newConfig);
+}
+
+export function setConfig(newConfig: Config): void {
   config = newConfig;
 }
 
 export function getConfig(optionalConfigPath?: string): Config {
   if (!optionalConfigPath) {
-    return defaultConfig;
+    return config;
   }
 
-  let config: Config;
+  let optionalConfig: Config;
 
   try {
     const configText = fs.readFileSync(optionalConfigPath, 'utf-8');
-    config = JSON.parse(configText) as Config;
+    optionalConfig = JSON.parse(configText) as Config;
   } catch (error) {
-    config = defaultConfig;
+    optionalConfig = defaultConfig;
   }
 
-  return config;
+  return optionalConfig;
 }
 
 // Helper function

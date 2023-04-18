@@ -6,13 +6,18 @@ setupCompletionResponse('test completion response');
 setupModerationResponse(false);
 setupCommonMocks();
 
+jest.mock('fs', () => ({
+  ...jest.requireActual('fs'),
+  appendFileSync: jest.fn()
+}));
+
 import { useAi } from '../src/spells/use_ai_spell';
 
 describe('useAi', () => {
   let tempConfigPath = '';
 
   beforeEach(() => {
-    tempConfigPath = setupConfigTestBefore({ ts: { typeDir: 'types', configPath: 'tsconfig.json' } });
+    tempConfigPath = setupConfigTestBefore({ ai: { retries: '3' }, ts: { typeDir: '../../types', configPath: 'tsconfig.json' } });
     jest.clearAllMocks();
   });
 

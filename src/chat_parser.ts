@@ -1,4 +1,4 @@
-import { isCreateApiResult, isGuidedEditResult } from "./prompts";
+import { isCreateApiResult, isGuidedEditResult, isCreateTypeResponse } from "./prompts";
 import { GuardValidations } from "./types";
 
 export function parseChatAttempt<T>(attempt: string): { supportingText: string, message: T } {
@@ -45,6 +45,7 @@ export function parseChatAttempt<T>(attempt: string): { supportingText: string, 
 
 const responseTypeGuards = [
   isGuidedEditResult,
+  isCreateTypeResponse,
   isCreateApiResult
 ];
 

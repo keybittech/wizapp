@@ -13,12 +13,15 @@ describe('getConfig', () => {
     setupConfigTestAfter(tempConfigPath);
   });  
 
-  it('returns default config values when config file does not exist', () => {
+  it('returns default config values when config file does not exist', async () => {
     // Remove the config file
-    fs.unlinkSync(tempConfigPath);
-
-    const config = getConfig();
-    expect(config).toEqual(defaultConfig);
+    await withOriginalGetConfig(async () => {
+      await withTempConfig(defaultConfig, async () => {
+        fs.unlinkSync(tempConfigPath);
+        const config = getConfig();
+        expect(config).toEqual(defaultConfig);
+      })
+    });
   });
 
   it('returns config values when config file exists', async () => {
