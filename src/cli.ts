@@ -136,7 +136,7 @@ const argv =  yargs(hideBin(process.argv))
         .then((result) => console.log(result))
         .catch((error) => console.error(error));
 
-      // await spells.createApiBackend(argv.typeName, generatedType);
+      await spells.createApiBackend(argv.typeName, generatedType);
     }
   )
   .demandCommand(1, 'You need at least one command before moving on')
