@@ -1,6 +1,6 @@
 import { Project } from 'ts-morph';
 import { getConfig } from '../config';
-import { getPathOf, toSnakeCase, toTitleCase } from '../util';
+import { getPathOf, sanitizeName, toSnakeCase, toTitleCase } from '../util';
 import { useAi } from './use_ai_spell';
 import { IPrompts } from '../prompts';
 
@@ -9,12 +9,16 @@ export async function createApiBackend(typeName: string, generatedType: string) 
   if (!config.ts.configPath) {
     throw new Error('Missing ts.configPath.')
   }
+  if (!config.ts.typeDir) {
+    throw new Error('Missing ts.typeDir.')
+  }
   const project = new Project({
     tsConfigFilePath: config.ts.configPath
   });
 
-  const coreTypesPath = getPathOf(`${config.ts.typeDir}/${toSnakeCase(typeName)}.ts`);
-  const sourceFile = project.addSourceFileAtPath(coreTypesPath);
+  const coreTypesPath = sanitizeName(config.ts.typeDir) + '/';
+  const typeFileName = getPathOf(`${coreTypesPath}${toSnakeCase(typeName)}.ts`);
+  const sourceFile = project.addSourceFileAtPath(typeFileName);
   const variables = sourceFile.getVariableDeclarations();
   const apiEndpoints: string[] = [];
 

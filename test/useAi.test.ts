@@ -9,14 +9,15 @@ setupCommonMocks();
 import { useAi } from '../src/spells/use_ai_spell';
 
 describe('useAi', () => {
+  let tempConfigPath = '';
 
   beforeEach(() => {
-    setupConfigTestBefore({ ts: { typeDir: 'types', configPath: 'tsconfig.json' } });
+    tempConfigPath = setupConfigTestBefore({ ts: { typeDir: 'types', configPath: 'tsconfig.json' } });
     jest.clearAllMocks();
   });
 
   afterEach(() => {
-    setupConfigTestAfter();
+    setupConfigTestAfter(tempConfigPath);
   });
 
   test('should return a chat response when promptType is a chat prompt', async () => {
@@ -41,5 +42,4 @@ describe('useAi', () => {
 
     await expect(useAi<GuidedEditResponse>(IPrompts.GUIDED_EDIT, 'testfile.tsx', 'add comments throughout the file')).rejects.toThrowError();
   });
-
 });

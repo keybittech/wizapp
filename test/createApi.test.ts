@@ -6,6 +6,8 @@ import {
   openai,
   setupConfigTestBefore,
   setupConfigTestAfter,
+  mockGetConfig,
+  withTempConfig,
 } from './testHelpers';
 
 setupChatResponse('const testTypeApi = { ...');
@@ -21,13 +23,15 @@ jest.mock('fs', () => ({
 }));
 
 describe('createApi', () => {
+  let tempConfigPath = '';
 
   beforeEach(() => {
-    setupConfigTestBefore({ ts: { typeDir: 'types', configPath: 'tsconfig.json' } });
+    tempConfigPath = setupConfigTestBefore({ ts: { typeDir: 'types', configPath: 'tsconfig.json' } });
+    mockGetConfig(tempConfigPath);
   });
 
   afterEach(() => {
-    setupConfigTestAfter();
+    setupConfigTestAfter(tempConfigPath);
   });
 
   test('should work by passing normal parameters for chat completion', async () => {
@@ -37,8 +41,9 @@ describe('createApi', () => {
   });
 
   test('should throw error when ts.typeDir is not set', async () => {
-    setupConfigTestBefore({ ai: { retries: '3' }, ts: { configPath: 'tsconfig.json' } });
-    await expect(createApi('ITestTypeName', 'userName')).rejects.toThrow('Missing ts.typeDir.');
+    await withTempConfig({ ai: { retries: '3' }, ts: { configPath: 'tsconfig.json' } }, async () => {
+      await expect(createApi('ITestTypeName', 'userName')).rejects.toThrow('Missing ts.typeDir.');
+    });
   });
 
   test('should call useAi with the correct prompt', async () => {
@@ -50,7 +55,8 @@ describe('createApi', () => {
   });
 
   test('should append the generated API to the correct file', async () => {
-    setupConfigTestBefore({ ai: { retries: '3' }, ts: { typeDir: 'types' } });
+    setupConfigTestAfter(tempConfigPath);
+    tempConfigPath = setupConfigTestBefore({ ai: { retries: '3' }, ts: { typeDir: 'types' } });
     const typeName = 'ITestTypeName';
     const generatedType = 'userName';
     const coreTypesPath = getPathOf(`../src/types/${toSnakeCase(typeName)}.ts`);

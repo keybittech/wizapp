@@ -2,6 +2,7 @@ import fs from 'fs';
 import { setConfig, getConfig, configFilePath } from '../src/config';
 import { Config } from '../src/types';
 import { SyntaxKind } from 'ts-morph';
+import { generateTempFilePath, getDirPathOf } from '../src/util';
 
 let chatResponseContent: string;
 let completionResponseText: string;
@@ -57,19 +58,56 @@ export function setupModerationResponse(flagged: boolean) {
   moderationResponseFlagged = flagged;
 }
 
+export function generateTempConfigPath() {
+  const configDirPath = getDirPathOf(configFilePath);
+  return generateTempFilePath(configDirPath, 'test-config');
+}
+
 export function setupConfigTestBefore(testConfig?: Config) {
   const defaultConfig = getConfig();
   const updatedConfig = Object.assign(defaultConfig, (testConfig || {}));
-  console.log({ NEW_CONFIG: updatedConfig });
   setConfig(updatedConfig);
-  // Reset the config file to default values before each test
-  fs.writeFileSync(configFilePath, JSON.stringify(updatedConfig, null, 2));
+  
+  // Reset the config file to default values before each test using a custom test file
+  const tempConfigPath = generateTempConfigPath();
+  fs.writeFileSync(tempConfigPath, JSON.stringify(updatedConfig, null, 2));
+  return tempConfigPath;
 }
 
-export function setupConfigTestAfter() {
+export function setupConfigTestAfter(tempConfigPath: string) {
   // Clean up the config file after each test
-  if (fs.existsSync(configFilePath)) {
-    fs.unlinkSync(configFilePath);
+  if (fs.existsSync(tempConfigPath)) {
+    fs.unlinkSync(tempConfigPath);
+  }
+}
+
+export function mockGetConfig(tempConfigPath: string) {
+  jest.resetModules();
+  jest.mock('../src/config', () => {
+    const original = jest.requireActual('../src/config');
+    return {
+      ...original,
+      getConfig: () => original.getConfig(tempConfigPath),
+    };
+  });
+}
+
+export async function withTempConfig(tempConfig: Config, testFunc: () => Promise<void>) {
+  const tempConfigPath = setupConfigTestBefore(tempConfig);
+  mockGetConfig(tempConfigPath);
+  try {
+    await testFunc();
+  } finally {
+    setupConfigTestAfter(tempConfigPath);
+  }
+}
+
+export function withOriginalGetConfig(testFunc: () => Promise<void>) {
+  jest.resetModules(); // Clear the Jest module cache
+  try {
+    return testFunc();
+  } finally {
+    jest.resetModules(); // Clear the Jest module cache again after the test execution
   }
 }
 

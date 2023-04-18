@@ -1,36 +1,39 @@
 import fs from 'fs';
-import { getConfig, defaultConfig, configFilePath } from '../src/config';
+import { getConfig, defaultConfig } from '../src/config';
 import { Config } from '../src/types';
-import { setupConfigTestBefore, setupConfigTestAfter } from './testHelpers';
+import { setupConfigTestBefore, setupConfigTestAfter, withTempConfig, withOriginalGetConfig } from './testHelpers';
 
 describe('getConfig', () => {
+  let tempConfigPath = '';
   beforeEach(() => {
-    setupConfigTestBefore();
+    tempConfigPath = setupConfigTestBefore();
   });
 
   afterEach(() => {
-    setupConfigTestAfter();
+    setupConfigTestAfter(tempConfigPath);
   });  
 
   it('returns default config values when config file does not exist', () => {
     // Remove the config file
-    fs.unlinkSync(configFilePath);
+    fs.unlinkSync(tempConfigPath);
 
     const config = getConfig();
     expect(config).toEqual(defaultConfig);
   });
 
-  it('returns config values when config file exists', () => {
+  it('returns config values when config file exists', async () => {
+
     const expectedConfig: Config = {
+      ai: { retries: '3', logFile: 'results.json' },
       ts: { configPath: 'config', typeDir: 'types', compDir: 'components' },
       git: { rootPath: 'root', source: 'dev', remote: 'origin' },
       user: { name: 'John Doe' },
     };
-
-    // Save the expected config to the config file
-    fs.writeFileSync(configFilePath, JSON.stringify(expectedConfig, null, 2));
-
-    const config = getConfig();
-    expect(config).toEqual(expectedConfig);
+    await withOriginalGetConfig(async () => {
+      await withTempConfig(expectedConfig, async () => {
+        const config = getConfig();
+        expect(config).toEqual(expectedConfig);
+      });
+    });
   });
 });

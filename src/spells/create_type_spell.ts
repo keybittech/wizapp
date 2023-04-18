@@ -1,7 +1,7 @@
 import fs from "fs";
 import { IPrompts } from "../prompts";
 import { useAi } from "./use_ai_spell";
-import { getPathOf, isValidName, toSnakeCase, toTitleCase } from "../util";
+import { getPathOf, isValidName, sanitizeName, toTitleCase } from "../util";
 import { getConfig } from "../config";
 
 export async function createType(typeName: string) {
@@ -15,11 +15,16 @@ export async function createType(typeName: string) {
     throw new Error('this prompt typeName must follow ITypeName format, leading I, titleized');
   }
 
+  const coreTypesPath = getPathOf(sanitizeName(config.ts.typeDir) + '/');
   const generatedType = await useAi<string>(IPrompts.CREATE_TYPE, typeName)
-  const coreTypesPath = getPathOf(`${config.ts.typeDir}/${toSnakeCase(typeName)}.ts`);
+  const typeFilePath = coreTypesPath + `toSnakeCase(typeName)}.ts`;
   const comment = `/*\n* @category ${toTitleCase(typeName)}\n*/\n`;
 
-  fs.appendFileSync(coreTypesPath, `${comment}${generatedType.message}\n\n`);
+  if (!fs.existsSync(coreTypesPath)) {
+    fs.mkdirSync(coreTypesPath, { recursive: true });
+  }
+
+  fs.writeFileSync(typeFilePath, `${comment}${generatedType.message}\n\n`);
 
   return generatedType.message;
 }

@@ -1,4 +1,4 @@
-// config.js
+// config.ts
 import fs from 'fs';
 import { Config, ConfigPropTypes, isConfigNestedObject } from './types';
 import { getPathOf } from './util';
@@ -29,15 +29,18 @@ export function saveConfig() {
 }
 
 export function setConfig(newConfig: Config) {
-  console.log({ SETTINGNEWCONFIG: newConfig })
   config = newConfig;
 }
 
-export function getConfig() {
+export function getConfig(optionalConfigPath?: string): Config {
+  if (!optionalConfigPath) {
+    return defaultConfig;
+  }
+
   let config: Config;
-  
+
   try {
-    const configText = fs.readFileSync(configFilePath, 'utf-8');
+    const configText = fs.readFileSync(optionalConfigPath, 'utf-8');
     config = JSON.parse(configText) as Config;
   } catch (error) {
     config = defaultConfig;

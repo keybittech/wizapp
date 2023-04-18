@@ -101,6 +101,14 @@ export function hasSimilarKey(obj: Record<string, unknown>, prop: string): boole
   return Object.keys(obj).some(key => regex.test(key));
 }
 
+export function getDirPathOf(filePath: string) {
+  return path.dirname(filePath)
+}
+
+export function generateTempFilePath(dir: string, name: string) {
+  return path.join(dir, `${name}-${Date.now()}.json`)
+}
+
 export function getPathOf(name: string): string {
   return path.join(__dirname, name);
 }

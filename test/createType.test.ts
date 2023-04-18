@@ -1,12 +1,14 @@
 import fs from 'fs';
 import * as useAiModule from '../src/spells/use_ai_spell';
 import { getConfig } from '../src/config';
-import { getPathOf, toSnakeCase, toTitleCase } from '../src/util';
-import { setupConfigTestBefore, setupConfigTestAfter } from './testHelpers';
+import { getPathOf, toTitleCase } from '../src/util';
+import { setupConfigTestBefore, setupConfigTestAfter, withTempConfig } from './testHelpers';
 
 jest.mock('fs', () => ({
   ...jest.requireActual('fs'),
-  appendFileSync: jest.fn(),
+  writeFileSync: jest.fn(),
+  existsSync: jest.fn(),
+  mkdirSync: jest.fn()
 }));
 
 // Mock the useAi function
@@ -19,19 +21,21 @@ const useAiMock = useAiModule.useAi as jest.Mock;
 import { createType } from '../src/spells';
 
 describe('createType', () => {
+  let tempConfigPath = '';
 
   beforeEach(() => {
-    setupConfigTestBefore({ ts: { typeDir: 'types', configPath: 'tsconfig.json' } });
+    tempConfigPath = setupConfigTestBefore({ ts: { typeDir: 'types', configPath: 'tsconfig.json' } });
     jest.clearAllMocks();
   });
 
   afterEach(() => {
-    setupConfigTestAfter();
+    setupConfigTestAfter(tempConfigPath);
   });
 
   test('should throw error when ts.typeDir is not set', async () => {
-    setupConfigTestBefore({ ts: { typeDir: '' } });
-    await expect(createType('ISomeTypeName')).rejects.toThrow('Missing ts.typeDir.');
+    await withTempConfig({ ts: { typeDir: '' } }, async () => {
+      await expect(createType('ISomeTypeName')).rejects.toThrow('Missing ts.typeDir.');
+    });
   });
 
   test('should throw error if typeName does not follow the required format', async () => {
@@ -43,11 +47,19 @@ describe('createType', () => {
     const generatedType = 'Test Type';
     const config = getConfig();
     useAiMock.mockResolvedValue({ message: generatedType });
-    const coreTypesPath = getPathOf(`../src/${config.ts.typeDir}/${toSnakeCase(typeName)}.ts`);
+    const coreTypesPath = getPathOf(`../src/${config.ts.typeDir}/`);
+    const typeFilePath = coreTypesPath + `toSnakeCase(typeName)}.ts`;
     const comment = `/*\n* @category ${toTitleCase(typeName)}\n*/\n`;
+
+    (fs.existsSync as jest.Mock).mockReturnValue(false);
 
     await createType(typeName);
 
-    expect(fs.appendFileSync).toHaveBeenCalledWith(coreTypesPath, `${comment}${generatedType}\n\n`);
+    // Check if the directory was created
+    expect(fs.existsSync).toHaveBeenCalledWith(coreTypesPath);
+    expect(fs.mkdirSync).toHaveBeenCalledWith(coreTypesPath, { recursive: true });
+
+    // Check if the file was written correctly
+    expect(fs.writeFileSync).toHaveBeenCalledWith(typeFilePath, `${comment}${generatedType}\n\n`);
   });
 });

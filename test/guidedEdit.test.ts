@@ -1,6 +1,6 @@
 import * as git from '../src/git';
 import * as useAiModule from '../src/spells/use_ai_spell';
-import { createMockStatement, setupConfigTestAfter, setupConfigTestBefore } from './testHelpers';
+import { createMockStatement, setupConfigTestAfter, setupConfigTestBefore, withTempConfig } from './testHelpers';
 import { Project, SyntaxKind } from 'ts-morph';
 
 // Mock the required functions
@@ -14,29 +14,32 @@ const useAiMock = useAiModule.useAi as jest.Mock;
 import { guidedEdit } from '../src/spells/guided_edit_spell';
 
 describe('guidedEdit', () => {
+  let tempConfigPath = '';
 
   beforeEach(() => {
-    setupConfigTestBefore({ ai: { retries: '3' }, ts: { typeDir: 'types', configPath: 'tsconfig.json' } });
+    tempConfigPath = setupConfigTestBefore({ ai: { retries: '3' }, ts: { typeDir: 'types', configPath: 'tsconfig.json' } });
     jest.clearAllMocks();
   });
 
   afterEach(() => {
-    setupConfigTestAfter();
+    setupConfigTestAfter(tempConfigPath);
   });
 
   test('should throw error when ts.configPath is not set', async () => {
-    setupConfigTestBefore({ ai: { retries: '3' }, ts: { configPath: '' } });
-    await expect(guidedEdit('NonExistent.tsx please make some changes to the file')).rejects.toThrow('Missing ts.configPath.');
+    await withTempConfig({ ai: { retries: '3' }, ts: { configPath: '' } }, async () => {
+      await expect(guidedEdit('NonExistent.tsx please make some changes to the file')).rejects.toThrow('Missing ts.configPath.');
+    });
   });
 
   it('should return "file not found" if the file does not exist', async () => {
-    setupConfigTestBefore({ ai: { retries: '3' }, ts: { configPath: 'tsconfig.json' } });
-    const fileParts = 'NonExistent.tsx please make some changes to the file';
-    prepareBranchMock.mockResolvedValue('test_branch');
-    useAiMock.mockResolvedValue({ message: [] });
-
-    const result = await guidedEdit(fileParts);
-    expect(result).toBe('file not found: NonExistent.tsx');
+    await withTempConfig({ ai: { retries: '3' }, ts: { configPath: 'tsconfig.json' } }, async () => {
+      const fileParts = 'NonExistent.tsx please make some changes to the file';
+      prepareBranchMock.mockResolvedValue('test_branch');
+      useAiMock.mockResolvedValue({ message: [] });
+  
+      const result = await guidedEdit(fileParts);
+      expect(result).toBe('file not found: NonExistent.tsx');
+    });
   });
 
   it('should return "the file is too large" if the file size is greater than 10000 characters', async () => {
