@@ -14,7 +14,7 @@ const guidedEditPrompt = [
   
   Whittling Technique:
   1. Identify: TARGET_STATE_RELEVANCE is assigned to each STATEMENTS_JSON value.
-    - Relevance is an internal measurement determining the liklihood that modifying the STATEMENTS_JSON value will contribute to TARGET_STATE.
+    - Relevance is an internal measurement determining the likelihood that modifying the STATEMENTS_JSON value will contribute to TARGET_STATE.
   2. Filter: ACTION_ITEMS filters STATEMENTS_JSON based on TARGET_STATE_RELEVANCE.
     - Any Relevance: Include
     - No Relevance: Exclude

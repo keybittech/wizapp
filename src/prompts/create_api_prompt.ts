@@ -30,7 +30,7 @@ const createApiMessages = [
 
 Object.assign(aiPrompts, { [IPrompts.CREATE_API]: createApiMessages });
 
-const createApiFormat = /^const\s+\w+Api\s*=\s*\{/gm;
+const createApiFormat = /^const\s+\w+Api\s*=\s*\{/gim;
 
 type CreateApiResult = string
 
