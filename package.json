@@ -1,6 +1,6 @@
 {
   "name": "@keybittech/wizapp",
-  "version": "0.0.4-alpha",
+  "version": "0.0.5-alpha",
   "description": "The Wizard's Apprentice",
   "keywords": [
     "automated",
@@ -24,7 +24,7 @@
     "wizapp": "ts-node ./src/cli.ts",
     "test": "jest",
     "debug": "node --inspect-brk ./node_modules/jest/bin/jest.js --runInBand",
-    "update-version": "npm version --no-git-tag-version $new_version && git add package.json && git commit -m 'Update to version $new_version'",
+    "update-version": "npm version --no-git-tag-version $new_version && git add package.json && git commit -m \"Update to version $new_version\"",
     "publish-package": "npm publish --access public",
     "update-and-publish": "npm run update-version && npm run publish-package"
   },
