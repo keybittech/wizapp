@@ -11,7 +11,7 @@ export async function goHome(): Promise<string> {
 
   const git = simpleGit(config.git.rootPath);
 
-  await git.checkout('main');
+  await git.checkout(config.git.source);
 
   return 'relocated to git root';
 }

@@ -20,5 +20,5 @@ export async function pushCommit(path: string, branch: string, msg: string) {
   await git.commit(commitMsg);
 
   console.log('Pushing changes to ', branch);
-  await git.push('origin', branch);
+  await git.push(config.git.remote, branch);
 }
