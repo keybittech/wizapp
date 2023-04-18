@@ -2,6 +2,11 @@ import { CreateModerationRequest, OpenAIApi } from "openai";
 import { aiPrompts, IPrompts } from "./prompts";
 import { isChatRequest, isCompletionRequest, isModerationRequest, OpenAIRequestShapes } from "./types";
 
+function add(a: number, b: number): number {
+  return a + b;
+}
+
+
 const openai = new OpenAIApi();
 export const openAIRequestOptions = {
   headers: {
@@ -55,6 +60,10 @@ export function buildOpenAIRequest(prompts: string[], promptType?: IPrompts): [O
   }
 
   throw new Error('invalid prompting procedure');
+function add(a: number, b: number): number {
+  return a + b;
+}
+
 }
 
 export async function performRequest(request: OpenAIRequestShapes): Promise<string | boolean | undefined> {
