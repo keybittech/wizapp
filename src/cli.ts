@@ -130,14 +130,11 @@ const argv =  yargs(hideBin(process.argv))
         });
     },
     async (argv) => {
-      console.log({ GENERATINGTYPEFROMCLI: argv.typeName })
-
       const generatedType = await spells.createType(argv.typeName) 
-      console.log({ GENERATEDTYPEFROMCLI: generatedType })
 
-      // await spells.createApiBackend(argv.typeName, generatedType)
-      //   .then((result) => console.log(result))
-      //   .catch((error) => console.error(error));
+      await spells.createApi(argv.typeName, generatedType)
+        .then((result) => console.log(result))
+        .catch((error) => console.error(error));
 
       // await spells.createApiBackend(argv.typeName, generatedType);
     }
