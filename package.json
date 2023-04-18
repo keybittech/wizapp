@@ -1,6 +1,6 @@
 {
   "name": "@keybittech/wizapp",
-  "version": "0.0.3-alpha",
+  "version": "0.0.4-alpha",
   "description": "The Wizard's Apprentice",
   "keywords": [
     "automated",
@@ -25,8 +25,8 @@
     "test": "jest",
     "debug": "node --inspect-brk ./node_modules/jest/bin/jest.js --runInBand",
     "update-version": "npm version --no-git-tag-version $new_version && git add package.json && git commit -m 'Update to version $new_version'",
-    "publish": "npm publish --access public",
-    "update-and-publish": "npm run update-version && npm run publish"
+    "publish-package": "npm publish --access public",
+    "update-and-publish": "npm run update-version && npm run publish-package"
   },
   "dependencies": {
     "openai": "^3.2.1",
