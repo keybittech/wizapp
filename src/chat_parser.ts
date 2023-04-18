@@ -29,7 +29,7 @@ export function parseChatAttempt<T>(attempt: string): { supportingText: string, 
     });
   
     if (!innerBlockText.length) {
-      throw new Error('Block structure is not valid.');
+      throw new Error('cannot parse Block structure is not valid.');
     }
   
     try {
