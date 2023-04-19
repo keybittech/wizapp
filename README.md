@@ -19,6 +19,8 @@ We want to work with you! If any of this sounds interesting, or you are looking 
 
 ## Installation
 
+[Clone Installation Demo](https://youtu.be/kCVwqbW8cic)
+
 OPENAI_API_KEY in the environment.
 
 To install WizApp locally, run the following command:
@@ -28,6 +30,7 @@ npm install @keybittech/wizapp
 ```
 
 ### Configure WizApp settings
+[Config Demo](https://youtu.be/b8uU2reOE5I)
 ```
 npx @keybittech/wizapp set ts.configPath "<path/to/tsconfig.json>"
 // required for create-api create-component guided-edit
@@ -53,10 +56,10 @@ The software can be used both as a CLI which acts upon a local typescript projec
 
 The WizApp CLI offers a variety of magical delights to help you manage your TypeScript projects:
 
-- `guided-edit`: Edits a specific file, creates a new git branch + pull request, updates pr on subsequent calls to same file
-- `create-api`: Creates a Typescript type with an api definition and functionality
-- `create-component`: Creates a new TypeScript react component
-- `use-ai`: General purpose function to generate a request for any IPrompts prompt
+- `use-ai`: General purpose function to generate a request for any application prompt [Demo](https://youtu.be/TbeQcZsg_eM)
+- `guided-edit`: Edits a specific file, creates a new git branch + pull request, updates pr on subsequent calls to same file [Demo](https://youtu.be/2gbj2QHwYEs)
+- `create-component`: Creates a new TypeScript react component [Demo](https://youtu.be/1eBD2-X9tTE)
+- `create-api`: (Awayto extension) Creates a Typescript type with an api definition and functionality (Temperamental)
 
 ```
 npx @keybittech/wizapp [command] [options]
@@ -64,39 +67,41 @@ npx @keybittech/wizapp [command] [options]
 
 ### CLI Commands - Work In Progress
 
-#### Guided Edit
-
+#### Use AI
 ```
-npx @keybittech/wizapp guided-edit "<fileName/Path> <desired addition, deletion, edit>"
+use-ai "suggest_service" "the downtown learning center at the U library"
+```
+
+#### Guided Edit
+```
+guided-edit "<fileName/Path> <desired addition, deletion, edit>"
 
 Ex:
 
-... guided-edit "Profile.tsx make the profile picture round instead of square"
+guided-edit "Profile.tsx make the profile picture round instead of square"
 
 ```
 Guided edit requires the tsconfig.json path to be configured and will seek out the filename you give it and attempt to perform the command that follows. Internally, guided edit reduces token usage on the response end, meaning requests can be larger; Generally an edit won't be too sweeping of a change, so AST parsing and prompt design are used to target the minimum required modifications.
 
 
-#### Create API
+#### Create API - Temperamental
 
 ```
 npx @keybittech/wizapp create-api "IMyApi"
 ```
-(Awayto) This command infers a typescript type from the name given, then designs a templated API configuration and functionality.
+(Awayto Extension) This command infers a typescript type from the name given, then designs a templated API configuration and functionality.
 
 #### Create Component
 
 ```
-npx @keybittech/wizapp create-component "description of a component"
+create-component "description of a component"
 ```
 This requires ts.compDir to be configured. A component name will be generated based on the description and placed into compDir/Component.tsx.
 
-#### Use AI
-```
-npx @keybittech/wizapp use-ai "suggest_service" "the downtown learning center at the U library"
-```
 
 ## TypeScript Library Usage
+
+This section is under development; seen as temperamental.
 
 WizApp can also be used as a library to directly interact with TypeScript files and manipulate them in your projects:
 
