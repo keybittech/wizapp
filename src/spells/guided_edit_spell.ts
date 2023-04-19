@@ -145,6 +145,7 @@ export async function guidedEdit(fileParts: string, editingUser?: string) {
         const prTitle = `${editingUser || config.user.name} edited ${fileName}: ${suggestions.replace(/[~^:?"*\[\]@{}\\/]+/g, '')}`.slice(0, 255);
         const prBody = `GPT: ${res.supportingText || 'No supporting text found.'}`.replaceAll('"', '');
         const prRes = await managePullRequest(generatedBranch, prTitle, prBody);
+        await goHome();
 
         return 'guided edit complete: ' + prRes;
       } else {
@@ -153,9 +154,8 @@ export async function guidedEdit(fileParts: string, editingUser?: string) {
     }
 
   } catch (error) {
-    return error;
-  } finally {
     await goHome();
+    return error;
   }
 
   return 'file not found: ' + fileName;
