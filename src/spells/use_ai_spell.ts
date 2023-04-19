@@ -51,7 +51,7 @@ export async function useAi<T = undefined>(promptType?: IPrompts, ...prompts: st
       return completionResponse as UseAIResponses<T>;
     }
 
-    async function resolveAttempt(attempt: string): Promise<ChatResponse<T>> {
+    async function resolveAttempt(attempt: string, retriesRemaining: number): Promise<ChatResponse<T>> {
       try {
         const { supportingText, message } = parseChatAttempt<T>(attempt);
 
@@ -65,7 +65,7 @@ export async function useAi<T = undefined>(promptType?: IPrompts, ...prompts: st
         return chatResponse;
       } catch (error) {
         const err = error as Error;
-        if (aiResponse.failures.length < retries && err.message.startsWith('cannot parse')) {
+        if (retriesRemaining > 0 && err.message.startsWith('cannot parse')) {
           const repeatedAttempt = await performRequest(builtRequest);
 
           aiResponse.rawResponses.push(repeatedAttempt);
@@ -76,7 +76,7 @@ export async function useAi<T = undefined>(promptType?: IPrompts, ...prompts: st
             throw new Error(imparsable);
           }
 
-          return await resolveAttempt(repeatedAttempt);
+          return await resolveAttempt(repeatedAttempt, retriesRemaining - 1);
         }
 
         const resolveIssue = 'Critical chat parse error or could not resolve a valid response after ' + retries + ' attempts. ' + (err.message ? 'Parsing error: ' + err.message : '');
@@ -85,7 +85,7 @@ export async function useAi<T = undefined>(promptType?: IPrompts, ...prompts: st
       }
     }
 
-    return await resolveAttempt(responseTry) as UseAIResponses<T>;
+    return await resolveAttempt(responseTry, retries) as UseAIResponses<T>;
   } catch (error) {
     const err = error as Error;
     aiResponse.successful = false;

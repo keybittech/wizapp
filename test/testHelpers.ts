@@ -60,7 +60,7 @@ export function setupModerationResponse(flagged: boolean) {
 
 export function generateTempConfigPath() {
   const configDirPath = getDirPathOf(configFilePath);
-  return generateTempFilePath(configDirPath, 'test-config');
+  return generateTempFilePath(configDirPath, `test-config-${Date.now()}.json`);
 }
 
 export function setupConfigTestBefore(testConfig?: Config) {
