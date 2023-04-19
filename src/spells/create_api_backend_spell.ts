@@ -17,7 +17,7 @@ export async function createApiBackend(typeName: string, generatedType: string) 
   });
 
   const coreTypesPath = sanitizeName(config.ts.typeDir);
-  const typeFileName = getPathOf(`../../${coreTypesPath}/${toSnakeCase(typeName)}.ts`);
+  const typeFileName = getPathOf(`${coreTypesPath}/${toSnakeCase(typeName)}.ts`);
   const sourceFile = project.addSourceFileAtPath(typeFileName);
   const variables = sourceFile.getVariableDeclarations();
   const apiEndpoints: string[] = [];

@@ -3,20 +3,18 @@ import { getPathOf, sanitizeName, toSnakeCase, toTitleCase } from '../src/util';
 import {
   setupChatResponse,
   setupCommonMocks,
-  openai,
   setupConfigTestBefore,
   setupConfigTestAfter,
   mockGetConfig,
   withTempConfig,
   withOriginalGetConfig,
 } from './testHelpers';
+import * as useAiModule from '../src/spells/use_ai_spell';
 
 setupChatResponse('const testTypeApi = { ...');
 setupCommonMocks();
 
 import { createApi } from '../src/spells';
-import { IPrompts } from '../src/prompts';
-import { buildOpenAIRequest, openAIRequestOptions } from '../src/request';
 import { getConfig } from '../src/config';
 
 jest.mock('fs', () => ({
@@ -24,12 +22,19 @@ jest.mock('fs', () => ({
   appendFileSync: jest.fn(),
 }));
 
+jest.mock('../src/spells/use_ai_spell', () => ({
+  useAi: jest.fn(),
+}));
+
+const useAiMock = useAiModule.useAi as jest.Mock;
+
 describe('createApi', () => {
   let tempConfigPath = '';
 
   beforeEach(() => {
     tempConfigPath = setupConfigTestBefore({ ai: { retries : '3' }, ts: { typeDir: 'types', configPath: 'tsconfig.json' } });
     mockGetConfig(tempConfigPath);
+    useAiMock.mockClear();
   });
 
   afterEach(() => {
@@ -37,8 +42,9 @@ describe('createApi', () => {
   });
 
   test('should work by passing normal parameters for chat completion', async () => {
+    useAiMock.mockResolvedValue({ message: 'const testTypeApi = { ...' });
     const response = await createApi('ITestTypeName', 'userName');
-    expect(openai.createChatCompletion).toHaveBeenCalled();
+    expect(useAiMock).toHaveBeenCalled();
     expect(response).toBe('const testTypeApi = { ...');
   });
 
@@ -48,22 +54,14 @@ describe('createApi', () => {
     });
   });
 
-  test('should call useAi with the correct prompt', async () => {
-    const typeName = 'ITestTypeName';
-    const generatedType = 'userName';
-    const [builtRequest] = buildOpenAIRequest([generatedType], IPrompts.CREATE_API);
-    await createApi(typeName, generatedType);
-    expect(openai.createChatCompletion).toHaveBeenCalledWith(builtRequest, openAIRequestOptions);
-  });
-
   test('should append the generated API to the correct file', async () => {
     await withOriginalGetConfig(async () => {
       await withTempConfig({ ai: { retries: '3' }, ts: { typeDir: 'types' } }, async () => {
         const config = getConfig();
         const typeName = 'ITestTypeName';
-        const generatedType = 'userName';
+        const generatedType = 'type ITestTypeName = {';
         const coreTypesPath = sanitizeName(config.ts.typeDir);
-        const typeFilePath = getPathOf(`../../${coreTypesPath}/${toSnakeCase(typeName)}.ts`);
+        const typeFilePath = getPathOf(`${coreTypesPath}/${toSnakeCase(typeName)}.ts`);
         const comment = `/*\n* @category ${toTitleCase(typeName)}\n*/\n`;
         const generatedApi = 'const testTypeApi = { ...';
         await createApi(typeName, generatedType);

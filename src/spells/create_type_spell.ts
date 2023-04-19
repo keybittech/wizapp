@@ -16,7 +16,7 @@ export async function createType(typeName: string) {
   }
 
   const coreTypesPath = sanitizeName(config.ts.typeDir);
-  const typeFilePath = getPathOf(`../../${coreTypesPath}/${toSnakeCase(typeName)}.ts`);
+  const typeFilePath = getPathOf(`${coreTypesPath}/${toSnakeCase(typeName)}.ts`);
   const comment = `/*\n* @category ${toTitleCase(typeName)}\n*/\n`;  
   const generatedType = await useAi<CreateTypeResponse>(IPrompts.CREATE_TYPE, typeName)
 

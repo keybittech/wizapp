@@ -1,9 +1,11 @@
 // config.ts
 import fs from 'fs';
+import path from 'path';
 import { Config, ConfigPropTypes, isConfigNestedObject } from './types';
-import { getPathOf } from './util';
 
-export const configFilePath = getPathOf('../../config.json');
+export const isCliRunning = process.argv[1].includes('bin/src/cli.js');
+
+export const configFilePath = path.join(__dirname, `${isCliRunning ? '../..' : '..'}/config.json`);
 
 // Default configuration values
 export const defaultConfig: Config = {
@@ -36,15 +38,15 @@ export function setConfig(newConfig: Config): void {
   config = newConfig;
 }
 
-export function getConfig(optionalConfigPath?: string): Config {
-  if (!optionalConfigPath) {
-    return config;
-  }
+export function getConfig(): Config {
+  return config;
+}
 
+export function getConfigFromPath(configPath: string): Config {
   let optionalConfig: Config;
 
   try {
-    const configText = fs.readFileSync(optionalConfigPath, 'utf-8');
+    const configText = fs.readFileSync(configPath, 'utf-8');
     optionalConfig = JSON.parse(configText) as Config;
   } catch (error) {
     optionalConfig = defaultConfig;

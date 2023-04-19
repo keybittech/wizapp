@@ -50,7 +50,7 @@ describe('createType', () => {
       useAiMock.mockResolvedValue({ message: generatedType });
 
       const coreTypesPath = sanitizeName(config.ts.typeDir);
-      const typeFilePath = getPathOf(`../../${coreTypesPath}/${toSnakeCase(typeName)}.ts`);
+      const typeFilePath = getPathOf(`${coreTypesPath}/${toSnakeCase(typeName)}.ts`);
       const comment = `/*\n* @category ${toTitleCase(typeName)}\n*/\n`;
   
       (fs.existsSync as jest.Mock).mockReturnValue(false);

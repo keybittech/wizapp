@@ -41,7 +41,7 @@ describe('createApiBackend', () => {
       const generatedType = 'GeneratedType';
       const config = getConfig();
       useAiMock.mockResolvedValue({ message: generatedType });
-      const coreTypesPath = getPathOf(`../src/spells/${config.ts.configPath}/${toSnakeCase(typeName)}.ts`);
+      const coreTypesPath = getPathOf(`${config.ts.configPath}/${toSnakeCase(typeName)}.ts`);
       const comment = `/*\n* @category ${toTitleCase(typeName)}\n*/\n`;
   
       const addSourceFileAtPathMock = jest.fn().mockReturnValue({

@@ -43,13 +43,13 @@ export async function createComponent(description: string, user?: string) {
   if (componentName) {
     const creatorComment = `/* Created by ${user || config.user.name}, ${description} */\n`;
     const coreCompsPath = sanitizeName(config.ts.compDir);
-    const filePath = getPathOf(`../../${coreCompsPath}/${componentName}.tsx`);
+    const compFilePath = getPathOf(`${coreCompsPath}/${componentName}.tsx`);
     
     if (!fs.existsSync(coreCompsPath)) {
       fs.mkdirSync(coreCompsPath, { recursive: true });
     }
 
-    fs.writeFileSync(filePath, `${creatorComment}${res.message}`);
+    fs.writeFileSync(compFilePath, `${creatorComment}${res.message}`);
     return 'created a new component';
   }
 

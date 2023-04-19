@@ -1,5 +1,5 @@
 import fs from 'fs';
-import { setConfig, getConfig, configFilePath } from '../src/config';
+import { setConfig, defaultConfig, configFilePath } from '../src/config';
 import { Config } from '../src/types';
 import { SyntaxKind } from 'ts-morph';
 import { generateTempFilePath, getDirPathOf } from '../src/util';
@@ -60,11 +60,10 @@ export function setupModerationResponse(flagged: boolean) {
 
 export function generateTempConfigPath() {
   const configDirPath = getDirPathOf(configFilePath);
-  return generateTempFilePath(configDirPath, `test-config-${Date.now()}.json`);
+  return generateTempFilePath(configDirPath, `test-config`);
 }
 
 export function setupConfigTestBefore(testConfig?: Config) {
-  const defaultConfig = getConfig();
   const updatedConfig = Object.assign(defaultConfig, (testConfig || {}));
   setConfig(updatedConfig);
   
@@ -87,7 +86,7 @@ export function mockGetConfig(tempConfigPath: string) {
     const original = jest.requireActual('../src/config');
     return {
       ...original,
-      getConfig: () => original.getConfig(tempConfigPath),
+      getConfig: () => original.getConfigFromPath(tempConfigPath),
     };
   });
 }

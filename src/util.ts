@@ -1,4 +1,5 @@
 import path from "path";
+import { isCliRunning } from "./config";
 
 export const isValidName = (name: string): boolean => {
   const regex = /^I[A-Z][a-zA-Z]*$/;
@@ -137,6 +138,10 @@ export function generateTempFilePath(dir: string, name: string) {
   return path.join(dir, `${name}-${Date.now()}.json`)
 }
 
-export function getPathOf(name: string): string {
-  return path.join(__dirname, name);
+export function getRootDir() {
+  return path.join(__dirname, isCliRunning ? '../../' : '../');
+}
+
+export function getPathOf(name: string, baseDir?: string): string {
+  return path.join(baseDir || getRootDir(), name);
 }

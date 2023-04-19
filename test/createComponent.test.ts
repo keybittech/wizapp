@@ -1,26 +1,33 @@
 import fs from 'fs';
 import { createComponent } from '../src/spells/create_component_spell';
-import { useAi } from '../src/spells/use_ai_spell';
-import { setupConfigTestAfter, setupConfigTestBefore, withTempConfig } from './testHelpers';
-import { getPathOf } from '../src/util';
+import * as useAiModule from '../src/spells/use_ai_spell';
+import { setupConfigTestAfter, setupConfigTestBefore, withOriginalGetConfig, withTempConfig } from './testHelpers';
+import { getPathOf, sanitizeName } from '../src/util';
+import { getConfig } from '../src/config';
 
-jest.mock('../src/spells/use_ai_spell');
+jest.mock('fs', () => ({
+  ...jest.requireActual('fs'),
+  writeFileSync: jest.fn(),
+  existsSync: jest.fn(),
+  mkdirSync: jest.fn()
+}));
 
-const useAiMock = useAi as jest.Mock;
+jest.mock('../src/spells/use_ai_spell', () => ({
+  useAi: jest.fn(),
+}));
+
+const useAiMock = useAiModule.useAi as jest.Mock;
 
 describe('createComponent', () => {
   let tempConfigPath = '';
-  const compDir = getPathOf('./components');
 
   beforeEach(() => {
-    tempConfigPath = setupConfigTestBefore({ ts: { compDir: './components', configPath: 'tsconfig.json' } });
-    fs.mkdirSync(compDir);
+    tempConfigPath = setupConfigTestBefore({ ts: { compDir: 'components', configPath: 'tsconfig.json' } });
     useAiMock.mockClear();
   });
 
   afterEach(() => {
     setupConfigTestAfter(tempConfigPath);
-    fs.rmdirSync(compDir, { recursive: true });
   });
 
   test('should throw error when ts.compDir is not set', async () => {
@@ -30,27 +37,35 @@ describe('createComponent', () => {
   });
 
   test('should create a new component', async () => {
-    await withTempConfig({ ts: { compDir: './components', configPath: 'tsconfig.json' } }, async ()=> {
+    await withOriginalGetConfig(async () => {
+      const config = getConfig();
       const componentName = 'TestComponent';
       const componentContent = `
-        import React from 'react';
-    
-        function ${componentName}() {
-          return <div>${componentName}</div>;
-        }
-    
-        export default ${componentName};
-      `;
-    
+          import React from 'react';
+      
+          function ${componentName}() {
+            return <div>${componentName}</div>;
+          }
+      
+          export default ${componentName};
+        `;
+
       useAiMock.mockResolvedValue({ message: componentContent });
-    
-      const writeFileSpy = jest.spyOn(fs, 'writeFileSync');
-      const result = await createComponent('Create a test component', 'user123');
-      const filePath = getPathOf(`./components/${componentName}.tsx`);
-      const creatorComment = `/* Created by user123, Create a test component */\n`;
-    
-      expect(writeFileSpy).toHaveBeenCalledWith(filePath, `${creatorComment}${componentContent}`);
-      expect(result).toBe('created a new component');
+
+      fs.writeFileSync = jest.fn()
+
+      await createComponent('Create a test component', 'user123');
+
+      const coreCompsPath = sanitizeName(config.ts.compDir);
+      const compFileDir = getPathOf(`${coreCompsPath}/${componentName}.tsx`);
+      const comment = `/* Created by user123, Create a test component */\n`;
+
+      // Check if the directory was created
+      expect(fs.existsSync).toHaveBeenCalledWith(coreCompsPath);
+      expect(fs.mkdirSync).toHaveBeenCalledWith(coreCompsPath, { recursive: true });
+
+      expect(fs.writeFileSync).toHaveBeenCalledWith(compFileDir, `${comment}${componentContent}`)
+
     });
   });
 
