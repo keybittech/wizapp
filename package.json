@@ -29,8 +29,11 @@
     "update-and-publish": "npm run update-version && npm run publish-package"
   },
   "dependencies": {
+    "@babel/parser": "^7.21.4",
+    "abstract-syntax-tree": "^2.20.6",
     "openai": "3.2.1",
     "simple-git": "3.17.0",
+    "tree-sitter": "^0.20.1",
     "ts-morph": "18.0.0",
     "yargs": "17.7.1"
   },

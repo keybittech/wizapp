@@ -63,3 +63,26 @@ export function isCompletionResponse(obj: GuardValidations): obj is CompletionRe
 export function isModerationResponse(obj: GuardValidations): obj is ModerationResponse {
   return 'object' === typeof obj && 'input' in obj;
 }
+
+export interface Node {
+  type: string;
+  text: string;
+  children: Node[];
+}
+
+export type Language = {
+  grammar: any;
+  regexRules: {
+    [nodeType: string]: RegExp;
+  };
+};
+
+export interface Statements {
+  type: string;
+  text: string;
+}
+
+export interface LanguageParser {
+  fileExtension: string[];
+  parserName: string;
+}

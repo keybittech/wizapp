@@ -1,6 +1,9 @@
 import path from "path";
 import { isCalledWithNpx, isCliRunning } from "./config";
 
+import languages from "./languages";
+const langValues = Object.values(languages);
+
 export const isValidName = (name: string): boolean => {
   const regex = /^I[A-Z][a-zA-Z]*$/;
   return regex.test(name);
@@ -144,4 +147,9 @@ export function getRootDir() {
 
 export function getPathOf(name: string, baseDir?: string): string {
   return path.join(baseDir || getRootDir(), name);
+}
+export function getParserFromExt(ext: string) {
+  const parser = langValues.find(l => l.fileExtension.includes(ext));
+  if (!parser) throw 'That parser is undefined!';
+  return parser.parserName;
 }
