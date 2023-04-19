@@ -12,7 +12,7 @@
     "editing",
     "projects"
   ],
-  "homepage": "https://awayto.dev",
+  "homepage": "https://github.com/keybittech/wizapp",
   "license": "MIT",
   "author": "Joe McCormick",
   "main": "./bin/src/cli.js",
