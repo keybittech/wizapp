@@ -1,5 +1,5 @@
 import path from "path";
-import { isCliRunning } from "./config";
+import { isCalledWithNpx, isCliRunning } from "./config";
 
 export const isValidName = (name: string): boolean => {
   const regex = /^I[A-Z][a-zA-Z]*$/;
@@ -139,7 +139,7 @@ export function generateTempFilePath(dir: string, name: string) {
 }
 
 export function getRootDir() {
-  return path.join(__dirname, isCliRunning ? '../../' : '../');
+  return isCalledWithNpx ? process.cwd() : path.join(__dirname, isCliRunning ? '../../' : '../');
 }
 
 export function getPathOf(name: string, baseDir?: string): string {

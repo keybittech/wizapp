@@ -4,8 +4,12 @@ import path from 'path';
 import { Config, ConfigPropTypes, isConfigNestedObject } from './types';
 
 export const isCliRunning = process.argv[1].includes('bin/src/cli.js');
+export const isCalledWithNpx = process.env.npm_execpath && /npx(-cli\.js)?$/.test(process.env.npm_execpath);
 
-export const configFilePath = path.join(__dirname, `${isCliRunning ? '../..' : '..'}/config.json`);
+const normalPath = path.join(__dirname, `${isCliRunning ? '../..' : isCalledWithNpx ? process.cwd() : '..'}/config.json`)
+const npxPath = path.join(process.cwd(), 'config.json')
+
+export const configFilePath = isCalledWithNpx ? npxPath : normalPath;
 
 // Default configuration values
 export const defaultConfig: Config = {
@@ -17,21 +21,21 @@ export const defaultConfig: Config = {
 
 // Load existing configuration or create a new file with default values
 export let config = defaultConfig;
-if (fs.existsSync(configFilePath)) {
-  const rawData = fs.readFileSync(configFilePath);
-  config = JSON.parse(rawData.toString());
-} else {
-  fs.writeFileSync(configFilePath, JSON.stringify(defaultConfig, null, 2));
-  config = defaultConfig;
+export function checkConfigExists() {
+  if (fs.existsSync(configFilePath)) {
+    const rawData = fs.readFileSync(configFilePath);
+    config = JSON.parse(rawData.toString());
+  } else {
+    fs.writeFileSync(configFilePath, JSON.stringify(defaultConfig, null, 2));
+    config = defaultConfig;
+  }
 }
+
+checkConfigExists();
 
 // Function to save the configuration
 export function saveConfig(): void {
   fs.writeFileSync(configFilePath, JSON.stringify(config, null, 2));
-}
-
-export function updateConfig(newConfig: Config): void {
-  config = Object.assign(config, newConfig);
 }
 
 export function setConfig(newConfig: Config): void {

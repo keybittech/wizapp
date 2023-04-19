@@ -3,10 +3,9 @@
 
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
-import { config, saveConfig, getConfigValue, updateConfig } from './config';
+import { config, saveConfig, getConfigValue, checkConfigExists, isCalledWithNpx, isCliRunning } from './config';
 import * as spells from './spells';
 import { IPrompts } from './prompts';
-import { Config } from './types';
 
 const argv =  yargs(hideBin(process.argv))
   .options({
@@ -36,11 +35,11 @@ const argv =  yargs(hideBin(process.argv))
       });
     },
     (argv) => {
+      checkConfigExists();
       if (!argv.key) throw new Error('key required');
       const keys = argv.key.split('.');
       const [current, lastKey] = getConfigValue(config, keys);
       current[lastKey] = argv.value || '';
-      updateConfig(current as Config);
       saveConfig();
     }
   )

@@ -32,19 +32,19 @@ npm install @keybittech/wizapp
 ### Configure WizApp settings
 [Config Demo](https://youtu.be/b8uU2reOE5I)
 ```
-npx @keybittech/wizapp set ts.configPath "<path/to/tsconfig.json>"
+npx wizapp set ts.configPath "<path/to/tsconfig.json>"
 // required for create-api create-component guided-edit
 
-npx @keybittech/wizapp set ts.typeDir "<folder for generated types/apis>"
+npx wizapp set ts.typeDir "<folder for generated types/apis>"
 // required for create-api
 
-npx @keybittech/wizapp set ts.compDir "<folder for generated components>"
+npx wizapp set ts.compDir "<folder for generated components>"
 // required for create-component
 
-npx @keybittech/wizapp set git.rootPath "<root directory for the git project containing the above>"
+npx wizapp set git.rootPath "<root directory for the git project containing the above>"
 // setting this will enable PR creation only for guided-edit
 
-npx @keybittech/wizapp set user.name "<name used for generating entity>"
+npx wizapp set user.name "<name used for generating entity>"
 // default wizapp
 ```
 
@@ -62,7 +62,7 @@ The WizApp CLI offers a variety of magical delights to help you manage your Type
 - `create-api`: (Awayto extension) Creates a Typescript type with an api definition and functionality (Temperamental)
 
 ```
-npx @keybittech/wizapp [command] [options]
+npx wizapp [command] [options]
 ```
 
 ### CLI Commands - Work In Progress
@@ -87,7 +87,7 @@ Guided edit requires the tsconfig.json path to be configured and will seek out t
 #### Create API - Temperamental
 
 ```
-npx @keybittech/wizapp create-api "IMyApi"
+npx wizapp create-api "IMyApi"
 ```
 (Awayto Extension) This command infers a typescript type from the name given, then designs a templated API configuration and functionality.
 
