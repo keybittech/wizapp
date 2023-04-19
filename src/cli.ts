@@ -3,7 +3,7 @@
 
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
-import { config, saveConfig, getConfigValue, checkConfigExists, isCalledWithNpx, isCliRunning } from './config';
+import { config, saveConfig, getConfigValue, checkConfigExists } from './config';
 import * as spells from './spells';
 import { IPrompts } from './prompts';
 
