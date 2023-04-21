@@ -2,45 +2,80 @@ import fs from 'fs';
 import os from 'os';
 import path from 'path';
 import { execSync } from "child_process";
+import { getFileParser } from '../util';
 
-const dockerFile = `FROM node:16\nWORKDIR /app\nRUN npm install tree-sitter`;
+const dockerfile = `FROM node:16\nWORKDIR /app\nRUN npm install tree-sitter`;
+const imageName = 'wizapp-image';
+const containerName = 'wizapp-container';
+const volumeName = 'wizapp-volume';
 
-export function processFile(filename: string) {
-  const extension = filename.split('.').pop();
-  if (!extension) {
-    console.error('File extension not found');
-    return;
-  }
-  buildAndCopyFile(filename, extension);
+let activeTasks = 0;
+
+export function processFile(fileName: string) {
+  activeTasks++;
+  buildAndCopyFile(fileName);
   runExtractionScript();
   const localModsPath = 'path/to/your/local_modifications_file';
   copyModifications(localModsPath);
   runModificationScript();
-  copyModifiedFileToLocal(filename);
+  copyModifiedFileToLocal(fileName);
+
+  activeTasks--;
+  if (!activeTasks) {
+    setTimeout(() => {
+      if (!activeTasks) stopContainer();
+    }, 10000)
+  }
 }
 
-function buildAndCopyFile(filename: string, extension: string) {
-  const imageName = 'my-node-image';
-  const containerName = 'my-node-container';
+function stopContainer() {
+  execSync(`docker stop ${containerName}`);
+}
 
-  if (!containerExists(containerName)) {
-    const tempDockerfilePath = writeTempDockerfile(dockerFile);
+function buildAndCopyFile(fileName: string) {
+  if (!containerExists()) {
+    createSharedVolume();
+    const tempDockerfilePath = getTempFilePath('Dockerfile', dockerfile);
     execSync(`docker build -t ${imageName} -f ${tempDockerfilePath} .`);
-    execSync(`docker create --name ${containerName} ${imageName}`);
+    execSync(`docker create --name ${containerName} -v ${volumeName}:/app/node_modules ${imageName}`);
+  } else {
+    startContainerIfNotRunning();
   }
 
-  installTreeSitterGrammar(extension);
-  execSync(`docker cp ${filename} ${containerName}:/app/src/file`);
+  installTreeSitterGrammar(fileName);
+  execSync(`docker cp ${fileName} ${containerName}:/app/src/file`);
+
+  // Copy getStatements.js and getStatements.js.map into the Docker container
+  const getStatementsPath = path.resolve(__dirname, 'getStatements.js');
+  const getStatementsMapPath = path.resolve(__dirname, 'getStatements.js.map');
+  execSync(`docker cp ${getStatementsPath} ${containerName}:/app/bin/getStatements.js`);
+  execSync(`docker cp ${getStatementsMapPath} ${containerName}:/app/bin/getStatements.js.map`);
+  
 }
 
-function writeTempDockerfile(content: string): string {
+function createSharedVolume() {
+  try {
+    execSync(`docker volume create ${volumeName}`);
+  } catch (error) {
+    console.error('Error creating shared volume:', error);
+  }
+}
+
+function startContainerIfNotRunning() {
+  const containerStatus = execSync(`docker inspect --format='{{.State.Status}}' ${containerName}`).toString().trim();
+  if (containerStatus !== 'running') {
+    execSync(`docker start ${containerName}`);
+  }
+}
+
+function getTempFilePath(fileName: string, content: string): string {
   const tempDir = os.tmpdir();
-  const tempDockerfilePath = path.join(tempDir, 'Dockerfile');
-  fs.writeFileSync(tempDockerfilePath, content);
-  return tempDockerfilePath;
+  const tempFilePath = path.join(tempDir, fileName);
+  fs.writeFileSync(tempFilePath, content);
+  return tempFilePath;
 }
 
-function containerExists(containerName: string): boolean {
+function containerExists(): boolean {
   try {
     execSync(`docker inspect ${containerName}`);
     return true;
@@ -49,27 +84,38 @@ function containerExists(containerName: string): boolean {
   }
 }
 
-function installTreeSitterGrammar(extension: string) {
-  const packageName = `tree-sitter-${extension}`;
-  execSync(`docker exec my-node-container npm install ${packageName}`);
+function installTreeSitterGrammar(fileName: string) {
+  const parserName = getFileParser(fileName);
+  const packageName = `tree-sitter-${parserName}`;
+  execSync(`docker exec ${containerName} npm install ${packageName}`);
 }
 
 function runExtractionScript() {
-  execSync('docker start -a my-node-container');
-  execSync('docker exec my-node-container node bin/getStatements.js -f /app/src/file');
+  const result = execSync(`docker exec ${containerName} node bin/getStatements.js`);
+  try {
+    return JSON.parse(result.toString());
+  } catch (error) {
+    console.error('Error parsing JSON from extraction script:', error);
+    return [];
+  }
+}
+
+export function copyContentsToDocker(fileName: string, content: string) {
+  const tempContentPath = getTempFilePath(fileName, content);
+  execSync(`docker cp ${tempContentPath} ${containerName}:/app/${fileName}`)
 }
 
 function copyModifications(localModsPath: string) {
-  execSync(`docker cp ${localModsPath} my-node-container:/app/src/mods`);
+  execSync(`docker cp ${localModsPath} ${containerName}:/app/src/mods`);
 }
 
 function runModificationScript() {
-  execSync('docker exec my-node-container node bin/modifyStatements.js -f /app/src/file -e /app/src/mods');
+  execSync(`docker exec ${containerName} node bin/modifyStatements.js -f /app/src/file -e /app/src/mods`);
 }
 
-function copyModifiedFileToLocal(filename: string) {
-  const modifiedFilename = 'modified_' + filename;
-  execSync(`docker cp my-node-container:/app/src/modified_file ${modifiedFilename}`);
-  execSync('docker rm my-node-container');
-  fs.writeFileSync(filename, fs.readFileSync(modifiedFilename));
+function copyModifiedFileToLocal(fileName: string) {
+  const modifiedfileName = 'modified_' + fileName;
+  execSync(`docker cp ${containerName}:/app/src/modified_file ${modifiedfileName}`);
+  execSync(`docker rm ${containerName}`);
+  fs.writeFileSync(fileName, fs.readFileSync(modifiedfileName));
 }

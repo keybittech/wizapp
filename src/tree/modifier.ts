@@ -10,7 +10,7 @@ interface ModificationRules {
   addAfterText?: string;
 }
 
-function createModificationsFunction(): (statement: Statements) => Statements | null {
+export function createModificationsFunction(): (statement: Statements) => Statements | null {
   
   const rules = JSON.parse(fs.readFileSync(path.join(__dirname, '../files/mods'), { encoding: 'utf-8' }).toString()) as ModificationRules[];
   

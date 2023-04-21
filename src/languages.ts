@@ -373,9 +373,15 @@ const languages: Record<string, LanguageParser> = {
     fileExtension: ["twig"],
     parserName: "tree-sitter-twig"
   },
+  TSX: {
+    fileExtension: ["tsx"],
+    parserName: "tree-sitter-typescript",
+    parserVariant: "tsx"
+  },
   TypeScript: {
-    fileExtension: ["ts", "tsx"],
-    parserName: "tree-sitter-typescript"
+    fileExtension: ["ts"],
+    parserName: "tree-sitter-typescript",
+    parserVariant: "typescript"
   },
   Verilog: {
     fileExtension: ["v", "sv", "svh"],

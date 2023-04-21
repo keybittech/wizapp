@@ -1,7 +1,8 @@
 node_modules
 bin/
 results.json
-.vscode
+statements.json
 config.json
+.vscode
 types/
 components/

@@ -85,4 +85,56 @@ export interface Statements {
 export interface LanguageParser {
   fileExtension: string[];
   parserName: string;
+  parserVariant?: string;
+}
+
+export interface Grammars {
+  name: string;
+  nodeTypeInfo: Grammar[];
+}
+
+export interface Grammar {
+  type: string;
+  named: boolean;
+  subtypes?: Grammar[];
+  fields?: Record<string, Field>;
+  children?: Children;
+}
+
+export interface Field {
+  multiple: boolean;
+  required: boolean;
+  types: TypeRef[];
+}
+
+export interface TypeRef {
+  type: string;
+  named: boolean;
+}
+
+export interface Children {
+  multiple: boolean;
+  required: boolean;
+  types: TypeRef[];
+}
+
+export type LinearizedStatement = {
+  i: number; // id
+  p?: number; // parentId
+  t: string; // type
+  c: string; // content
+};
+
+export type DefaultGrammarOrVariants = {
+  default: Grammars | {
+    [prop: string]: Grammars
+  }
+}
+
+export function isDefaultGrammar(obj: DefaultGrammarOrVariants): obj is { default: Grammars } {
+  return 'string' === typeof obj.default.name;
+}
+
+export function isDefaultGrammarVariants(obj: DefaultGrammarOrVariants): obj is { default: { [prop: string]: Grammars } } {
+  return 'undefined' === typeof obj.default.name;
 }
