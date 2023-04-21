@@ -61,12 +61,9 @@ console.log({ changeViewerPrompt });
 
 Object.assign(aiPrompts, { [IPrompts.FILE_EDITOR]: changeViewerPrompt });
 
-export type FileEditorKeyPrefix = 'statement';
-
-export type FileEditorKeys = `${FileEditorKeyPrefix}_${number}`;
-
-export type FileEditorResponse = Record<FileEditorKeys, string>[];
+const fileEditorResponseRegex = /^\d+./igm;
+export type FileEditorResponse = `${number}. ${string}`;
 
 export function isFileEditorResult(obj: GuardValidations): boolean {
-  return 'string' === typeof obj;
+  return 'string' === typeof obj && fileEditorResponseRegex.test(obj);
 }
