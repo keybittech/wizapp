@@ -1,4 +1,6 @@
+import fs from 'fs';
 import path from "path";
+import { sync } from 'glob';
 import { isCalledWithNpx, isCliRunning } from "./config";
 
 import languages from "./languages";
@@ -148,8 +150,50 @@ export function getRootDir() {
 export function getPathOf(name: string, baseDir?: string): string {
   return path.join(baseDir || getRootDir(), name);
 }
-export function getParserFromExt(ext: string) {
-  const parser = langValues.find(l => l.fileExtension.includes(ext));
+
+export function getFileParser(fileName: string) {
+  const extension = path.extname(fileName);
+  const parser = langValues.find(l => l.fileExtension.includes(extension));
   if (!parser) throw 'That parser is undefined!';
   return parser.parserName;
 }
+
+export function getFileFromDir(file: string, dir: string = __dirname) {
+  const files = fs.readdirSync(dir);
+  const fileName = files.find(f => f.startsWith(file));
+  if (!fileName) throw 'File not found.';
+  return fs.readFileSync(path.join(dir, fileName), { encoding: 'utf-8' })
+}
+
+export function getTargetFile(targetFile: string, rootDir: string = getRootDir(), ignoredDirectories: string[] = excludeDirectories): string | null {
+  const pattern = path.join(rootDir, '**', targetFile);
+
+  const files = sync(pattern, {
+    ignore: ignoredDirectories.map(dir => path.join('**', dir, '**')),
+    nodir: true,
+  });
+
+  if (!files.length) {
+    throw 'No file found.';
+  }
+  
+  if (files.length > 1) {
+    throw 'Multiple files were found. Please specifiy with a local folder path.';
+  }
+
+  const fileContent = fs.readFileSync(files[0], { encoding: 'utf-8' });
+
+  console.log({ gotfiles: files, fileContent})
+
+  return files.length > 0 ? fileContent : null;
+}
+
+const excludeDirectories = [
+  'node_modules',
+  'vendor',
+  'dist',
+  'build',
+  '.git',
+  '.svn',
+  // add other directories to exclude
+];

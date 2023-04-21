@@ -11,6 +11,7 @@ export enum IPrompts {
   MORPH_2 = 'morph_2',
   MORPH_3 = 'morph_3',
   DERIVE_INSTRUCTION = 'derive_instruction',
+  FILE_EDITOR = 'file_editor',
   GUIDED_EDIT = 'guided_edit',
   MIRROR_EDIT = 'mirror_edit',
   SUGGEST_ROLE = 'suggest_role',
@@ -38,6 +39,7 @@ export * from './create_api_prompt';
 export * from './create_app_component_prompt';
 export * from './create_gen_component_prompt';
 export * from './create_type_prompt';
+export * from './file_editor_prompt';
 export * from './guided_edit_prompt';
 export * from './suggest_feature_prompt';
 export * from './suggest_role_prompt';

@@ -1,4 +1,4 @@
-import { isCreateApiResult, isGuidedEditResult, isCreateTypeResponse, isCreateApiBackendResult, isGeneralComponentResponse } from "./prompts";
+import { isCreateApiResult, isGuidedEditResult, isCreateTypeResponse, isCreateApiBackendResult, isGeneralComponentResponse, isFileEditorResult } from "./prompts";
 import { GuardValidations } from "./types";
 import { processTextWithCodeBlock } from "./util";
 
@@ -69,6 +69,7 @@ export function parseChatAttempt<T>(attempt: string): { supportingText: string, 
 }
 
 const responseValidators = [
+  isFileEditorResult,
   isGuidedEditResult,
   isCreateTypeResponse,
   isCreateApiResult,

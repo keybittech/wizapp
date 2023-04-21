@@ -101,6 +101,29 @@ const argv =  yargs(hideBin(process.argv))
     }
   )
   .command(
+    'file-editor <fileName> [instructions...]',
+    'Edit any file',
+    (yargs) => {
+      return yargs
+        .positional('fileName', {
+          describe: 'File Name',
+          type: 'string',
+          demandOption: true
+        })
+        .positional('instructions', {
+          describe: 'File name with instructions',
+          type: 'string',
+          array: true,
+          demandOption: true
+        });
+    },
+    async (argv) => {
+      await spells.fileEditor(argv.fileName, ...argv.instructions)
+        .then((result) => console.log(result))
+        .catch((error) => console.error(error));
+    }
+  )
+  .command(
     'create-component [description]',
     'Create a component',
     (yargs) => {
