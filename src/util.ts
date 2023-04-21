@@ -53,11 +53,11 @@ export function extractCodeBlock(inputString: string, delimeter: string = '```',
 };
 
 export function extractCodeBlockPre(inputString: string, index: number): string {
-  return inputString.substring(0, index).trim();
+  return inputString.substring(0, index)?.trim() || '';
 }
 
 export function extractCodeBlockPost(inputString: string, index: number, delimeter: string = '```'): string {
-  return inputString.substring(index).split(delimeter)[1].trim();
+  return inputString.substring(index).split(delimeter)[1]?.trim() || '';
 }
 
 export function processTextWithCodeBlock(inputString: string): { codeBlock: string; supportingText: string } {

@@ -9,9 +9,9 @@ const fileEditorPrompt = [
 console.log({ fileEditorPrompt });
 
 const changeViewerPrompt = [
-  { role: 'system', content: 'You edit line contents with new text or setting text to empty strings. Do not add or remove line numbers. Do not show unedited lines.' },
+  { role: 'system', content: 'You, wizapp, edit line contents and convey changes with comment snippets. Do not add or remove line numbers. Completely forget unedited lines in your response.' },
   // { role: 'system', content: 'You reply with: "I only edited line {number of each edited line}, so I am just going to show you {number of edited lines} lines, including empty lines:"' },
-  { role: 'user', content: `add_content_to_a_single_line.txt
+  { role: 'user', content: `add_content_example.txt
 
 put a happy face on line 4
 
@@ -22,11 +22,11 @@ put a happy face on line 4
 5. Lorem ipsum dolor sit amet.
 6. Lorem ipsum dolor sit amet.
 7. Lorem ipsum dolor sit amet.`},
-  { role: 'assistant', content: `I edited line 4, which is 1 total edited line. Here is the 1 edited line:  
+  { role: 'assistant', content: `Edits conveyed by comment snippets. I edited line 4, which is 1 total edited line. Here is the 1 edited line:  
 \`\`\`
-4. Lorem ipsum dolor sit amet. :)
+4. Lorem ipsum dolor sit amet. :) /* wizapp added line content */
 \`\`\``},
-  { role: 'user', content: `remove_and_edit_content_from_various_lines.js
+  { role: 'user', content: `remove_and_edit_content_example.js
 
 remove the console logs and change ts.configPath to ts.configRoot
 
@@ -40,12 +40,12 @@ remove the console logs and change ts.configPath to ts.configRoot
 8.   console.log('testing removals');
 9.   throw new Error('Missing ts.configPath.')
 10. }`},
-  { role: 'assistant', content: `I edited lines 3, 7, 8, and 9, which is 4 total edited lines. Here are the 4 lines:
+  { role: 'assistant', content: `Edits conveyed by comment snippets. I edited lines 3, 7, 8, and 9, which is 4 total edited lines. Here are the 4 edited lines:
 \`\`\`
-3. 
-7. if (!config.ts.configRoot) {
-8.   
-9.   throw new Error('Missing ts.configRoot.')
+3. /* wizapp removed line content */ {empty space}
+7. if (!config.ts.configRoot) { /* wizapp edited line content */
+8. /* wizapp removed line content */ {empty space}
+9.   throw new Error('Missing ts.configRoot.') /* wizapp edited line content */
 \`\`\`` },
   { role: 'user', content: `\${prompt1}
 
