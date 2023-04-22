@@ -1,5 +1,5 @@
 {
-  "include": ["src", "test"],
+  "include": ["src"],
   "exclude": ["types", "components"],
   "compilerOptions": {
     "outDir": "bin",
@@ -9,8 +9,8 @@
     "lib": [
       "es2021"
     ],
-    "module": "commonjs",
-    "target": "es2021",
+    "module": "esnext",
+    "target": "es2020",
     "esModuleInterop": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": false,
