@@ -1,6 +1,6 @@
 {
   "name": "@keybittech/wizapp",
-  "version": "0.1.8-beta",
+  "version": "0.1.9-beta",
   "description": "The Wizard's Apprentice",
   "keywords": [
     "automated",
@@ -45,6 +45,10 @@
     "ts-jest": "29.1.0",
     "ts-loader": "9.0.0",
     "typescript": "4.9.5"
+  },
+  "optionalDependencies": {
+    "source-map-support": "^0.5.21",
+    "supports-color": "^8.1.1"
   },
   "directories": {
     "test": "test"
