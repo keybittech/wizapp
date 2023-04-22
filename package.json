@@ -1,6 +1,6 @@
 {
   "name": "@keybittech/wizapp",
-  "version": "0.1.13-beta",
+  "version": "0.1.14-beta",
   "description": "The Wizard's Apprentice",
   "keywords": [
     "automated",
@@ -15,13 +15,13 @@
   "homepage": "https://github.com/keybittech/wizapp",
   "license": "MIT",
   "author": "Joe McCormick",
+  "type": "module",
   "main": "./bin/src/index.js",
   "bin": {
-    "wizapp": "./bin/src/cli/cli.js"
+    "wizapp": "./cli/src/cli.js"
   },
   "scripts": {
     "build": "tsc -p tsconfig.json && tsc -p tsconfig.cli.json",
-    "wizapp": "ts-node ./src/cli.ts",
     "test": "jest",
     "debug": "node --inspect-brk ./node_modules/jest/bin/jest.js --runInBand",
     "update-version": "npm version --no-git-tag-version $new_version && git add package.json && git commit -m \"Update to version $new_version\"",
@@ -46,9 +46,13 @@
     "ts-loader": "9.0.0",
     "typescript": "4.9.5"
   },
-  "directories": {
-    "test": "test"
-  },
+  "files": [
+    "cli",
+    "bin",
+    "src",
+    "LICENSE",
+    "README.md"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/keybittech/wizapp.git"
