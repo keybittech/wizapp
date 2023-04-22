@@ -4,7 +4,7 @@ import { getPathOf, sanitizeName, toSnakeCase, toTitleCase } from '../util';
 import { useAi } from './use_ai_spell';
 import { CreateApiBackendResult, IPrompts } from '../prompts';
 
-export async function createApiBackend(typeName: string, generatedType: string) {
+export async function createApiBackend(typeName: string, generatedType: string): Promise<string> {
   const config = getConfig();
   if (!config.ts.configPath) {
     throw new Error('Missing ts.configPath.');

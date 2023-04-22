@@ -4,7 +4,7 @@ import { useAi } from "./use_ai_spell";
 import { getPathOf, isValidName, sanitizeName, toSnakeCase, toTitleCase } from "../util";
 import { getConfig } from "../config";
 
-export async function createType(typeName: string) {
+export async function createType(typeName: string): Promise<string> {
   
   const config = getConfig();
   if (!config.ts.typeDir) {

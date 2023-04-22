@@ -6,7 +6,7 @@ import { GeneralComponentResponse, IPrompts } from '../prompts';
 import { getConfig } from '../config';
 import { getPathOf, sanitizeName } from '../util';
 
-export async function createComponent(description: string, user?: string) {
+export async function createComponent(description: string, user?: string): Promise<string> {
   
   const config = getConfig();
   if (!config.ts.compDir) {

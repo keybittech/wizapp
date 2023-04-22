@@ -29,7 +29,7 @@ function walkNode(child: Node, i: number, parsedStatements: Record<string, strin
   }
 }
 
-export async function guidedEdit(fileParts: string, editingUser?: string) {
+export async function guidedEdit(fileParts: string, editingUser?: string): Promise<string> {
 
   const config = getConfig();
   if (!config.ts.configPath) {
@@ -106,6 +106,8 @@ export async function guidedEdit(fileParts: string, editingUser?: string) {
         }
       });
 
+      let responseMessage = '';
+
       if (fileModified) {
         // const projectDiffPath = path.resolve('~/code/project_diff');
         // const apiPath = path.join(projectDiffPath, 'api');
@@ -145,17 +147,20 @@ export async function guidedEdit(fileParts: string, editingUser?: string) {
         const prTitle = `${editingUser || config.user.name} edited ${fileName}: ${suggestions.replace(/[~^:?"*\[\]@{}\\/]+/g, '')}`.slice(0, 255);
         const prBody = `GPT: ${res.supportingText || 'No supporting text found.'}`.replaceAll('"', '');
         const prRes = await managePullRequest(generatedBranch, prTitle, prBody);
-        await goHome();
 
-        return 'guided edit complete: ' + prRes;
+        responseMessage = 'guided edit complete: ' + prRes;
       } else {
-        throw new Error('guided edit produced no modifications for ' + fileName);
+        responseMessage = 'guided edit produced no modifications for ' + fileName;
       }
+
+      await goHome();
+      return responseMessage;
     }
 
   } catch (error) {
     await goHome();
-    return error;
+    const err = error as Error;
+    return err.message + '\n\n' + err.stack;
   }
 
   return 'file not found: ' + fileName;

@@ -9,7 +9,7 @@ import { FileEditorResponse } from '../prompts/file_editor_prompt';
 import { getTargetFile, saveTargetFile } from '../util';
 // import { copyContentsToDocker } from '../tree/docker';
 
-export async function fileEditor(...fileParts: string[]) {
+export async function fileEditor(...fileParts: string[]): Promise<string> {
 
   console.log({ fileParts });
   

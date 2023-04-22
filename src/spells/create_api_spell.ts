@@ -4,7 +4,7 @@ import { useAi } from './use_ai_spell';
 import { CreateApiResult, IPrompts } from '../prompts';
 import { getConfig } from '../config';
 
-export async function createApi(typeName: string, generatedType: string) {
+export async function createApi(typeName: string, generatedType: string): Promise<string> {
 
   const config = getConfig();
 
