@@ -17,10 +17,10 @@
   "author": "Joe McCormick",
   "main": "./bin/src/index.js",
   "bin": {
-    "wizapp": "./bin/src/cli.js"
+    "wizapp": "./bin/src/cli/cli.js"
   },
   "scripts": {
-    "build": "tsc -p tsconfig.json",
+    "build": "tsc -p tsconfig.json && tsc -p tsconfig.cli.json",
     "wizapp": "ts-node ./src/cli.ts",
     "test": "jest",
     "debug": "node --inspect-brk ./node_modules/jest/bin/jest.js --runInBand",
@@ -46,7 +46,6 @@
     "ts-loader": "9.0.0",
     "typescript": "4.9.5"
   },
-  "optionalDependencies": {},
   "directories": {
     "test": "test"
   },
