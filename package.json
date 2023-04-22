@@ -1,6 +1,6 @@
 {
   "name": "@keybittech/wizapp",
-  "version": "0.1.7-beta",
+  "version": "0.1.8-beta",
   "description": "The Wizard's Apprentice",
   "keywords": [
     "automated",
@@ -15,7 +15,7 @@
   "homepage": "https://github.com/keybittech/wizapp",
   "license": "MIT",
   "author": "Joe McCormick",
-  "main": "./src/index.ts",
+  "main": "./bin/src/index.js",
   "bin": {
     "wizapp": "./bin/src/cli.js"
   },
