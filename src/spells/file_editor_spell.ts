@@ -6,7 +6,8 @@ import { IPrompts } from '../prompts';
 import { getConfig } from '../config';
 // import { getPathOf, sanitizeName } from '../util';
 import { FileEditorResponse } from '../prompts/file_editor_prompt';
-import { getTargetFile } from '../util';
+import { getTargetFile, saveTargetFile } from '../util';
+// import { copyContentsToDocker } from '../tree/docker';
 
 export async function fileEditor(...fileParts: string[]) {
 
@@ -27,43 +28,41 @@ export async function fileEditor(...fileParts: string[]) {
 
   if (!originalFileContents) throw 'File not found.';
 
-  const lined = originalFileContents.split('\n').map((l, i) => `${i + 1}. ${l}`).join('\n');
+  const lined = originalFileContents.split('\n').map((l, i) => `${i + 1}. ${l}`);
 
   console.log({ lined, fileName, suggestedEdits });
 
-  await useAi<FileEditorResponse>(IPrompts.FILE_EDITOR, fileName, suggestedEdits.join(' '), lined);
+  const response = await useAi<FileEditorResponse>(IPrompts.FILE_EDITOR, fileName, suggestedEdits.join(' '), lined.join('\n'));
   
-  // console.log({ EDITOR_FINISHED: true })
+  console.log({ EDITOR_FINISHED: response.message });
 
-  // const sourceFile = project.createSourceFile('new_component.tsx', res.message, { scriptKind: ScriptKind.JSX });
+  const editedLines: Record<string, string> = response.message.split('\n').reduce((m, d) => {
+    const match = d.match(/^\d+. /);
+    if (match) {
+      console.log({ match })
+      return ({
+        ...m,
+        [match[0].trim()]: d.slice(match[0].length)
+      })
+    }
+    return { ...m };
+  }, {});
 
-  
-  // let componentName;
-  // const exportedDeclarations = sourceFile.getExportedDeclarations().get('default');
-  // if (exportedDeclarations) {
-  //   const declaration = exportedDeclarations[0];
-  //   if (Node.isVariableDeclaration(declaration)) {
-  //     const initializer = declaration.getInitializer();
-  //     if (initializer?.getKind() === SyntaxKind.FunctionExpression || initializer?.getKind() === SyntaxKind.ArrowFunction) {
-  //       componentName = declaration.getName();
-  //     }
-  //   } else if (Node.isFunctionDeclaration(declaration)) {
-  //     componentName = declaration.getName();
-  //   }
-  // }
+  const regex = /\/\*\s*change:.*?\*\//gs;
 
-  // if (componentName) {
-  //   const creatorComment = `/* Created by ${user || config.user.name}, ${description} */\n`;
-  //   const coreCompsPath = sanitizeName(config.ts.compDir);
-  //   const compFilePath = getPathOf(`${coreCompsPath}/${componentName}.tsx`);
-    
-  //   if (!fs.existsSync(coreCompsPath)) {
-  //     fs.mkdirSync(coreCompsPath, { recursive: true });
-  //   }
+  const editedFile = lined.map(l => {
+    const match = l.match(/^\d+. /);
+    const key = match && match[0].trim();
+    const edit = key && editedLines[key as keyof typeof editedLines];
+    if (edit) {
+      return edit.replace(regex, ''); 
+    }
+    return l.slice(match?match[0].length:0);
+  }).filter(l => l?.length > 0).join('\n');
 
-  //   fs.writeFileSync(compFilePath, `${creatorComment}${res.message}`);
-  //   return 'created a new component';
-  // }
+  console.log({ lined, editedLines, editedFile, editNum: Object.keys(editedLines).length });
 
-  return 'end of file editor ';
+  const saved = saveTargetFile(fileName, editedFile);
+
+  return saved;
 }

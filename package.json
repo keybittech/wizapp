@@ -15,7 +15,7 @@
   "homepage": "https://github.com/keybittech/wizapp",
   "license": "MIT",
   "author": "Joe McCormick",
-  "main": "./bin/src/cli.js",
+  "main": "./bin/src/index.js",
   "bin": {
     "wizapp": "./bin/src/cli.js"
   },

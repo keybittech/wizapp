@@ -188,6 +188,29 @@ export function getTargetFile(targetFile: string, rootDir: string = getRootDir()
   return files.length > 0 ? fileContent : null;
 }
 
+export function saveTargetFile(targetFile: string, contents: string, rootDir: string = getRootDir(), ignoredDirectories: string[] = excludeDirectories): string {
+  const pattern = path.join(rootDir, '**', targetFile);
+
+  const files = sync(pattern, {
+    ignore: ignoredDirectories.map(dir => path.join('**', dir, '**')),
+    nodir: true,
+  });
+
+  if (!files.length) {
+    throw 'No file found.';
+  }
+  
+  if (files.length > 1) {
+    throw 'Multiple files were found. Please specifiy with a local folder path.';
+  }
+
+  const fileContent = fs.writeFileSync(files[0], contents, { encoding: 'utf-8' });
+
+  console.log({ gotfiles: files, fileContent})
+
+  return 'file saved';
+}
+
 const excludeDirectories = [
   'node_modules',
   'vendor',
