@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from "path";
-import { sync } from 'glob';
+import { sync } from 'fast-glob';
 import { isCalledWithNpx, isCliRunning } from "./config";
 
 import languages from "./languages";
@@ -170,7 +170,7 @@ export function getTargetFile(targetFile: string, rootDir: string = getRootDir()
 
   const files = sync(pattern, {
     ignore: ignoredDirectories.map(dir => path.join('**', dir, '**')),
-    nodir: true,
+    onlyFiles: true,
   });
 
   if (!files.length) {
@@ -193,7 +193,7 @@ export function saveTargetFile(targetFile: string, contents: string, rootDir: st
 
   const files = sync(pattern, {
     ignore: ignoredDirectories.map(dir => path.join('**', dir, '**')),
-    nodir: true,
+    onlyFiles: true,
   });
 
   if (!files.length) {
