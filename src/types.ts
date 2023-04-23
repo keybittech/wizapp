@@ -1,5 +1,5 @@
 import { CreateChatCompletionRequest, CreateCompletionRequest, CreateModerationRequest } from "openai";
-import { IPrompts } from "./prompts";
+import { IPrompts } from "./prompts/prompts.js";
 
 export type ConfigPropTypes = string;
 export type Config = Record<string, Record<string, ConfigPropTypes>>;

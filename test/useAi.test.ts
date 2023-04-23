@@ -1,4 +1,4 @@
-import { GuidedEditResponse, IPrompts } from '../src/prompts';
+import { IPrompts } from '../src/prompts/prompts';
 import { setupCommonMocks, setupChatResponse, setupCompletionResponse, setupModerationResponse, openai, setupConfigTestBefore, setupConfigTestAfter } from './testHelpers';
 
 setupChatResponse('&&&Some text@@@[{ "statement_0": "some code " }]@@@Some other text&&&');
@@ -12,6 +12,7 @@ jest.mock('fs', () => ({
 }));
 
 import { useAi } from '../src/spells/use_ai_spell';
+import { GuidedEditResponse } from '../src/prompts/guided_edit_prompt';
 
 describe('useAi', () => {
   let tempConfigPath = '';

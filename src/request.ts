@@ -1,6 +1,6 @@
 import { CreateModerationRequest, OpenAIApi } from "openai";
-import { aiPrompts, IPrompts } from "./prompts";
-import { isChatRequest, isCompletionRequest, isModerationRequest, OpenAIRequestShapes } from "./types";
+import { aiPrompts, IPrompts } from "./prompts/prompts.js";
+import { isChatRequest, isCompletionRequest, isModerationRequest, OpenAIRequestShapes } from "./types.js";
 
 const openai = new OpenAIApi();
 export const openAIRequestOptions = {
@@ -19,6 +19,8 @@ export function buildOpenAIRequest(prompts: string[], promptType?: IPrompts): [O
     }
     return [moderationRequest];
   }
+  
+  console.log({ aiPrompts })
 
   const promptTokens = prompts.reduce<Record<string, string>>((m, t, i) => ({ ...m, [`\$\{prompt${i + 1}\}`]: t }), {});
   const promptTemplate = aiPrompts[promptType];

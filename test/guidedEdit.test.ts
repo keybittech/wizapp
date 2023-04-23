@@ -1,14 +1,18 @@
-import * as git from '../src/git';
+
 import * as useAiModule from '../src/spells/use_ai_spell';
 import { createMockStatement, setupConfigTestAfter, setupConfigTestBefore, withTempConfig } from './testHelpers';
 import { Project, SyntaxKind } from 'ts-morph';
 
 // Mock the required functions
-jest.mock('../src/git');
+jest.mock('../src/git/prepare_branch');
+jest.mock('../src/git/manage_pull_request');
 jest.mock('../src/spells/use_ai_spell');
 
-const prepareBranchMock = git.prepareBranch as jest.Mock;
-const managePullRequestMock = git.managePullRequest as jest.Mock;
+import { prepareBranch } from '../src/git/prepare_branch';
+import { managePullRequest } from '../src/git/manage_pull_request';
+
+const prepareBranchMock = prepareBranch as jest.Mock;
+const managePullRequestMock = managePullRequest as jest.Mock;
 const useAiMock = useAiModule.useAi as jest.Mock;
 
 import { guidedEdit } from '../src/spells/guided_edit_spell';
@@ -17,7 +21,7 @@ describe('guidedEdit', () => {
   let tempConfigPath = '';
 
   beforeEach(() => {
-    tempConfigPath = setupConfigTestBefore({ ai: { retries: '3' }, ts: { typeDir: 'types', configPath: 'tsconfig.json' } });
+    tempConfigPath = setupConfigTestBefore({ ai: { retries: '3' }, ts: { typeDir: 'types', configPath: 'tsconfig.json' }, git: { rootPath: '.' } });
     jest.clearAllMocks();
   });
 

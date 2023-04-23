@@ -1,7 +1,10 @@
-// config.ts
 import fs from 'fs';
+// import url from 'url';
 import path from 'path';
-import { Config, ConfigPropTypes, isConfigNestedObject } from './types';
+import { Config, ConfigPropTypes, isConfigNestedObject } from './types.js';
+
+// const __filename = url.fileURLToPath(import.meta.url);
+// const __dirname = path.dirname(__filename);
 
 export const isCliRunning = process.argv[1].includes('bin/src/cli.js');
 export const isCalledWithNpx = process.env.npm_execpath && /npx(-cli\.js)?$/.test(process.env.npm_execpath);

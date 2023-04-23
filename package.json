@@ -1,6 +1,6 @@
 {
   "name": "@keybittech/wizapp",
-  "version": "0.1.14-beta",
+  "version": "0.1.22-beta",
   "description": "The Wizard's Apprentice",
   "keywords": [
     "automated",
@@ -16,14 +16,21 @@
   "license": "MIT",
   "author": "Joe McCormick",
   "type": "module",
-  "main": "./bin/src/index.js",
+  "main": "./build/index.js",
   "bin": {
-    "wizapp": "./cli/src/cli.js"
+    "wizapp": "./cli/cli.cjs"
   },
+  "files": [
+    "build",
+    "cli",
+    "src",
+    "LICENSE",
+    "README.md"
+  ],
   "scripts": {
-    "build": "tsc -p tsconfig.json && tsc -p tsconfig.cli.json",
+    "build": "tsc -p tsconfig.json && tsc -p tsconfig.cli.json && node renameCjs.cjs",
     "test": "jest",
-    "debug": "node --inspect-brk ./node_modules/jest/bin/jest.js --runInBand",
+    "debug": "--inspect-brk ./node_modules/jest/bin/jest.js --runInBand",
     "update-version": "npm version --no-git-tag-version $new_version && git add package.json && git commit -m \"Update to version $new_version\"",
     "publish-package": "npm publish --access public",
     "update-and-publish": "npm run update-version && npm run publish-package"
@@ -42,17 +49,14 @@
     "@types/node": "16.18.0",
     "@types/yargs": "17.0.24",
     "jest": "29.5.0",
+    "jest-environment-node": "^29.5.0",
+    "jest-ts-webcompat-resolver": "^1.0.0",
     "ts-jest": "29.1.0",
     "ts-loader": "9.0.0",
-    "typescript": "4.9.5"
+    "ts-node": "^10.9.1",
+    "tspath": "^2.6.8",
+    "typescript": "5.0.4"
   },
-  "files": [
-    "cli",
-    "bin",
-    "src",
-    "LICENSE",
-    "README.md"
-  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/keybittech/wizapp.git"

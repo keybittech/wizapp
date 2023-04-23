@@ -31,16 +31,29 @@ export function setupCommonMocks() {
   jest.mock('openai', () => ({
     OpenAIApi: jest.fn().mockImplementation(() => openai),
   }));
+  
+  const addSourceFileAtPathMock = jest.fn().mockReturnValue({
+    getVariableDeclarations: jest.fn().mockReturnValue([]),
+    getExportedDeclarations: jest.fn().mockReturnValue({
+      get: jest.fn()
+    }),
+    insertText: jest.fn(),
+    fixMissingImports: jest.fn(),
+    getEnd: jest.fn()
+  });
+  const saveMock = jest.fn();
 
   jest.mock('ts-morph', () => ({
     // Mock the ts-morph library's methods here.
     Project: jest.fn().mockImplementation(() => ({
-      addSourceFileAtPath: jest.fn().mockReturnValue({}),
+      createSourceFile: addSourceFileAtPathMock,
+      addSourceFileAtPath: addSourceFileAtPathMock,
       getSourceFile: jest.fn().mockReturnValue({}),
-      save: jest.fn(),
+      save: saveMock,
       // ...mock other methods if needed
     })),
     SyntaxKind: jest.fn().mockReturnValue({}),
+    ScriptKind: jest.fn().mockReturnValue({}),
     FunctionDeclaration: jest.fn(),
     Node: jest.fn()
   }));

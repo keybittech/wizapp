@@ -1,8 +1,8 @@
-import { IPrompts, aiPrompts } from ".";
-import { GuardValidations } from "../types";
+import { ChatCompletionRequestMessage } from "openai";
+import { GuardValidations } from "../types.js";
 
 // aHR0cHM6Ly9tYXJ0aW5mb3dsZXIuY29tL2FydGljbGVzLzIwMjMtY2hhdGdwdC14dS1oYW8uaHRtbA==
-const instructionPromptMessages = [
+export const deriveInstructionPrompt: ChatCompletionRequestMessage[] = [
   { role: 'system', content: '' },
   { role: 'assistant', content: `{introduction}
 
@@ -49,10 +49,7 @@ const instructionPromptMessages = [
   {solution_guidance}
   
   Provide an overall solution following the guidance mentioned above. Hint, {solution_hint}. Don't generate code. Describe the solution and break it down into a task list based on the guidance mentioned above. We will refer to this task list as our master plan.`}
-]
-
-
-Object.assign(aiPrompts, { [IPrompts.DERIVE_INSTRUCTION]: instructionPromptMessages });
+];
 
 const derivedInstructionResponseRegex = /export default function/igm;
 type DerivedInstructionKey = string;

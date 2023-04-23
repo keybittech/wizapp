@@ -1,8 +1,9 @@
 import fs from "fs";
-import { CreateTypeResponse, IPrompts } from "../prompts";
-import { useAi } from "./use_ai_spell";
-import { getPathOf, isValidName, sanitizeName, toSnakeCase, toTitleCase } from "../util";
-import { getConfig } from "../config";
+import { IPrompts } from "../prompts/prompts.js";
+import { useAi } from "../spells/use_ai_spell.js";
+import { getPathOf, isValidName, sanitizeName, toSnakeCase, toTitleCase } from "../util.js";
+import { getConfig } from "../config.js";
+import { CreateTypeResponse } from "../prompts/create_type_prompt.js";
 
 export async function createType(typeName: string): Promise<string> {
   

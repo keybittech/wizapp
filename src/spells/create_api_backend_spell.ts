@@ -1,8 +1,9 @@
 import { Project } from 'ts-morph';
-import { getConfig } from '../config';
-import { getPathOf, sanitizeName, toSnakeCase, toTitleCase } from '../util';
-import { useAi } from './use_ai_spell';
-import { CreateApiBackendResult, IPrompts } from '../prompts';
+import { getConfig } from '../config.js';
+import { getPathOf, sanitizeName, toSnakeCase, toTitleCase } from '../util.js';
+import { useAi } from '../spells/use_ai_spell.js';
+import { IPrompts } from '../prompts/prompts.js';
+import { CreateApiBackendResult } from '../prompts/create_api_backend_prompt.js';
 
 export async function createApiBackend(typeName: string, generatedType: string): Promise<string> {
   const config = getConfig();

@@ -1,6 +1,6 @@
 import { execSync } from "child_process";
-import { gitCheck } from "./check_git_cli";
-import { getConfig } from "../config";
+import { gitCheck } from "../git/check_git_cli.js";
+import { getConfig } from "../config.js";
 
 
 export async function managePullRequest(branch: string, title: string, body: string) {

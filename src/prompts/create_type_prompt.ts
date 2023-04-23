@@ -1,5 +1,5 @@
-import { aiPrompts, IPrompts } from ".";
-import { GuardValidations } from "../types";
+import { ChatCompletionRequestMessage } from "openai";
+import { GuardValidations } from "../types.js";
 
 // const createTypePrompt = 'Complete the following typescript type with 4-7 unconventionally named properties, using string, number or boolean, starting with its opening bracket, "type ${prompt1} =';
 
@@ -18,7 +18,7 @@ import { GuardValidations } from "../types";
 //   ` }
 // ]
 
-const createTypeMessages = [
+export const createTypeMessages: ChatCompletionRequestMessage[] = [
   { role: 'system', content: 'As a TypescriptTypeGeneratorGPT, generate a Typescript type definition for ${prompt1}.' },
   { role: 'assistant', content: `Internal Process:
   1. Generate: 4-7 uncommon English-language attribute names. 
@@ -31,9 +31,7 @@ const createTypeMessages = [
   {left intentionally blank}
   &&&
   3. Validation: Response structure is re-validated to adhere to the formatting of step 2.`}
-]
-
-Object.assign(aiPrompts, { [IPrompts.CREATE_TYPE]: createTypeMessages });
+];
 
 export type CreateTypeTypeName = `I${string}`;
 

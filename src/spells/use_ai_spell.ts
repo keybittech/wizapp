@@ -1,9 +1,9 @@
-import { ChatResponse, CompletionResponse, isCompletionRequest, ModerationResponse, OpenAIResults, UseAIResponses } from '../types';
-import { parseChatAttempt } from '../chat_parser';
-import { IPrompts } from '../prompts';
-import { buildOpenAIRequest, performRequest } from '../request';
-import { logAiResult } from '../stats';
-import { getConfig } from '../config';
+import { ChatResponse, CompletionResponse, isCompletionRequest, ModerationResponse, OpenAIRequestShapes, OpenAIResults, UseAIResponses } from '../types.js';
+import { parseChatAttempt } from '../chat_parser.js';
+import { IPrompts } from '../prompts/prompts.js';
+import { buildOpenAIRequest, performRequest } from '../request.js';
+import { logAiResult } from '../stats.js';
+import { getConfig } from '../config.js';
 
 export async function useAi<T = undefined>(promptType?: IPrompts, ...prompts: string[]): Promise<UseAIResponses<T>> {
   
@@ -51,45 +51,47 @@ export async function useAi<T = undefined>(promptType?: IPrompts, ...prompts: st
       return completionResponse as UseAIResponses<T>;
     }
 
-    async function resolveAttempt(attempt: string, retriesRemaining: number): Promise<ChatResponse<T>> {
-      try {
-        const { supportingText, message } = parseChatAttempt<T>(attempt);
+    const chatResponse = await resolveAttempt<T>(responseTry, retries, aiResponse, builtRequest) as UseAIResponses<T>;
 
-        const chatResponse = {
-          ...aiResponse,
-          supportingText,
-          message
-        };
-        logAiResult<T>({ ...chatResponse, prompts, model: builtRequest.model });
-        console.log('CHAT RESPONSE :==: ', chatResponse)
-        return chatResponse;
-      } catch (error) {
-        const err = error as Error;
-        if (retriesRemaining > 0 && err.message.startsWith('cannot parse')) {
-          const repeatedAttempt = await performRequest(builtRequest);
-
-          aiResponse.rawResponses.push(repeatedAttempt);
-
-          if ('string' !== typeof repeatedAttempt) {
-            const imparsable = 'Received imparsable resolution during retry.';
-            aiResponse.failures.push(imparsable);
-            throw new Error(imparsable);
-          }
-
-          return await resolveAttempt(repeatedAttempt, retriesRemaining - 1);
-        }
-
-        const resolveIssue = 'Critical chat parse error or could not resolve a valid response after ' + retries + ' attempts. ' + (err.message ? 'Parsing error: ' + err.message : '');
-        aiResponse.failures.push(resolveIssue);
-        throw new Error(resolveIssue);
-      }
-    }
-
-    return await resolveAttempt(responseTry, retries) as UseAIResponses<T>;
+    logAiResult<T>({ ...chatResponse, prompts, model: builtRequest.model });
+    console.log('CHAT RESPONSE :==: ', chatResponse)
+    return chatResponse;
   } catch (error) {
     const err = error as Error;
     aiResponse.successful = false;
     logAiResult({ ...aiResponse, prompts, message: undefined, model: builtRequest.model });
     throw new Error('General use AI failure!\nStack: ' + err.stack);
+  }
+}
+
+async function resolveAttempt<T>(attempt: string, retriesRemaining: number, oaiRes: OpenAIResults, curReq: OpenAIRequestShapes): Promise<ChatResponse<T>> {
+  try {
+    const { supportingText, message } = parseChatAttempt<T>(attempt);
+
+    const chatResponse = {
+      ...oaiRes,
+      supportingText,
+      message
+    };
+    return chatResponse;
+  } catch (error) {
+    const err = error as Error;
+    if (retriesRemaining > 0 && err.message.startsWith('cannot parse')) {
+      const repeatedAttempt = await performRequest(curReq);
+
+      oaiRes.rawResponses.push(repeatedAttempt);
+
+      if ('string' !== typeof repeatedAttempt) {
+        const imparsable = 'Received imparsable resolution during retry.';
+        oaiRes.failures.push(imparsable);
+        throw new Error(imparsable);
+      }
+
+      return await resolveAttempt(repeatedAttempt, retriesRemaining - 1, oaiRes, curReq);
+    }
+
+    const resolveIssue = 'Critical chat parse error or could not resolve a valid after all attempts. ' + (err.message ? 'Parsing error: ' + err.message : '');
+    oaiRes.failures.push(resolveIssue);
+    throw new Error(resolveIssue);
   }
 }

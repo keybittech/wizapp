@@ -18,7 +18,7 @@ jest.mock('../src/spells/use_ai_spell', () => ({
 
 const useAiMock = useAiModule.useAi as jest.Mock;
 
-import { createType } from '../src/spells';
+import { createType } from '../src/spells/create_type_spell';
 
 describe('createType', () => {
   let tempConfigPath = '';

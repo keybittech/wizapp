@@ -1,6 +1,11 @@
-import { isCreateApiResult, isGuidedEditResult, isCreateTypeResponse, isCreateApiBackendResult, isGeneralComponentResponse, isFileEditorResult } from "./prompts";
-import { GuardValidations } from "./types";
-import { processTextWithCodeBlock } from "./util";
+import { isCreateApiBackendResult } from "./prompts/create_api_backend_prompt.js";
+import { isCreateApiResult } from "./prompts/create_api_prompt.js";
+import { isGeneralComponentResponse } from "./prompts/create_gen_component_prompt.js";
+import { isCreateTypeResponse } from "./prompts/create_type_prompt.js";
+import { isFileEditorResult } from "./prompts/file_editor_prompt.js";
+import { isGuidedEditResult } from "./prompts/guided_edit_prompt.js";
+import { GuardValidations } from "./types.js";
+import { processTextWithCodeBlock } from "./util.js";
 
 export function parseChatAttempt<T>(attempt: string): { supportingText: string, message: T } {
   const aiRefusalError = /(?:ai(?:\s|-)?language(?:\s|-)?model|i(?:'?m| am))(?:[^.]*?)(?:can(?:'?t| not)|unable to)(?:[^.]*?)(?:perform|do|create|provide)/i;

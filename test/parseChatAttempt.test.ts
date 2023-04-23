@@ -1,4 +1,4 @@
-import { GuidedEditResponse } from '../src/prompts';
+import { GuidedEditResponse } from '../src/prompts/guided_edit_prompt';
 import { setupChatResponse, setupCommonMocks } from './testHelpers';
 setupChatResponse('');
 setupCommonMocks();

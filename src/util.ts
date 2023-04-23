@@ -1,10 +1,22 @@
 import fs from 'fs';
+// import url from 'url';
 import path from "path";
-import { sync } from 'fast-glob';
-import { isCalledWithNpx, isCliRunning } from "./config";
+import fg from 'fast-glob';
+import { isCalledWithNpx, isCliRunning } from "./config.js";
 
-import languages from "./languages";
+import languages from "./languages.js";
 const langValues = Object.values(languages);
+
+// const __filename = url.fileURLToPath(import.meta.url);
+// const __dirname = path.dirname(__filename);
+
+export function getSuggestionPrompt(prompt: string) {
+  return `Generate 5 ${prompt}; Result is 1-3 words separated by |. Here are some examples: `;
+}
+
+export function generateExample(prompt: string, result: string = '') {
+  return `Phrase: ${prompt}\nResult: ${result}`;
+}
 
 export const isValidName = (name: string): boolean => {
   const regex = /^I[A-Z][a-zA-Z]*$/;
@@ -168,7 +180,7 @@ export function getFileFromDir(file: string, dir: string = __dirname) {
 export function getTargetFile(targetFile: string, rootDir: string = getRootDir(), ignoredDirectories: string[] = excludeDirectories): string | null {
   const pattern = path.join(rootDir, '**', targetFile);
 
-  const files = sync(pattern, {
+  const files = fg.sync(pattern, {
     ignore: ignoredDirectories.map(dir => path.join('**', dir, '**')),
     onlyFiles: true,
   });
@@ -191,7 +203,7 @@ export function getTargetFile(targetFile: string, rootDir: string = getRootDir()
 export function saveTargetFile(targetFile: string, contents: string, rootDir: string = getRootDir(), ignoredDirectories: string[] = excludeDirectories): string {
   const pattern = path.join(rootDir, '**', targetFile);
 
-  const files = sync(pattern, {
+  const files = fg.sync(pattern, {
     ignore: ignoredDirectories.map(dir => path.join('**', dir, '**')),
     onlyFiles: true,
   });

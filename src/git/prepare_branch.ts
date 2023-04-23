@@ -1,7 +1,7 @@
-import simpleGit from "simple-git";
-import { sanitizeName } from "../util";
-import { getConfig } from "../config";
-import { gitCheck } from "./check_git_cli";
+import { simpleGit } from "simple-git";
+import { sanitizeName } from "../util.js";
+import { getConfig } from "../config.js";
+import { gitCheck } from "../git/check_git_cli.js";
 
 export async function prepareBranch(name: string): Promise<string> {
   gitCheck();

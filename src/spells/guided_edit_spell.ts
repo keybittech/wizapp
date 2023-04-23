@@ -1,9 +1,13 @@
 import { FunctionDeclaration, SyntaxKind, Node, Project } from 'ts-morph';
 
-import { useAi } from './use_ai_spell';
-import { GuidedEditKeys, GuidedEditResponse, IPrompts } from '../prompts';
-import { prepareBranch, pushCommit, managePullRequest, goHome } from '../git';
-import { getConfig } from '../config';
+import { useAi } from '../spells/use_ai_spell.js';
+import { IPrompts } from '../prompts/prompts.js';
+import { getConfig } from '../config.js';
+import { prepareBranch } from '../git/prepare_branch.js';
+import { GuidedEditKeys, GuidedEditResponse } from '../prompts/guided_edit_prompt.js';
+import { pushCommit } from '../git/push_commit.js';
+import { managePullRequest } from '../git/manage_pull_request.js';
+import { goHome } from '../git/go_home.js';
 
 function getStatementText(child: Node) {
   let parsedStatementText = child.getText();

@@ -1,12 +1,12 @@
-import { IPrompts, aiPrompts } from ".";
-import { GuardValidations } from "../types";
+import { ChatCompletionRequestMessage } from "openai";
+import { GuardValidations } from "../types.js";
 
 // const fileEditorPrompt = [
 //   { role: 'system', content: 'you are a helpful file editing assistant' },
 //   { role: 'user', content: 'edit ${prompt1} with regard to ${prompt2}. only show edited lines. remember to encase the edited code inside proper markdown "```" header. \n\n ${prompt1}:\n${prompt3}' }
 // ];
 
-const changeViewerPrompt = [
+export const fileEditorPrompt: ChatCompletionRequestMessage[] = [
   { role: 'system', content: 'You, CodeCommenter, follow user instructions to add, edit, and delete text in specific ways, leaving change comments. You only reply with the line number + the change comment + the new content of the line. 3 possible static comments: "/* change: added text */", "/* change: edited text */", and "/* change: fully removed text */". Your reply includes only changed lines which have change comments, and clearly formats it in an anonymous markdown backtick block.' },
   // { role: 'system', content: 'You reply with: "I only edited line {number of each edited line}, so I am just going to show you {number of edited lines} lines, including empty lines:"' },
   { role: 'user', content: `add_text_example.txt
@@ -56,8 +56,6 @@ Please find the 4 changes above this line.` },
 
 // const testSystem = 'you are a helpful typescript coding assistant';
 // const testPrompt = 'typescript code that ${prompt1}. only show completely working code. remember to encase your code inside proper markdown "```typescript" header, and on the next line, include a unique-description filename such as `#dice-counter.py`.'
-
-Object.assign(aiPrompts, { [IPrompts.FILE_EDITOR]: changeViewerPrompt });
 
 const fileEditorResponseRegex = /^\d+./igm;
 export type FileEditorResponse = `${number}. ${string}`;

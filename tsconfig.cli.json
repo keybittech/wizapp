@@ -1,8 +1,26 @@
 {
-  "extends": "./tsconfig.json",
   "include": ["src"],
+  "exclude": ["src/tree"],
   "compilerOptions": {
-    "module": "commonjs",
-    "outDir": "bin/cli"
+    "baseUrl": ".",
+    "lib": [
+      "ES2022"
+    ],
+    "outDir": "cli",
+    "strict": true,
+    "allowJs": true,
+    "jsx": "react",
+    "moduleResolution": "node",
+    "module": "CommonJS",
+    "target": "ES5",
+    "esModuleInterop": true,
+    "declaration": true,
+    "downlevelIteration": true,
+    "skipLibCheck": true
+  },
+  "ts-node": {
+    "moduleTypes": {
+      "jest.config.ts": "cjs"
+    }
   }
 }

@@ -14,7 +14,7 @@ import * as useAiModule from '../src/spells/use_ai_spell';
 setupChatResponse('const testTypeApi = { ...');
 setupCommonMocks();
 
-import { createApi } from '../src/spells';
+import { createApi } from '../src/spells/create_api_spell';
 import { getConfig } from '../src/config';
 
 jest.mock('fs', () => ({

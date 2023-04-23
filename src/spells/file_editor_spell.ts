@@ -1,12 +1,12 @@
 // import fs from 'fs';
 // import { Node, Project, ScriptKind, SyntaxKind } from 'ts-morph';
 
-import { useAi } from './use_ai_spell';
-import { IPrompts } from '../prompts';
-import { getConfig } from '../config';
+import { useAi } from '../spells/use_ai_spell.js';
+import { IPrompts } from '../prompts/prompts.js';
+import { getConfig } from '../config.js';
+import { getTargetFile, saveTargetFile } from '../util.js';
+import { FileEditorResponse } from '../prompts/file_editor_prompt.js';
 // import { getPathOf, sanitizeName } from '../util';
-import { FileEditorResponse } from '../prompts/file_editor_prompt';
-import { getTargetFile, saveTargetFile } from '../util';
 // import { copyContentsToDocker } from '../tree/docker';
 
 export async function fileEditor(...fileParts: string[]): Promise<string> {

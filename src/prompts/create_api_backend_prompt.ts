@@ -1,7 +1,7 @@
-import { IPrompts, aiPrompts } from ".";
-import { GuardValidations } from "../types";
+import { ChatCompletionRequestMessage } from "openai";
+import { GuardValidations } from "../types.js";
 
-const createApiBackendMessages = [
+export const createApiBackendMessages: ChatCompletionRequestMessage[] = [
   { role: 'system', content: 'I, TemplateTransferGPT, transfer the qualities of Typescript types into file templates.'},
   { role: 'assistant', content: `I perform each step silently to my self, and then I will give you a response like in Sample Response:
   1. Define Accepted FILE_RELATED_TYPE Input: type IUuidFiles = { id: string; parentUuid: string; fileId: string; } postUuidFile, putUuidFile, getUuidFiles, getUuidFileById, deleteUuidFile, disableUuidFile' }
@@ -13,8 +13,6 @@ const createApiBackendMessages = [
   7. Validate Response: The response returned to the user follows the exact format of Step 6: eg. &&&@@@const customizedApiHandlers: ApiHandler<typeof customizedApi> = {\n transferred functionality customized around FILE_RELATED_TYPE\n }@@@&&&` },
   { role: 'user', content: 'FILE_RELATED_TYPE=\${prompt1}' }
 ];
-
-Object.assign(aiPrompts, { [IPrompts.CREATE_API_BACKEND]: createApiBackendMessages });
 
 const createApiFormat = /^const\s+\w+ApiHandlers:\s+ApiHandler/gim;
 

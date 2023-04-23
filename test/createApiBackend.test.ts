@@ -1,6 +1,8 @@
+import { setupConfigTestBefore, setupConfigTestAfter, withTempConfig, setupCommonMocks } from './testHelpers';
+setupCommonMocks();
+
 import * as useAiModule from '../src/spells/use_ai_spell';
 import { getConfig } from '../src/config';
-import { setupConfigTestBefore, setupConfigTestAfter, withTempConfig } from './testHelpers';
 import { getPathOf, toSnakeCase, toTitleCase } from '../src/util';
 import { Project } from 'ts-morph';
 
@@ -16,8 +18,7 @@ jest.mock('../src/spells/use_ai_spell', () => ({
 
 const useAiMock = useAiModule.useAi as jest.Mock;
 
-import { createApiBackend } from '../src/spells';
-
+import { createApiBackend } from '../src/spells/create_api_backend_spell';
 describe('createApiBackend', () => {
   let tempConfigPath = '';
 
@@ -43,16 +44,6 @@ describe('createApiBackend', () => {
       useAiMock.mockResolvedValue({ message: generatedType });
       const coreTypesPath = getPathOf(`${config.ts.configPath}/${toSnakeCase(typeName)}.ts`);
       const comment = `/*\n* @category ${toTitleCase(typeName)}\n*/\n`;
-  
-      const addSourceFileAtPathMock = jest.fn().mockReturnValue({
-        getVariableDeclarations: jest.fn().mockReturnValue([]),
-        insertText: jest.fn(),
-        fixMissingImports: jest.fn(),
-        getEnd: jest.fn()
-      });
-      const saveMock = jest.fn();
-      jest.spyOn(Project.prototype, 'addSourceFileAtPath').mockImplementation(addSourceFileAtPathMock);
-      jest.spyOn(Project.prototype, 'save').mockImplementation(saveMock);
       
       // Re-import the project module to use the mocked version
       jest.resetModules();

@@ -1,7 +1,7 @@
-import { IPrompts, aiPrompts } from ".";
-import { GuardValidations } from "../types";
+import { ChatCompletionRequestMessage } from "openai";
+import { GuardValidations } from "../types.js";
 
-const createApiMessages = [
+export const createApiMessages: ChatCompletionRequestMessage[] = [
   { role: 'system', content: 'TemplateTransferGPT transfers the qualities of type script types into Api templates.'},
   { role: 'assistant', content: `I perform each step silently to my self, and then I will give you a response like in Sample Response:
   1. Define Accepted API_RELATED_TYPE Input: type IDigitalWhiteboard = { manufacturer: string;  model: string;  screenSize: number;  resolution: string;  touchSensitive: boolean;  connectivity: string[];  interface: string;}
@@ -27,9 +27,7 @@ const createApiMessages = [
   {left intentionally blank}
   &&&` },
   { role: 'user', content: 'API_RELATED_TYPE=\${prompt1}' }
-]
-
-Object.assign(aiPrompts, { [IPrompts.CREATE_API]: createApiMessages });
+];
 
 const createApiFormat = /^const\s+\w+Api\s*=\s*\{/gim;
 

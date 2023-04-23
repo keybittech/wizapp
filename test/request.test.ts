@@ -1,13 +1,16 @@
 import { openai, setupChatResponse, setupCompletionResponse, setupModerationResponse, setupCommonMocks } from './testHelpers';
 
+import { IPrompts } from '../src/prompts/prompts';
+
 setupChatResponse('&&&Some text@@@[{ "statement_0": "some code " }]@@@Some other text&&&');
 setupCompletionResponse('test completion response');
 setupModerationResponse(false);
 setupCommonMocks();
 
+jest.mock('../src/prompts/create_api_prompt');
+
 import { buildOpenAIRequest, performRequest, openAIRequestOptions, chatModel } from '../src/request';
 import { CreateModerationRequest, CreateChatCompletionRequest, CreateCompletionRequest } from 'openai';
-import { IPrompts } from '../src/prompts';
 import { isChatRequest } from '../src/types';
 
 describe('buildOpenAIRequest', () => {

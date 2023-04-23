@@ -1,6 +1,6 @@
-import { IPrompts, aiPrompts } from ".";
+import { ChatCompletionRequestMessage } from "openai";
 
-const createAppComponentPrompt = [
+export const createAppComponentPrompt: ChatCompletionRequestMessage[] = [
   { role: 'system', content: 'As .' },
   {
     role: 'user', content: `Decompress "Compressed Types"; review the decompressed Typescript type set; design a TSX React Functional Component primarily focusing on the Component Description resulting in a TSX code block; incorporate the optional decompressed types where applicable:
@@ -22,5 +22,3 @@ const createAppComponentPrompt = [
   8. Utilize Material-UI components for all design related aspects.
   9. Export the component as the default export and reply strictly only with the TSX surrounded in a code block.`}
 ];
-
-Object.assign(aiPrompts, { [IPrompts.CREATE_APP_COMPONENT]: createAppComponentPrompt })

@@ -3,9 +3,15 @@
 
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
-import { config, saveConfig, getConfigValue, checkConfigExists } from './config';
-import * as spells from './spells';
-import { IPrompts } from './prompts';
+import { config, saveConfig, getConfigValue, checkConfigExists } from './config.js';
+import { IPrompts } from './prompts/prompts.js';
+import { useAi } from './spells/use_ai_spell.js';
+import { guidedEdit } from './spells/guided_edit_spell.js';
+import { fileEditor } from './spells/file_editor_spell.js';
+import { createComponent } from './spells/create_component_spell.js';
+import { createType } from './spells/create_type_spell.js';
+import { createApi } from './spells/create_api_spell.js';
+import { createApiBackend } from './spells/create_api_backend_spell.js';
 
 const argv =  yargs(hideBin(process.argv))
   .options({
@@ -62,7 +68,7 @@ const argv =  yargs(hideBin(process.argv))
         });
     },
     async (argv) => {
-      await spells.useAi(argv.promptType as IPrompts | undefined, ...argv.prompts)
+      await useAi(argv.promptType as IPrompts | undefined, ...argv.prompts)
         .then((result) => console.log(result))
         .catch((error) => console.error(error));
     }
@@ -95,7 +101,7 @@ const argv =  yargs(hideBin(process.argv))
         });
     },
     async (argv) => {
-      await spells.guidedEdit(argv.fileNameWithInstructions, argv.optionalName)
+      await guidedEdit(argv.fileNameWithInstructions, argv.optionalName)
         .then((result) => console.log(result))
         .catch((error) => console.error(error));
     }
@@ -118,7 +124,7 @@ const argv =  yargs(hideBin(process.argv))
         });
     },
     async (argv) => {
-      await spells.fileEditor(argv.fileName, ...argv.instructions)
+      await fileEditor(argv.fileName, ...argv.instructions)
         .then((result) => console.log(result))
         .catch((error) => console.error(error));
     }
@@ -135,7 +141,7 @@ const argv =  yargs(hideBin(process.argv))
         });
     },
     async (argv) => {
-      await spells.createComponent(argv.description)
+      await createComponent(argv.description)
         .then((result) => console.log(result))
         .catch((error) => console.error(error));
     }
@@ -152,13 +158,13 @@ const argv =  yargs(hideBin(process.argv))
         });
     },
     async (argv) => {
-      const generatedType = await spells.createType(argv.typeName) 
+      const generatedType = await createType(argv.typeName) 
 
-      await spells.createApi(argv.typeName, generatedType)
+      await createApi(argv.typeName, generatedType)
         .then((result) => console.log(result))
         .catch((error) => console.error(error));
 
-      await spells.createApiBackend(argv.typeName, generatedType);
+      await createApiBackend(argv.typeName, generatedType);
     }
   )
   .demandCommand(1, 'You need at least one command before moving on')
