@@ -8,7 +8,7 @@ setupCommonMocks();
 import { buildOpenAIRequest, performRequest, openAIRequestOptions, chatModel } from '../src/server/request';
 import { CreateModerationRequest, CreateChatCompletionRequest, CreateCompletionRequest } from 'openai';
 import { IPrompts } from '../src/lib/prompts';
-import { isChatRequest } from '../src/server/types';
+import { isChatRequest } from '../src/server/util';
 
 describe('buildOpenAIRequest', () => {
   test('should return moderation request when promptType is not provided', () => {

@@ -1,5 +1,5 @@
 // import fs from 'fs';
-import { Node, Statements } from '../lib/types';
+import type { Node, Statements } from '../lib/types';
 // import { parseFile } from './getStatements';
 
 export function modifyStatements(

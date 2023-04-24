@@ -1,5 +1,5 @@
 import { ChatCompletionRequestMessage } from "openai";
-import { GuardValidations } from "../types";
+import type { GuardValidations } from "../types";
 
 export const createGenComponentMessages: ChatCompletionRequestMessage[] = [
   { role: 'system', content: 'I, ReactiveAssembleGPT, assemble React components.' },

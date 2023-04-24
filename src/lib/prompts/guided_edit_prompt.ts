@@ -1,5 +1,5 @@
 import { ChatCompletionRequestMessage } from "openai";
-import { GuardValidations } from "../types";
+import type { GuardValidations } from "../types";
 import { hasSimilarKey } from "./prompt_utils";
 
 // const guidedEditPrompt = [

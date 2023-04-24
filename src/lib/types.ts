@@ -3,10 +3,6 @@ export type ConfigPropTypes = string;
 export type Config = Record<string, Record<string, ConfigPropTypes>>;
 export type CurrentType = ConfigPropTypes | Config;
 
-export function isConfigNestedObject(obj: unknown): obj is Record<string, ConfigPropTypes> {
-  return typeof obj === 'object' && obj !== null;
-}
-
 export type GuardValidations = Record<string, unknown> | Record<string, unknown>[] | string
 
 
@@ -36,17 +32,6 @@ export type ModerationResponse = OpenAIResults & {
 
 export type UseAIResponses<T> = T extends boolean ? ModerationResponse : T extends undefined ? CompletionResponse : ChatResponse<T>;
 
-export function isChatResponse<T>(obj: GuardValidations): obj is ChatResponse<T> {
-  return 'object' === typeof obj && 'message' in obj && Array.isArray(obj.message);
-}
-
-export function isCompletionResponse(obj: GuardValidations): obj is CompletionResponse {
-  return 'object' === typeof obj && 'message' in obj && 'string' === typeof obj.message;
-}
-
-export function isModerationResponse(obj: GuardValidations): obj is ModerationResponse {
-  return 'object' === typeof obj && 'input' in obj;
-}
 
 export interface Node {
   type: string;
@@ -113,12 +98,4 @@ export type DefaultGrammarOrVariants = {
   default: Grammars | {
     [prop: string]: Grammars
   }
-}
-
-export function isDefaultGrammar(obj: DefaultGrammarOrVariants): obj is { default: Grammars } {
-  return 'string' === typeof obj.default.name;
-}
-
-export function isDefaultGrammarVariants(obj: DefaultGrammarOrVariants): obj is { default: { [prop: string]: Grammars } } {
-  return 'undefined' === typeof obj.default.name;
 }

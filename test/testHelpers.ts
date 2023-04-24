@@ -1,6 +1,6 @@
 import fs from 'fs';
 import { setConfig, defaultConfig, configFilePath } from '../src/server/config';
-import { Config } from '../src/lib/types';
+import type { Config } from '../src/lib/types';
 import { SyntaxKind } from 'ts-morph';
 import { generateTempFilePath, getDirPathOf } from '../src/server/util';
 

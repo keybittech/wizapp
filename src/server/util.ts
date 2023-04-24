@@ -4,6 +4,8 @@ import { sync } from 'fast-glob';
 import { isCalledWithNpx, isCliRunning } from "./config";
 
 import languages from "../lib/languages";
+import type { OpenAIRequestShapes } from './types';
+import { CreateChatCompletionRequest, CreateCompletionRequest, CreateModerationRequest } from 'openai';
 const langValues = Object.values(languages);
 
 export const codeGPTPrecursor = 'You are BacktickGPT, providing only typescript code responses wrapped with 3 backticks before and after.';
@@ -218,3 +220,15 @@ const excludeDirectories = [
   '.svn',
   // add other directories to exclude
 ];
+
+export function isChatRequest(obj: OpenAIRequestShapes): obj is CreateChatCompletionRequest {
+  return 'messages' in obj;
+}
+
+export function isCompletionRequest(obj: OpenAIRequestShapes): obj is CreateCompletionRequest {
+  return 'prompt' in obj;
+}
+
+export function isModerationRequest(obj: OpenAIRequestShapes): obj is CreateModerationRequest {
+  return 'input' in obj;
+}

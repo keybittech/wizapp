@@ -1,5 +1,5 @@
 import { ChatCompletionRequestMessage } from "openai";
-import { GuardValidations } from "../types";
+import type { GuardValidations } from "../types";
 
 export const createApiMessages: ChatCompletionRequestMessage[] = [
   { role: 'system', content: 'TemplateTransferGPT transfers the qualities of type script types into Api templates.'},

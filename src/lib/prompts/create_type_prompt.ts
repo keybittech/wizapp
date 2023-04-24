@@ -1,6 +1,6 @@
 
 import { ChatCompletionRequestMessage } from "openai";
-import { GuardValidations } from "../types";
+import type { GuardValidations } from "../types";
 
 // const createTypePrompt = 'Complete the following typescript type with 4-7 unconventionally named properties, using string, number or boolean, starting with its opening bracket, "type ${prompt1} =';
 

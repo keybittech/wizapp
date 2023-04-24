@@ -1,4 +1,4 @@
-import { LanguageParser } from "./types";
+import type { LanguageParser } from "./types";
 
 const languages: Record<string, LanguageParser> = {
   Ada: {

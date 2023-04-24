@@ -4,7 +4,7 @@ import { isGeneralComponentResponse } from "../lib/prompts/create_gen_component_
 import { isCreateTypeResponse } from "../lib/prompts/create_type_prompt";
 import { isFileEditorResult } from "../lib/prompts/file_editor_prompt";
 import { isGuidedEditResult } from "../lib/prompts/guided_edit_prompt";
-import { GuardValidations } from "../lib/types";
+import type { GuardValidations } from "../lib/types";
 import { processTextWithCodeBlock } from "./util";
 
 export function parseChatAttempt<T>(attempt: string): { supportingText: string, message: T } {

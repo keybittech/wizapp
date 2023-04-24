@@ -1,5 +1,5 @@
 import { ChatCompletionRequestMessage } from "openai";
-import { GuardValidations } from "../types";
+import type { GuardValidations } from "../types";
 
 // const fileEditorPrompt = [
 //   { role: 'system', content: 'you are a helpful file editing assistant' },

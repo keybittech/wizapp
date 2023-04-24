@@ -1,6 +1,7 @@
-import { ChatResponse, CompletionResponse, isChatResponse, isCompletionResponse, isModerationResponse, ModerationResponse } from "../lib/types";
+import type { ChatResponse, CompletionResponse, ModerationResponse } from "../lib/types";
 import fs from 'fs';
 import { getConfig } from "./config";
+import { isChatResponse, isCompletionResponse, isModerationResponse } from "../lib/util";
 
 export function logAiResult<T>(res: ChatResponse<T> | CompletionResponse | ModerationResponse) {
   const config = getConfig();
