@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from "path";
-import { Statements } from "../types";
+import { Statements } from "../lib/types";
 
 interface ModificationRules {
   type: string;

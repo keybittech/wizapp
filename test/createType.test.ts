@@ -1,7 +1,7 @@
 import fs from 'fs';
-import * as useAiModule from '../src/spells/use_ai_spell';
-import { getConfig } from '../src/config';
-import { getPathOf, sanitizeName, toSnakeCase, toTitleCase } from '../src/util';
+import * as useAiModule from '../src/server/spells/use_ai_spell';
+import { getConfig } from '../src/server/config';
+import { getPathOf, sanitizeName, toSnakeCase, toTitleCase } from '../src/server/util';
 import { setupConfigTestBefore, setupConfigTestAfter, withTempConfig, withOriginalGetConfig } from './testHelpers';
 
 jest.mock('fs', () => ({
@@ -12,13 +12,13 @@ jest.mock('fs', () => ({
 }));
 
 // Mock the useAi function
-jest.mock('../src/spells/use_ai_spell', () => ({
+jest.mock('../src/server/spells/use_ai_spell', () => ({
   useAi: jest.fn(),
 }));
 
 const useAiMock = useAiModule.useAi as jest.Mock;
 
-import { createType } from '../src/spells';
+import { createType } from '../src/server/spells';
 
 describe('createType', () => {
   let tempConfigPath = '';

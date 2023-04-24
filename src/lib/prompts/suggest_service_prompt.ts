@@ -1,4 +1,4 @@
-import { generateExample, getSuggestionPrompt } from "../util";
+import { generateExample, getSuggestionPrompt } from "./prompt_utils";
 
 export const suggestServiceMessages = `${getSuggestionPrompt('gerund verbs performed for the purpose of ${prompt1}')}
 ${generateExample('gerund verbs performed for the purpose of offering educational services to community college students', 'Tutoring|Advising|Consulting|Instruction|Mentoring')}

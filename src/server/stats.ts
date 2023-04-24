@@ -1,4 +1,4 @@
-import { ChatResponse, CompletionResponse, isChatResponse, isCompletionResponse, isModerationResponse, ModerationResponse } from "./types";
+import { ChatResponse, CompletionResponse, isChatResponse, isCompletionResponse, isModerationResponse, ModerationResponse } from "../lib/types";
 import fs from 'fs';
 import { getConfig } from "./config";
 

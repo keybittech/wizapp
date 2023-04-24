@@ -1,13 +1,13 @@
 import fs from 'fs';
-import { ChatResponse } from '../src/types';
-import { IPrompts } from '../src/prompts';
+import { ChatResponse } from '../src/lib/types';
+import { IPrompts } from '../src/lib/prompts';
 
-import { logAiResult } from '../src/stats';
-import { GuidedEditResponse } from '../src/prompts/guided_edit_prompt';
+import { logAiResult } from '../src/server/stats';
+import { GuidedEditResponse } from '../src/lib/prompts/guided_edit_prompt';
 
 describe('logAiResult', () => {
   const logFilePath = './testLogFile.log';
-  const configSpy = jest.spyOn(require('../src/config'), 'getConfig');
+  const configSpy = jest.spyOn(require('../src/server/config'), 'getConfig');
   configSpy.mockReturnValue({ ai: { logFile: logFilePath } });
 
   afterEach(() => {

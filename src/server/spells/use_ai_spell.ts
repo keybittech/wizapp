@@ -1,9 +1,10 @@
-import { ChatResponse, CompletionResponse, isCompletionRequest, ModerationResponse, OpenAIResults, UseAIResponses } from '../types';
+import { isCompletionRequest } from '../types';
 import { parseChatAttempt } from '../chat_parser';
-import { IPrompts } from '../prompts';
+import { IPrompts } from '../../lib/prompts';
 import { buildOpenAIRequest, performRequest } from '../request';
 import { logAiResult } from '../stats';
 import { getConfig } from '../config';
+import { ChatResponse, CompletionResponse, ModerationResponse, OpenAIResults, UseAIResponses } from '../../lib/types';
 
 export async function useAi<T = undefined>(promptType?: IPrompts, ...prompts: string[]): Promise<UseAIResponses<T>> {
   

@@ -1,5 +1,5 @@
 import fs from 'fs';
-import { getPathOf, sanitizeName, toSnakeCase, toTitleCase } from '../src/util';
+import { getPathOf, sanitizeName, toSnakeCase, toTitleCase } from '../src/server/util';
 import {
   setupChatResponse,
   setupCommonMocks,
@@ -9,20 +9,20 @@ import {
   withTempConfig,
   withOriginalGetConfig,
 } from './testHelpers';
-import * as useAiModule from '../src/spells/use_ai_spell';
+import * as useAiModule from '../src/server/spells/use_ai_spell';
 
 setupChatResponse('const testTypeApi = { ...');
 setupCommonMocks();
 
-import { createApi } from '../src/spells';
-import { getConfig } from '../src/config';
+import { createApi } from '../src/server/spells';
+import { getConfig } from '../src/server/config';
 
 jest.mock('fs', () => ({
   ...jest.requireActual('fs'),
   appendFileSync: jest.fn(),
 }));
 
-jest.mock('../src/spells/use_ai_spell', () => ({
+jest.mock('../src/server/spells/use_ai_spell', () => ({
   useAi: jest.fn(),
 }));
 

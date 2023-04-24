@@ -1,4 +1,4 @@
-import { Grammar } from "../types";
+import { Grammar } from "../lib/types";
 
 // export const syntacticGroupPatterns = [
 //   /_statement$/,          // e.g., if_statement, for_statement, while_statement

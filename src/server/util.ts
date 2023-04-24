@@ -3,18 +3,10 @@ import path from "path";
 import { sync } from 'fast-glob';
 import { isCalledWithNpx, isCliRunning } from "./config";
 
-import languages from "./languages";
+import languages from "../lib/languages";
 const langValues = Object.values(languages);
 
 export const codeGPTPrecursor = 'You are BacktickGPT, providing only typescript code responses wrapped with 3 backticks before and after.';
-
-export function getSuggestionPrompt(prompt: string) {
-  return `Generate 5 ${prompt}; Result is 1-3 words separated by |. Here are some examples: `;
-}
-
-export function generateExample(prompt: string, result: string = '') {
-  return `Phrase: ${prompt}\nResult: ${result}`;
-}
 
 export const isValidName = (name: string): boolean => {
   const regex = /^I[A-Z][a-zA-Z]*$/;
@@ -139,10 +131,6 @@ export function typeDefinitionToSentence(typeDefinition: string): string {
   }
 
   return 'Unable to parse the type definition.';
-}
-
-export function hasSimilarKey(obj: Record<string, unknown>, regex: RegExp): boolean {
-  return Object.keys(obj).some(key => regex.test(key));
 }
 
 export function getDirPathOf(filePath: string) {

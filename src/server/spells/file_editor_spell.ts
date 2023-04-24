@@ -2,10 +2,10 @@
 // import { Node, Project, ScriptKind, SyntaxKind } from 'ts-morph';
 
 import { useAi } from './use_ai_spell';
-import { IPrompts } from '../prompts';
+import { IPrompts } from '../../lib/prompts';
 import { getConfig } from '../config';
 // import { getPathOf, sanitizeName } from '../util';
-import { FileEditorResponse } from '../prompts/file_editor_prompt';
+import { FileEditorResponse } from '../../lib/prompts/file_editor_prompt';
 import { getTargetFile, saveTargetFile } from '../util';
 // import { copyContentsToDocker } from '../tree/docker';
 

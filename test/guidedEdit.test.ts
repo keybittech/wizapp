@@ -1,17 +1,17 @@
-import * as git from '../src/git';
-import * as useAiModule from '../src/spells/use_ai_spell';
+import * as git from '../src/server/git';
+import * as useAiModule from '../src/server/spells/use_ai_spell';
 import { createMockStatement, setupConfigTestAfter, setupConfigTestBefore, withTempConfig } from './testHelpers';
 import { Project, SyntaxKind } from 'ts-morph';
 
 // Mock the required functions
-jest.mock('../src/git');
-jest.mock('../src/spells/use_ai_spell');
+jest.mock('../src/server/git');
+jest.mock('../src/server/spells/use_ai_spell');
 
 const prepareBranchMock = git.prepareBranch as jest.Mock;
 const managePullRequestMock = git.managePullRequest as jest.Mock;
 const useAiMock = useAiModule.useAi as jest.Mock;
 
-import { guidedEdit } from '../src/spells/guided_edit_spell';
+import { guidedEdit } from '../src/server/spells/guided_edit_spell';
 
 describe('guidedEdit', () => {
   let tempConfigPath = '';

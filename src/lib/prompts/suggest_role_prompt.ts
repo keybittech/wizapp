@@ -1,5 +1,5 @@
 import { ChatCompletionRequestMessage } from "openai";
-import { generateExample, getSuggestionPrompt } from "../util";
+import { generateExample, getSuggestionPrompt } from "./prompt_utils";
 
 export const suggestRoleMessagesOld = `${getSuggestionPrompt('role names for a group named ${prompt1} which is interested in ${prompt2}')}
 ${generateExample('role names for a group named writing center which is interested in consulting on writing', 'Tutor|Student|Advisor|Administrator|Consultant')}

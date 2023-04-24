@@ -1,4 +1,4 @@
-import { generateExample, getSuggestionPrompt } from "../util";
+import { generateExample, getSuggestionPrompt } from "./prompt_utils";
 
 export const suggestTierMessages = `${getSuggestionPrompt('service level names for ${prompt1}')}
 ${generateExample('service level names for a generic service', 'Small|Medium|Large')}

@@ -1,9 +1,9 @@
 import fs from 'fs';
-import { createComponent } from '../src/spells/create_component_spell';
-import * as useAiModule from '../src/spells/use_ai_spell';
+import { createComponent } from '../src/server/spells/create_component_spell';
+import * as useAiModule from '../src/server/spells/use_ai_spell';
 import { setupConfigTestAfter, setupConfigTestBefore, withOriginalGetConfig, withTempConfig } from './testHelpers';
-import { getPathOf, sanitizeName } from '../src/util';
-import { getConfig } from '../src/config';
+import { getPathOf, sanitizeName } from '../src/server/util';
+import { getConfig } from '../src/server/config';
 
 jest.mock('fs', () => ({
   ...jest.requireActual('fs'),
@@ -12,7 +12,7 @@ jest.mock('fs', () => ({
   mkdirSync: jest.fn()
 }));
 
-jest.mock('../src/spells/use_ai_spell', () => ({
+jest.mock('../src/server/spells/use_ai_spell', () => ({
   useAi: jest.fn(),
 }));
 

@@ -1,10 +1,10 @@
 import { FunctionDeclaration, SyntaxKind, Node, Project } from 'ts-morph';
 
 import { useAi } from './use_ai_spell';
-import { IPrompts } from '../prompts';
+import { IPrompts } from '../../lib/prompts';
 import { prepareBranch, pushCommit, managePullRequest, goHome } from '../git';
 import { getConfig } from '../config';
-import { GuidedEditKeys, GuidedEditResponse } from '../prompts/guided_edit_prompt';
+import { GuidedEditKeys, GuidedEditResponse } from '../../lib/prompts/guided_edit_prompt';
 
 function getStatementText(child: Node) {
   let parsedStatementText = child.getText();

@@ -1,4 +1,4 @@
-import { generateExample, getSuggestionPrompt } from "../util";
+import { generateExample, getSuggestionPrompt } from "./prompt_utils";
 
 export const suggestFeatureMessages = `${getSuggestionPrompt('features of ${prompt1}')}
 ${generateExample('features of ENGL 1010 writing tutoring', 'Feedback|Revisions|Brainstorming|Discussion')}

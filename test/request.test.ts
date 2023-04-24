@@ -5,10 +5,10 @@ setupCompletionResponse('test completion response');
 setupModerationResponse(false);
 setupCommonMocks();
 
-import { buildOpenAIRequest, performRequest, openAIRequestOptions, chatModel } from '../src/request';
+import { buildOpenAIRequest, performRequest, openAIRequestOptions, chatModel } from '../src/server/request';
 import { CreateModerationRequest, CreateChatCompletionRequest, CreateCompletionRequest } from 'openai';
-import { IPrompts } from '../src/prompts';
-import { isChatRequest } from '../src/types';
+import { IPrompts } from '../src/lib/prompts';
+import { isChatRequest } from '../src/server/types';
 
 describe('buildOpenAIRequest', () => {
   test('should return moderation request when promptType is not provided', () => {

@@ -1,6 +1,6 @@
 import { ChatCompletionRequestMessage } from "openai";
 import { GuardValidations } from "../types";
-import { hasSimilarKey } from "../util";
+import { hasSimilarKey } from "./prompt_utils";
 
 // const guidedEditPrompt = [
 //   { role: 'system', content: 'As CodeWhittler I transform STATEMENTS_JSON, deriving RESPONSE_ARRAY from TARGET_STATE modifications.' },

@@ -1,6 +1,6 @@
 import fs from 'fs';
-import { getConfig, defaultConfig } from '../src/config';
-import { Config } from '../src/types';
+import { getConfig, defaultConfig } from '../src/server/config';
+import { Config } from '../src/lib/types';
 import { setupConfigTestBefore, setupConfigTestAfter, withTempConfig, withOriginalGetConfig } from './testHelpers';
 
 describe('getConfig', () => {

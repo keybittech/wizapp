@@ -1,5 +1,5 @@
 import { CreateModerationRequest, OpenAIApi } from "openai";
-import { aiPrompts, IPrompts } from "./prompts";
+import { aiPrompts, IPrompts } from "../lib/prompts";
 import { isChatRequest, isCompletionRequest, isModerationRequest, OpenAIRequestShapes } from "./types";
 
 const openai = new OpenAIApi();

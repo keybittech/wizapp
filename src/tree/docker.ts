@@ -2,7 +2,7 @@ import fs from 'fs';
 import os from 'os';
 import path from 'path';
 import { execSync } from "child_process";
-import { getFileParser } from '../util';
+import { getFileParser } from '../server/util';
 
 const dockerfile = `FROM node:16\nWORKDIR /app\nRUN npm install tree-sitter`;
 const imageName = 'wizapp-image';
