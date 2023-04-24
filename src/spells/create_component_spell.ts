@@ -2,9 +2,10 @@ import fs from 'fs';
 import { Node, Project, ScriptKind, SyntaxKind } from 'ts-morph';
 
 import { useAi } from './use_ai_spell';
-import { GeneralComponentResponse, IPrompts } from '../prompts';
+import { IPrompts } from '../prompts';
 import { getConfig } from '../config';
 import { getPathOf, sanitizeName } from '../util';
+import { GeneralComponentResponse } from '../prompts/create_gen_component_prompt';
 
 export async function createComponent(description: string, user?: string): Promise<string> {
   

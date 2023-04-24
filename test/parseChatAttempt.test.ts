@@ -1,9 +1,9 @@
-import { GuidedEditResponse } from '../src/prompts';
 import { setupChatResponse, setupCommonMocks } from './testHelpers';
 setupChatResponse('');
 setupCommonMocks();
 
 import { parseChatAttempt } from '../src/chat_parser';
+import { GuidedEditResponse } from '../src/prompts/guided_edit_prompt';
 
 describe('parseChatAttempt', () => {
 

@@ -1,13 +1,12 @@
 #!/usr/bin/env node
 
 
-import yargs from 'yargs';
-import { hideBin } from 'yargs/helpers';
+import yargs from 'yargs/yargs';
 import { config, saveConfig, getConfigValue, checkConfigExists } from './config';
 import * as spells from './spells';
 import { IPrompts } from './prompts';
 
-const argv =  yargs(hideBin(process.argv))
+const parser = yargs(process.argv.slice(2))
   .options({
     'config': {
       alias: 'c',
@@ -164,7 +163,8 @@ const argv =  yargs(hideBin(process.argv))
   .demandCommand(1, 'You need at least one command before moving on')
   .help()
   .alias('h', 'help')
-  .strict()
-  .argv;
+  .strict();
 
-export default argv;
+(async () => {
+  await parser.argv;
+})();

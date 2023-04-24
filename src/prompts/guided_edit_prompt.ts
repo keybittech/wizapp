@@ -1,4 +1,4 @@
-import { IPrompts, aiPrompts } from ".";
+import { ChatCompletionRequestMessage } from "openai";
 import { GuardValidations } from "../types";
 import { hasSimilarKey } from "../util";
 
@@ -51,7 +51,7 @@ import { hasSimilarKey } from "../util";
 // const testSystem = 'you are a helpful typescript coding assistant';
 // const testPrompt = 'typescript code that ${prompt1}. only show completely working code. remember to encase your code inside proper markdown "```typescript" header, and on the next line, include a unique-description filename such as `#dice-counter.py`.'
 
-const simplePrompt = [
+export const guidedEditMessages: ChatCompletionRequestMessage[] = [
   { role: 'system', content: 'I change code from a JSON object to an array based on the target state.' },
   { role: 'assistant', content: `What I need:
   
@@ -86,9 +86,7 @@ const simplePrompt = [
   
   I'll change the code in the JSON object to reach the target state and create the final array.`},
   { role: 'user', content: ' TARGET_STATE --- ${prompt1}\n STATEMENTS_JSON --- ${prompt2}' }
-  ];
-
-Object.assign(aiPrompts, { [IPrompts.GUIDED_EDIT]: simplePrompt });
+];
 
 export type GuidedEditKeyPrefix = 'statement' | 'above' | 'below';
 

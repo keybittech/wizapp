@@ -1,5 +1,18 @@
 import { ChatCompletionRequestMessage } from "openai";
 
+import { convertPurposeMessages } from './convert_purpose_prompt';
+import { createApiBackendMessages } from './create_api_backend_prompt';
+import { createApiMessages } from './create_api_prompt';
+import { createAppComponentMessages } from './create_app_component_prompt';
+import { createGenComponentMessages } from './create_gen_component_prompt';
+import { createTypeMessages } from './create_type_prompt';
+import { fileEditorMessages } from './file_editor_prompt';
+import { guidedEditMessages } from './guided_edit_prompt';
+import { suggestFeatureMessages } from './suggest_feature_prompt';
+import { suggestRoleMessages } from './suggest_role_prompt';
+import { suggestServiceMessages } from './suggest_service_prompt';
+import { suggestTierMessages } from './suggest_tier_prompt';
+
 export enum IPrompts {
   CREATE_API = 'create_api',
   CREATE_API_BACKEND = 'create_api_backend',
@@ -21,27 +34,17 @@ export enum IPrompts {
   CONVERT_PURPOSE = 'convert_purpose'
 }
 
-export const codeGPTPrecursor = 'You are BacktickGPT, providing only typescript code responses wrapped with 3 backticks before and after.';
-
-export const aiPrompts: Partial<Record<IPrompts, string | ChatCompletionRequestMessage[]>> = {};
-
-export function getSuggestionPrompt(prompt: string) {
-  return `Generate 5 ${prompt}; Result is 1-3 words separated by |. Here are some examples: `;
-}
-
-export function generateExample(prompt: string, result: string = '') {
-  return `Phrase: ${prompt}\nResult: ${result}`;
-}
-
-export * from './convert_purpose_prompt';
-export * from './create_api_backend_prompt';
-export * from './create_api_prompt';
-export * from './create_app_component_prompt';
-export * from './create_gen_component_prompt';
-export * from './create_type_prompt';
-export * from './file_editor_prompt';
-export * from './guided_edit_prompt';
-export * from './suggest_feature_prompt';
-export * from './suggest_role_prompt';
-export * from './suggest_service_prompt';
-export * from './suggest_tier_prompt';
+export const aiPrompts: Partial<Record<IPrompts, string | ChatCompletionRequestMessage[]>> = {
+  [IPrompts.CONVERT_PURPOSE]: convertPurposeMessages,
+  [IPrompts.CREATE_API_BACKEND]: createApiBackendMessages,
+  [IPrompts.CREATE_API]: createApiMessages,
+  [IPrompts.CREATE_APP_COMPONENT]: createAppComponentMessages,
+  [IPrompts.CREATE_GEN_COMPONENT]: createGenComponentMessages,
+  [IPrompts.CREATE_TYPE]: createTypeMessages,
+  [IPrompts.FILE_EDITOR]: fileEditorMessages,
+  [IPrompts.GUIDED_EDIT]: guidedEditMessages,
+  [IPrompts.SUGGEST_FEATURE]: suggestFeatureMessages,
+  [IPrompts.SUGGEST_ROLE]: suggestRoleMessages,
+  [IPrompts.SUGGEST_SERVICE]: suggestServiceMessages,
+  [IPrompts.SUGGEST_TIER]: suggestTierMessages
+};

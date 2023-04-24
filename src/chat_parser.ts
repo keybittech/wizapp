@@ -1,4 +1,9 @@
-import { isCreateApiResult, isGuidedEditResult, isCreateTypeResponse, isCreateApiBackendResult, isGeneralComponentResponse, isFileEditorResult } from "./prompts";
+import { isCreateApiBackendResult } from "./prompts/create_api_backend_prompt";
+import { isCreateApiResult } from "./prompts/create_api_prompt";
+import { isGeneralComponentResponse } from "./prompts/create_gen_component_prompt";
+import { isCreateTypeResponse } from "./prompts/create_type_prompt";
+import { isFileEditorResult } from "./prompts/file_editor_prompt";
+import { isGuidedEditResult } from "./prompts/guided_edit_prompt";
 import { GuardValidations } from "./types";
 import { processTextWithCodeBlock } from "./util";
 

@@ -1,8 +1,9 @@
 import fs from 'fs';
 import { getPathOf, sanitizeName, toSnakeCase, toTitleCase } from '../util';
 import { useAi } from './use_ai_spell';
-import { CreateApiResult, IPrompts } from '../prompts';
+import { IPrompts } from '../prompts';
 import { getConfig } from '../config';
+import { CreateApiResult } from '../prompts/create_api_prompt';
 
 export async function createApi(typeName: string, generatedType: string): Promise<string> {
 

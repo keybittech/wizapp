@@ -1,7 +1,7 @@
-import { IPrompts, aiPrompts } from ".";
+import { ChatCompletionRequestMessage } from "openai";
 import { GuardValidations } from "../types";
 
-const createGenComponentPrompt = [
+export const createGenComponentMessages: ChatCompletionRequestMessage[] = [
   { role: 'system', content: 'I, ReactiveAssembleGPT, assemble React components.' },
   {
     role: 'assistant', content: `Provide the description of a react component, and I will assemble it.
@@ -13,8 +13,6 @@ const createGenComponentPrompt = [
   Simply respond with the description of a react component, and I will try my best. If your idea is too complex, I may simplify it. Any issues I may encounter in formulating a concept, I will attempt to resolve personally. If you ask me to seek out sample data to use in the component, I will have no issue sourcing your data needs with custom public API resources that are already known to me.`},
   { role: 'user', content: '${prompt1}' }
 ];
-
-Object.assign(aiPrompts, { [IPrompts.CREATE_GEN_COMPONENT]: createGenComponentPrompt });
 
 const generalComponentResponseRegex = /export default/ig;
 type GeneralComponentKey = string;

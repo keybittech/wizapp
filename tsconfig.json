@@ -1,28 +1,20 @@
 {
-  "include": ["src", "test"],
+  "include": ["src"],
   "exclude": ["types", "components"],
   "compilerOptions": {
-    "outDir": "bin",
-    "composite": true,
-    "incremental": true,
+    "outDir": "dist",
     "strict": true,
     "lib": [
       "es2021"
     ],
-    "module": "commonjs",
-    "target": "es2021",
+    "target": "ESNext",
+    "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
-    "experimentalDecorators": true,
-    "emitDecoratorMetadata": false,
-    // "noUnusedLocals": true,
+    "baseUrl": ".",
     "declaration": true,
-    "declarationMap": true,
-    "downlevelIteration": true,
+    "emitDeclarationOnly": true,
     "moduleResolution": "node",
-    "skipLibCheck": true,
-    "sourceMap": true,
-    "useDefineForClassFields": true,
-    "forceConsistentCasingInFileNames": true
+    "skipLibCheck": true
   },
   "ts-node": {
     "compilerOptions": {

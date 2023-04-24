@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "lib": ["ESNext"],
+    "outDir": "cli",
+    "target": "ES2015",
+    "module": "CommonJS",
+    "strict": true,
+    "esModuleInterop": true,
+    "moduleResolution": "node"
+  },
+  "typeRoots": [
+    "node_modules/@types"
+  ],
+  "include": ["src/cli.ts"]
+}

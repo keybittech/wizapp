@@ -1,8 +1,9 @@
 import fs from 'fs';
 import { ChatResponse } from '../src/types';
-import { GuidedEditResponse, IPrompts } from '../src/prompts';
+import { IPrompts } from '../src/prompts';
 
 import { logAiResult } from '../src/stats';
+import { GuidedEditResponse } from '../src/prompts/guided_edit_prompt';
 
 describe('logAiResult', () => {
   const logFilePath = './testLogFile.log';

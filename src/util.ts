@@ -6,6 +6,16 @@ import { isCalledWithNpx, isCliRunning } from "./config";
 import languages from "./languages";
 const langValues = Object.values(languages);
 
+export const codeGPTPrecursor = 'You are BacktickGPT, providing only typescript code responses wrapped with 3 backticks before and after.';
+
+export function getSuggestionPrompt(prompt: string) {
+  return `Generate 5 ${prompt}; Result is 1-3 words separated by |. Here are some examples: `;
+}
+
+export function generateExample(prompt: string, result: string = '') {
+  return `Phrase: ${prompt}\nResult: ${result}`;
+}
+
 export const isValidName = (name: string): boolean => {
   const regex = /^I[A-Z][a-zA-Z]*$/;
   return regex.test(name);

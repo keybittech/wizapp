@@ -9,7 +9,6 @@ export async function useAi<T = undefined>(promptType?: IPrompts, ...prompts: st
   
   const config = getConfig();
   const retries = parseInt(config.ai.retries, 10);
-  
 
   const [builtRequest, promptTemplate] = buildOpenAIRequest(prompts, promptType);
 
