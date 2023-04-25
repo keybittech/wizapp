@@ -1,6 +1,6 @@
 {
   "name": "@keybittech/wizapp",
-  "version": "0.1.23-beta",
+  "version": "0.1.26-beta",
   "description": "The Wizard's Apprentice",
   "keywords": [
     "automated",
@@ -15,14 +15,21 @@
   "homepage": "https://github.com/keybittech/wizapp",
   "license": "MIT",
   "author": "Joe McCormick",
-  "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
   "type": "module",
   "bin": {
-    "wizapp": "./dist/cli.cjs"
+    "wizapp": "./dist/server/cli.cjs"
   },
   "exports": {
-    ".": "./dist/index.js"
+    "./dist/lib": {
+      "types": "./dist/lib/index.d.ts",
+      "import": "./dist/lib/index.js",
+      "require": "./dist/lib/index.cjs"
+    },
+    "./dist/server": {
+      "types": "./dist/server/index.d.ts",
+      "import": "./dist/server/index.js",
+      "require": "./dist/server/index.cjs"
+    }
   },
   "files": [
     "dist",
@@ -30,9 +37,8 @@
     "README.md"
   ],
   "scripts": {
-    "oldbuild": "tsc -p tsconfig.json && tsc -p tsconfig.cli.json",
-    "postinstall": "npm run build",
-    "build": "node node_modules/tsup/dist/cli-default.js --format esm,cjs src/index.ts src/cli.ts && tsc -p tsconfig.json",
+    "build": "node node_modules/tsup/dist/cli-default.js --config tsup.config.ts && tsc -p tsconfig.json",
+    "oldbuild": "node node_modules/tsup/dist/cli-default.js --treeshake --format esm,cjs src/index.ts src/cli.ts && tsc -p tsconfig.json",
     "wizapp": "ts-node ./src/cli.ts",
     "test": "jest",
     "debug": "node --inspect-brk ./node_modules/jest/bin/jest.js --runInBand",

@@ -1,6 +1,6 @@
 {
-  "include": ["src"],
-  "exclude": ["types", "components"],
+  "include": ["src/lib", "src/server"],
+  "exclude": ["src/tree", "types", "components"],
   "compilerOptions": {
     "outDir": "dist",
     "strict": true,
