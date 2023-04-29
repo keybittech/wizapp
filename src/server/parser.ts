@@ -73,7 +73,7 @@ export function parseChatAttempt<T>(attempt: string): { supportingText: string, 
   return { message: result, supportingText: '' };
 }
 
-const responseValidators = [
+export let responseValidators = [
   isFileEditorResult,
   isGuidedEditResult,
   isCreateTypeResponse,
@@ -82,7 +82,11 @@ const responseValidators = [
   isGeneralComponentResponse
 ];
 
-function validateTypedResponse<T>(response: string): T {
+export function injectResponseValidators(validators: ((obj: GuardValidations) => boolean)[]): void {
+  responseValidators = responseValidators.concat(validators);
+}
+
+export function validateTypedResponse<T>(response: string): T {
   if (!response) {
     throw new Error('empty response');
   }

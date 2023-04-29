@@ -1,4 +1,4 @@
-import { parseChatAttempt } from '../chat_parser';
+import { parseChatAttempt } from '../parser';
 import { IPrompts } from '../../lib/prompts';
 import { buildOpenAIRequest, performRequest } from '../request';
 import { logAiResult } from '../stats';

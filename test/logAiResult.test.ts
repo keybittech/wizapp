@@ -27,7 +27,7 @@ describe('logAiResult', () => {
       message: [{ "above_9": "yep" }],
       supportingText: 'testSupportingText',
       promptTemplate: 'testTemplate',
-      promptType: IPrompts.EDIT_FILE,
+      promptType: IPrompts.GUIDED_EDIT,
     };
 
     const expectedLogLine = {

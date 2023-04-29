@@ -10,6 +10,7 @@ const config: Options = {
   
   format: ['cjs', 'esm'],
   outDir: 'dist',
+  clean: true,
 }
 
 export default config;

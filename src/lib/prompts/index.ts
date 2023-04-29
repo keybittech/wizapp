@@ -12,6 +12,7 @@ import { suggestFeatureMessages } from './suggest_feature_prompt';
 import { suggestRoleMessages } from './suggest_role_prompt';
 import { suggestServiceMessages } from './suggest_service_prompt';
 import { suggestTierMessages } from './suggest_tier_prompt';
+import { deriveInstructionMessages } from "./derive_instruction_prompt";
 
 export enum IPrompts {
   CREATE_API = 'create_api',
@@ -19,14 +20,9 @@ export enum IPrompts {
   CREATE_TYPE = 'create_type',
   CREATE_GEN_COMPONENT = 'create_gen_component',
   CREATE_APP_COMPONENT = 'create_app_component',
-  EDIT_FILE = 'edit_file',
-  MORPH_FILE = 'morph_file',
-  MORPH_2 = 'morph_2',
-  MORPH_3 = 'morph_3',
   DERIVE_INSTRUCTION = 'derive_instruction',
   FILE_EDITOR = 'file_editor',
   GUIDED_EDIT = 'guided_edit',
-  MIRROR_EDIT = 'mirror_edit',
   SUGGEST_ROLE = 'suggest_role',
   SUGGEST_SERVICE = 'suggest_service',
   SUGGEST_TIER = 'suggest_tier',
@@ -34,13 +30,16 @@ export enum IPrompts {
   CONVERT_PURPOSE = 'convert_purpose'
 }
 
-export const aiPrompts: Partial<Record<IPrompts, string | ChatCompletionRequestMessage[]>> = {
+type AiPrompts = Record<IPrompts, string | ChatCompletionRequestMessage[]>;
+
+export let aiPrompts: AiPrompts = {
   [IPrompts.CONVERT_PURPOSE]: convertPurposeMessages,
   [IPrompts.CREATE_API_BACKEND]: createApiBackendMessages,
   [IPrompts.CREATE_API]: createApiMessages,
   [IPrompts.CREATE_APP_COMPONENT]: createAppComponentMessages,
   [IPrompts.CREATE_GEN_COMPONENT]: createGenComponentMessages,
   [IPrompts.CREATE_TYPE]: createTypeMessages,
+  [IPrompts.DERIVE_INSTRUCTION]: deriveInstructionMessages,
   [IPrompts.FILE_EDITOR]: fileEditorMessages,
   [IPrompts.GUIDED_EDIT]: guidedEditMessages,
   [IPrompts.SUGGEST_FEATURE]: suggestFeatureMessages,
@@ -48,3 +47,7 @@ export const aiPrompts: Partial<Record<IPrompts, string | ChatCompletionRequestM
   [IPrompts.SUGGEST_SERVICE]: suggestServiceMessages,
   [IPrompts.SUGGEST_TIER]: suggestTierMessages
 };
+
+export function injectPrompts(prompts: Partial<AiPrompts>) {
+  aiPrompts = { ...aiPrompts, ...prompts };
+}

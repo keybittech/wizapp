@@ -2,7 +2,7 @@ import { ChatCompletionRequestMessage } from "openai";
 import type { GuardValidations } from "../types";
 
 // aHR0cHM6Ly9tYXJ0aW5mb3dsZXIuY29tL2FydGljbGVzLzIwMjMtY2hhdGdwdC14dS1oYW8uaHRtbA==
-export const instructionPromptMessages: ChatCompletionRequestMessage[] = [
+export const deriveInstructionMessages: ChatCompletionRequestMessage[] = [
   { role: 'system', content: '' },
   { role: 'assistant', content: `{introduction}
 

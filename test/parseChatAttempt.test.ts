@@ -2,7 +2,7 @@ import { setupChatResponse, setupCommonMocks } from './testHelpers';
 setupChatResponse('');
 setupCommonMocks();
 
-import { parseChatAttempt } from '../src/server/chat_parser';
+import { parseChatAttempt } from '../src/server/parser';
 import { GuidedEditResponse } from '../src/lib/prompts/guided_edit_prompt';
 
 describe('parseChatAttempt', () => {
