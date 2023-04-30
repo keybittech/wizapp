@@ -2,10 +2,10 @@ import { setupChatResponse, setupCommonMocks } from './testHelpers';
 setupChatResponse('');
 setupCommonMocks();
 
-import { parseChatAttempt } from '../src/server/parser';
+import * as parserModule from '../src/server/parser';
 import { GuidedEditResponse } from '../src/lib/prompts/guided_edit_prompt';
 
-describe('parseChatAttempt', () => {
+describe('parserModule.parseChatAttempt', () => {
 
   test('should handle forgotten markdown footer', async () => {
     const badRes = 'Edits conveyed by comment snippets. I edited lines 61, 63, 65, 68, 70, 73, 75, which is 7 total edited lines. Here are the 7 edited lines:\n' +
@@ -27,28 +27,28 @@ describe('parseChatAttempt', () => {
       '75.   return moderationResponse.data.results[0]?.flagged; /* wizapp removed console log */',
       supportingText: "Edits conveyed by comment snippets. I edited lines 61, 63, 65, 68, 70, 73, 75, which is 7 total edited lines. Here are the 7 edited lines:\n``` "
     };
-    const result = parseChatAttempt(badRes);
+    const result = parserModule.parseChatAttempt(badRes);
     expect(result).toEqual(expectedResult);
   });
 
   test('should throw AI Refusal error', () => {
     const attempt = "I'm an AI language model and I can't perform this task.";
-    expect(() => parseChatAttempt(attempt)).toThrowError('AI Refusal');
+    expect(() => parserModule.parseChatAttempt(attempt)).toThrowError('AI Refusal');
   });
 
   test('should return throw on non typed chat completion response', () => {
     const attempt = "This is a normal response.";
-    expect(() => parseChatAttempt(attempt)).toThrowError();
+    expect(() => parserModule.parseChatAttempt(attempt)).toThrowError();
   });
 
   test('should throw Block structure is not valid error', () => {
     const attempt = "&&&Some text@@@&&&";
-    expect(() => parseChatAttempt(attempt)).toThrowError('Block structure is not valid.');
+    expect(() => parserModule.parseChatAttempt(attempt)).toThrowError('Block structure is not valid.');
   });
 
   test('should throw cannot parse json error', () => {
     const attempt = "&&&Some text@@@{invalid json}@@@Some other text&&&";
-    expect(() => parseChatAttempt(attempt)).toThrowError(/cannot parse json./);
+    expect(() => parserModule.parseChatAttempt(attempt)).toThrowError(/cannot parse json./);
   });
 
   test('should return parsed json and supporting text when using a type', () => {
@@ -57,12 +57,22 @@ describe('parseChatAttempt', () => {
       message: [{ "statement_7": "some changes" }],
       supportingText: "In this edit, we fixed...\nSome other information about these changes"
     };
-    expect(parseChatAttempt<GuidedEditResponse>(attempt)).toEqual(expectedResult);
+    expect(parserModule.parseChatAttempt<GuidedEditResponse>(attempt)).toEqual(expectedResult);
   });
   
   test('should throw bad chat format error', () => {
     const attempt = '&&&Some text@@@{"unknown": "value"}@@@Some other text&&&';
-    expect(() => parseChatAttempt(attempt)).toThrowError('bad chat format');
+    expect(() => parserModule.parseChatAttempt(attempt)).toThrowError('bad chat format');
   });
 
+  test('should call validateTypedResponse with a string not wrapped in quotes', () => {
+    const attempt = "'walking down the road'";
+    const attemptDbl = '"walking down the road"';
+    const response = {
+      message: 'walking down the road',
+      supportingText: ''
+    }
+    expect(parserModule.parseChatAttempt(attempt)).toEqual(response);
+    expect(parserModule.parseChatAttempt(attemptDbl)).toEqual(response);
+  });
 });

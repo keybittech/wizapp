@@ -1,6 +1,6 @@
 
 export type ConfigPropTypes = string;
-export type Config = Record<string, Record<string, ConfigPropTypes>>;
+export type Config<T = Record<string, Record<string, ConfigPropTypes>>> = T;
 export type CurrentType = ConfigPropTypes | Config;
 
 export type GuardValidations = Record<string, unknown> | Record<string, unknown>[] | string

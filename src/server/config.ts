@@ -1,7 +1,7 @@
 // config.ts
 import fs from 'fs';
 import path from 'path';
-import type { Config, ConfigPropTypes } from '../lib/types';
+import type { Config as RootConfig, ConfigPropTypes } from '../lib/types';
 import { isConfigNestedObject } from '../lib/util';
 
 export const isCliRunning = process.argv[1].includes('bin/src/cli.js');
@@ -12,13 +12,16 @@ const npxPath = path.join(process.cwd(), 'config.json')
 
 export const configFilePath = isCalledWithNpx ? npxPath : normalPath;
 
+
 // Default configuration values
-export const defaultConfig: Config = {
-  ai: { retries: '3', logFile: 'results.json' },
+export const defaultConfig = {
+  ai: { retries: '3', logFile: 'results.json', chatModel: 'gpt-3.5-turbo', completionModel: 'curie' },
   ts: { configPath: '', typeDir: '', compDir: '' },
   git: { rootPath: '', source: 'main', remote: 'origin' },
   user: { name: 'wizapp' }
 };
+
+type Config = RootConfig<typeof defaultConfig>;
 
 // Load existing configuration or create a new file with default values
 export let config = defaultConfig;

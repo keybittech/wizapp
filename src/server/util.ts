@@ -75,6 +75,14 @@ export function processTextWithCodeBlock(inputString: string): { codeBlock: stri
   };
 }
 
+export function stripWrappedCharacter(inputString: string, wrappedCharacters: string[] = ['"', "'"]): string {
+  for (const char of wrappedCharacters) {
+    if (inputString.startsWith(char)) inputString = inputString.slice(1); 
+    if (inputString.endsWith(char)) inputString = inputString.substring(0, inputString.length - 1); 
+  }
+  return inputString;
+}
+
 export function sanitizeName(input: string): string {
   // Trim whitespaces and replace consecutive spaces with a single dash
   const trimmed = input.trim();

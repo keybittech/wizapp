@@ -2,6 +2,7 @@ import { CreateModerationRequest, OpenAIApi } from "openai";
 import { aiPrompts, IPrompts } from "../lib/prompts";
 import type { OpenAIRequestShapes } from "./types";
 import { isChatRequest, isCompletionRequest, isModerationRequest } from "./util";
+import { getConfig } from "./config";
 
 const openai = new OpenAIApi();
 export const openAIRequestOptions = {
@@ -11,9 +12,8 @@ export const openAIRequestOptions = {
   }
 };
 
-export const chatModel = 'gpt-3.5-turbo';
-
 export function buildOpenAIRequest(prompts: string[], promptType?: IPrompts): [OpenAIRequestShapes, string?] {
+  const config = getConfig();
   if (!promptType) {
     const moderationRequest: CreateModerationRequest = {
       input: prompts[0]
@@ -33,7 +33,7 @@ export function buildOpenAIRequest(prompts: string[], promptType?: IPrompts): [O
       completionOrHistory = completionOrHistory.replaceAll(token, promptTokens[token]);
     }
     const completionRequest = {
-      model: 'curie',
+      model: config.ai.completionModel,
       prompt: completionOrHistory
     };
     return [completionRequest, promptTemplateString]
@@ -49,7 +49,7 @@ export function buildOpenAIRequest(prompts: string[], promptType?: IPrompts): [O
     }
 
     const chatRequest = {
-      model: chatModel,
+      model: config.ai.chatModel,
       messages: completionOrHistory
     };
     return [chatRequest, promptTemplateString]
@@ -61,17 +61,14 @@ export function buildOpenAIRequest(prompts: string[], promptType?: IPrompts): [O
 export async function performRequest(request: OpenAIRequestShapes): Promise<string | boolean | undefined> {
   console.log('OpenAIActionTrigger  =::= ', JSON.stringify(request, null, 2))
   if (isChatRequest(request)) {
-    console.log('CHAT')
     const chatResponse = await openai.createChatCompletion(request, openAIRequestOptions);
     console.log({ RAW_CHAT: chatResponse.data.choices[0] });
     return chatResponse.data.choices[0]?.message?.content.trim();
   } else if (isCompletionRequest(request)) {
-    console.log('COMPLETION')
     const completionResponse = await openai.createCompletion(request, openAIRequestOptions);
     console.log({ RAW_COMPLETION: completionResponse.data.choices[0] });
     return completionResponse.data.choices[0].text?.trim();
   } else if (isModerationRequest(request)) {
-    console.log('MODERATION')
     const moderationResponse = await openai.createModeration(request, openAIRequestOptions);
     console.log({ RAW_MODERATION: moderationResponse.data.results[0] });
     return moderationResponse.data.results[0]?.flagged;

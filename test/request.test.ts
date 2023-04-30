@@ -5,7 +5,7 @@ setupCompletionResponse('test completion response');
 setupModerationResponse(false);
 setupCommonMocks();
 
-import { buildOpenAIRequest, performRequest, openAIRequestOptions, chatModel } from '../src/server/request';
+import { buildOpenAIRequest, performRequest, openAIRequestOptions } from '../src/server/request';
 import { CreateModerationRequest, CreateChatCompletionRequest, CreateCompletionRequest } from 'openai';
 import { IPrompts } from '../src/lib/prompts';
 import { isChatRequest } from '../src/server/util';
@@ -29,11 +29,11 @@ describe('buildOpenAIRequest', () => {
 
 describe('performRequest', () => {
   const chatRequest: CreateChatCompletionRequest = {
-    model: chatModel,
+    model: 'gpt-3.5-turbo',
     messages: [{ role: 'system', content: 'test' }],
   };
   const completionRequest: CreateCompletionRequest = {
-    model: chatModel,
+    model: 'ada',
     prompt: 'test'
   };
   const moderationRequest: CreateModerationRequest = {
