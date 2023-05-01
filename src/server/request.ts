@@ -1,7 +1,7 @@
 import { CreateModerationRequest, OpenAIApi } from "openai";
 import { aiPrompts, IPrompts } from "../lib/prompts";
 import type { OpenAIRequestShapes } from "./types";
-import { isChatRequest, isCompletionRequest, isModerationRequest } from "./util";
+import { deepClone, isChatRequest, isCompletionRequest, isModerationRequest } from "./util";
 import { getConfig } from "./config";
 
 const openai = new OpenAIApi();
@@ -25,22 +25,24 @@ export function buildOpenAIRequest(prompts: string[], promptType?: IPrompts): [O
   const promptTemplate = aiPrompts[promptType];
   if (!promptTemplate) throw new Error('invalid prompt type');
 
-  const promptTemplateString = JSON.stringify(promptTemplate);
-  let completionOrHistory = promptTemplate;
+  const originalPromptTemplate = JSON.stringify(promptTemplate);
+  const completionStringOrMessageHistory = promptTemplate;
 
-  if ('string' === typeof completionOrHistory) {
+  if ('string' === typeof completionStringOrMessageHistory) {
+    let completionString = String(completionStringOrMessageHistory);
     for (const token in promptTokens) {
-      completionOrHistory = completionOrHistory.replaceAll(token, promptTokens[token]);
+      completionString = completionString.replaceAll(token, promptTokens[token]);
     }
     const completionRequest = {
       model: config.ai.completionModel,
-      prompt: completionOrHistory
+      prompt: completionString
     };
-    return [completionRequest, promptTemplateString]
+    return [completionRequest, originalPromptTemplate]
   }
 
-  if (Array.isArray(completionOrHistory)) {
-    for (let item of completionOrHistory) {
+  if (Array.isArray(completionStringOrMessageHistory)) {
+    const messageHistory = deepClone(completionStringOrMessageHistory);
+    for (let item of messageHistory) {
       if (item.content.includes('${') && item.content.includes('}')) {
         for (const token in promptTokens) {
           item.content = item.content.replaceAll(token, promptTokens[token]);
@@ -50,9 +52,9 @@ export function buildOpenAIRequest(prompts: string[], promptType?: IPrompts): [O
 
     const chatRequest = {
       model: config.ai.chatModel,
-      messages: completionOrHistory
+      messages: messageHistory
     };
-    return [chatRequest, promptTemplateString]
+    return [chatRequest, originalPromptTemplate]
   }
 
   throw new Error('invalid prompting procedure');

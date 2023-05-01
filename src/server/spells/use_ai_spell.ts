@@ -22,11 +22,11 @@ export async function useAi<T = undefined>(promptType?: IPrompts, ...prompts: st
     promptType: (!promptType ? 'moderation' : promptType) as IPrompts
   }
 
-  const responseTry = await performRequest(builtRequest);
-
-  aiResponse.rawResponses.push(responseTry);
-
   try {
+
+    const responseTry = await performRequest(builtRequest);
+
+    aiResponse.rawResponses.push(responseTry);
 
     if ('undefined' === typeof responseTry) {
       const noChoices = 'Open AI returned no choices.'
@@ -89,7 +89,7 @@ export async function useAi<T = undefined>(promptType?: IPrompts, ...prompts: st
   } catch (error) {
     const err = error as Error;
     aiResponse.successful = false;
-    logAiResult({ ...aiResponse, prompts, message: undefined, model: builtRequest.model });
+    logAiResult({ ...aiResponse, prompts, message: err.message + ' ' + err.stack, model: builtRequest.model });
     throw new Error('General use AI failure!\nStack: ' + err.stack);
   }
 }
