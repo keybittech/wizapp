@@ -34,6 +34,8 @@ describe('parserModule.parseChatAttempt', () => {
   test('should throw AI Refusal error', () => {
     const attempt = "I'm an AI language model and I can't perform this task.";
     expect(() => parserModule.parseChatAttempt(attempt)).toThrowError('AI Refusal');
+    const attempt2 = "I'm sorry, I don't understand";
+    expect(() => parserModule.parseChatAttempt(attempt2)).toThrowError('AI Refusal');
   });
 
   test('should return throw on non typed chat completion response', () => {

@@ -9,7 +9,7 @@ import type { GuardValidations } from "../lib/types";
 import { processTextWithCodeBlock, stripWrappedCharacter } from "./util";
 
 export function parseChatAttempt<T>(attempt: string): { supportingText: string, message: T } {
-  const aiRefusalError = /(?:ai(?:\s|-)?language(?:\s|-)?model|i(?:'?m| am))(?:[^.]*?)(?:can(?:'?t| not)|unable to)(?:[^.]*?)(?:perform|do|create|provide)/i;
+  const aiRefusalError = /(^i\'m sorry)|(?:ai(?:\s|-)?language(?:\s|-)?model|i(?:'?m| am))(?:[^.]*?)(?:can(?:'?t| not)|unable to)(?:[^.]*?)(?:perform|do|create|provide)/i;
   if (aiRefusalError.test(attempt)) {
     throw new Error('AI Refusal');
   }
