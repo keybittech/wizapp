@@ -15,7 +15,7 @@ WizApp provides the following feature set:
 - Logging and statistics
 - Detailed configuration
 
-We want to work with you! If any of this sounds interesting, or you are looking for business partnership, please check out the contact info above. Also check out [Awayto](https://github.com/keybittech/awayto) and soon to be released [Awayto v2](https://github.com/jcmccormick/wc), letting you deploy web apps on AWS (v1), k8s (v2), or docker (v2). V2 is exceptionally featured and you should check it out if you deploy, build, or need pre-built fully featured web platforms to launch from.
+Also check out [Awayto](https://github.com/keybittech/awayto) and soon to be released [Awayto v2](https://github.com/jcmccormick/wc), letting you deploy web apps on AWS (v1), k8s (v2), or docker (v2). V2 is exceptionally featured and you should check it out if you deploy, build, or need pre-built fully featured web platforms to launch from.
 
 ## Installation
 
